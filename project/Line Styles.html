@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Line Styles, reference</title>
+<link rel="stylesheet" href="site/fm.css">
+<style>
+  .ls-body { background: var(--bg); color: var(--body); font-family: var(--sans); }
+  .ls-wrap { max-width: 1080px; margin-inline: auto; padding: clamp(40px,7vh,90px) clamp(20px,5vw,56px) 120px; }
+  .ls-head .eyebrow { margin-bottom: 16px; }
+  .ls-head h1 { font-size: clamp(2rem,4.4vw,3rem); color: var(--heading); letter-spacing: -0.025em; line-height: 1.05; }
+  .ls-head p { color: var(--muted); margin-top: 14px; max-width: 600px; font-size: 1.05rem; line-height: 1.6; }
+
+  .ls-grid { display: grid; gap: 22px; margin-top: 48px; }
+  .spec { display: grid; grid-template-columns: 1.15fr 1fr; gap: 0; border: 1px solid var(--line); border-radius: var(--r-xl); overflow: hidden; background: var(--s-1); }
+  .stage { position: relative; min-height: 230px; overflow: hidden; background:
+      radial-gradient(120% 90% at 50% -10%, color-mix(in oklch, var(--s-1) 80%, transparent), transparent 60%), var(--inset); }
+  .meta { padding: 30px 32px; display: flex; flex-direction: column; justify-content: center; border-left: 1px solid var(--line); }
+  .meta .num { font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em; color: var(--primary-lift); margin-bottom: 12px; }
+  .meta h3 { font-size: 1.35rem; color: var(--heading); letter-spacing: -0.01em; }
+  .meta p { color: var(--muted); margin-top: 10px; font-size: 0.95rem; line-height: 1.55; }
+  .meta .where { margin-top: 14px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; color: var(--subtle); }
+
+  /* ---- 01 glowing horizon crest (curved) ---- */
+  .crest {
+    position: absolute; left: 50%; bottom: -64%; width: 210%; height: 124%;
+    transform: translateX(-50%); border-radius: 50% 50% 0 0; pointer-events: none;
+    border-top: 2px solid color-mix(in oklch, var(--b-cyan) 70%, transparent);
+    box-shadow: 0 -24px 90px -24px color-mix(in oklch, var(--b-blue) 60%, transparent);
+    background: radial-gradient(120% 60% at 50% 0%, color-mix(in oklch, var(--primary) 16%, transparent), transparent 62%);
+  }
+  .crest::before { content: ""; position: absolute; left: 50%; top: -2px; transform: translateX(-50%);
+    width: 56%; height: 2px; border-radius: 2px;
+    background: radial-gradient(50% 50% at 50% 50%, var(--b-cyan), transparent 78%);
+    box-shadow: 0 0 22px 2px color-mix(in oklch, var(--b-cyan) 55%, transparent); }
+
+  /* ---- 02 brand-spectrum gradient hairline (straight) ---- */
+  .hairline { position: absolute; left: 9%; right: 9%; top: 50%; height: 2px; border-radius: 2px;
+    background: linear-gradient(90deg, #01B3F6, #18C95C, #FFC500, #FF6A04);
+    box-shadow: 0 0 18px -2px color-mix(in oklch, #18C95C 60%, transparent); }
+
+  /* ---- 03 plain thin glowing line (straight) ---- */
+  .thin { position: absolute; left: 9%; right: 9%; top: 50%; height: 1px;
+    background: color-mix(in oklch, var(--b-cyan) 75%, transparent);
+    box-shadow: 0 0 14px color-mix(in oklch, var(--b-cyan) 70%, transparent); }
+
+  /* ---- motion demo ---- */
+  .motion { grid-template-columns: 1fr; }
+  .motion .stage { min-height: 320px; }
+  .motion .meta { border-left: 0; border-top: 1px solid var(--line); }
+  .mover { position: absolute; left: 50%; width: 210%; height: 124%; transform: translateX(-50%);
+    border-radius: 50% 50% 0 0; border-top: 2px solid color-mix(in oklch, var(--b-cyan) 70%, transparent);
+    box-shadow: 0 -24px 90px -24px color-mix(in oklch, var(--b-blue) 60%, transparent);
+    background: radial-gradient(120% 60% at 50% 0%, color-mix(in oklch, var(--primary) 16%, transparent), transparent 62%);
+    animation: rise 5.5s var(--ease) infinite; }
+  @keyframes rise {
+    0%   { bottom: -90%; opacity: 0; }
+    15%  { opacity: 1; }
+    85%  { opacity: 1; }
+    100% { bottom: 80%; opacity: 0; }
+  }
+  .scroll-hint { position: absolute; right: 18px; bottom: 16px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; color: var(--subtle); display: flex; align-items: center; gap: 8px; }
+  .scroll-hint .arr { animation: hintUp 1.6s var(--ease) infinite; }
+  @keyframes hintUp { 0%,100% { transform: translateY(2px); opacity:.5; } 50% { transform: translateY(-2px); opacity:1; } }
+
+  @media (max-width: 760px) { .spec { grid-template-columns: 1fr; } .meta { border-left: 0; border-top: 1px solid var(--line); } }
+</style>
+</head>
+<body class="ls-body">
+<div class="page-base" aria-hidden="true"></div>
+
+<div class="ls-wrap">
+  <header class="ls-head">
+    <span class="eyebrow"><span class="dot pulse"></span> Reference</span>
+    <h1>The three line options</h1>
+    <p>Here's what each "horizontal line" looks like on the dark brand background. Tell me the number you want and I'll roll it out across the pages with the bottom→top scroll motion (shown at the bottom).</p>
+  </header>
+
+  <div class="ls-grid">
+
+    <div class="spec">
+      <div class="stage"><div class="crest" aria-hidden="true"></div></div>
+      <div class="meta">
+        <span class="num">01 · CURVED</span>
+        <h3>Glowing horizon crest</h3>
+        <p>A gently curved, glowing crest, like a planet's horizon. Soft cyan/blue light with a brighter centre. This is the signature motif already in your "changing that" transition and inside the feature cards.</p>
+        <span class="where">Used in: transition section · card horizons</span>
+      </div>
+    </div>
+
+    <div class="spec">
+      <div class="stage"><div class="hairline" aria-hidden="true"></div></div>
+      <div class="meta">
+        <span class="num">02 · STRAIGHT</span>
+        <h3>Brand-spectrum gradient hairline</h3>
+        <p>A crisp, straight 2px line running through the full brand spectrum, blue → green → gold → orange. Bright and on-brand; reads as a precise divider rather than ambient glow.</p>
+        <span class="where">Used in: section eyebrows · platform heading</span>
+      </div>
+    </div>
+
+    <div class="spec">
+      <div class="stage"><div class="thin" aria-hidden="true"></div></div>
+      <div class="meta">
+        <span class="num">03 · STRAIGHT</span>
+        <h3>Plain thin glowing line</h3>
+        <p>A single hairline in one accent colour with a soft glow. The most minimal and quiet option, a clean light beam across the width.</p>
+        <span class="where">Most subtle · pure ambient</span>
+      </div>
+    </div>
+
+    <div class="spec motion">
+      <div class="stage">
+        <div class="mover" aria-hidden="true"></div>
+        <div class="scroll-hint"><span class="arr">↑</span> bottom → top on scroll</div>
+      </div>
+      <div class="meta">
+        <span class="num">MOTION</span>
+        <h3>How it moves</h3>
+        <p>Whichever line you pick, this is the behavior: one line sits in the background and travels from the bottom of the screen to the top as you scroll the page down, a slow rising horizon. (Looping here for demo; on the real pages it tracks your scroll position exactly.)</p>
+        <span class="where">0% scroll = bottom · 100% scroll = top</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

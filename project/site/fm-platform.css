@@ -1,0 +1,200 @@
+/* ============================================================
+   FrontM, "Introducing: The FrontM Platform"
+   Dark, scroll-driven 3D assembly. Tokens from fm.css.
+   ============================================================ */
+
+.pf-body { background: var(--bg); color: var(--body); font-family: var(--sans); }
+
+/* intro spacer */
+.pf-intro {
+  height: 100vh; display: grid; place-items: end center; padding-bottom: 8vh;
+  position: relative; z-index: 1;
+}
+.pf-scrollcue {
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--subtle);
+  animation: pfCue 2.6s var(--ease) infinite;
+}
+@keyframes pfCue { 0%,100% { opacity: 0.45; transform: translateY(0); } 50% { opacity: 1; transform: translateY(4px); } }
+
+/* ---------- pinned stage ---------- */
+.platform { position: relative; height: 360vh; }
+.pf-stage {
+  position: sticky; top: 0; height: 100vh; overflow: hidden;
+  perspective: 1400px; transform-style: preserve-3d;
+  background:
+    radial-gradient(120% 80% at 50% -10%, color-mix(in oklch, var(--s-1) 80%, transparent), transparent 60%),
+    var(--bg);
+}
+
+/* depth floor */
+.pf-floor {
+  position: absolute; left: 50%; bottom: -8%; width: 190%; height: 64%;
+  transform: translateX(-50%) rotateX(74deg); transform-origin: 50% 100%;
+  background-image:
+    linear-gradient(to right, color-mix(in oklch, var(--b-blue) 18%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklch, var(--b-blue) 18%, transparent) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(60% 75% at 50% 100%, #000 10%, transparent 72%);
+  mask-image: radial-gradient(60% 75% at 50% 100%, #000 10%, transparent 72%);
+  opacity: 0; z-index: 1; pointer-events: none; will-change: opacity;
+}
+.pf-floor-glow {
+  position: absolute; left: 50%; bottom: -4%; width: 86%; height: 46%;
+  transform: translateX(-50%);
+  background: radial-gradient(60% 80% at 50% 100%, color-mix(in oklch, var(--b-blue) 22%, transparent), transparent 70%);
+  opacity: 0; z-index: 1; pointer-events: none; will-change: opacity;
+}
+
+/* circuit-board overlay (ambient nodes + wired traces + pulses) */
+.pf-circuit { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 4; pointer-events: none; }
+
+/* ---------- heading ---------- */
+.pf-head {
+  position: absolute; top: 5.5%; left: 50%; transform: translateX(-50%);
+  text-align: center; width: min(720px, 86vw); z-index: 7; will-change: transform, opacity;
+}
+.pf-hairline {
+  height: 2px; width: 132px; margin: 0 auto 18px; border-radius: 2px;
+  background: linear-gradient(90deg, #01B3F6, #18C95C, #FFC500, #FF6A04);
+}
+.pf-head h2 { font-size: clamp(1.7rem, 3.3vw, 2.6rem); color: var(--heading); letter-spacing: -0.02em; line-height: 1.1; }
+.pf-head p { color: var(--muted); margin-top: 12px; font-size: clamp(0.95rem, 1.3vw, 1.08rem); }
+
+/* ---------- channel row ---------- */
+.pf-channels {
+  position: absolute; top: 18%; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 14px; z-index: 6; align-items: stretch;
+}
+.pf-tile {
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 10px;
+  width: 96px; padding: 14px 8px; border-radius: 10px;
+  background: var(--s-1); border: 1px solid var(--line);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+  will-change: transform, opacity;
+}
+.pf-tile svg { width: 24px; height: 24px; color: var(--b-cyan); flex: none; }
+.pf-tile span { font-family: var(--mono); font-size: 11px; letter-spacing: 0.03em; color: var(--muted); text-align: center; line-height: 1.25; min-height: 2.5em; display: grid; place-items: center; }
+
+/* ---------- 3-card 3D deck ---------- */
+.pf-deck {
+  position: absolute; top: 58%; left: 50%;
+  width: 392px; height: 128px;
+  transform-style: preserve-3d; z-index: 5;
+  will-change: transform;
+}
+.pf-card {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; gap: 18px; padding: 0 24px;
+  border-radius: 14px; background: var(--s-1);
+  border: 1px solid var(--line);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 24px 54px -26px rgba(0,0,0,0.75);
+  backface-visibility: hidden; transform-style: preserve-3d;
+  will-change: transform;
+}
+.pf-card[data-card="exchange"] { --accent: #5FE6D0; --conn: #00D9C9; }
+.pf-card[data-card="studio"]   { --accent: #FFD24D; --conn: #FFC500; }
+.pf-card[data-card="fabric"]   { --accent: #FFD24D; --conn: #FFC500; }
+
+.pf-glyph {
+  width: 56px; height: 56px; flex: none; display: grid; place-items: center;
+  border-radius: 10px; color: var(--accent);
+  background: color-mix(in oklch, var(--accent) 14%, var(--s-2));
+  border: 1px solid color-mix(in oklch, var(--accent) 42%, var(--line));
+  box-shadow: 0 0 22px -6px color-mix(in oklch, var(--accent) 60%, transparent);
+}
+.pf-glyph svg { width: 30px; height: 30px; }
+.pf-divider { width: 1px; height: 66%; background: var(--line-2); flex: none; }
+.pf-text h3 { font-size: 1.04rem; color: var(--heading); letter-spacing: -0.01em; }
+.pf-tag { font-family: var(--mono); font-size: 11px; letter-spacing: 0.03em; color: var(--accent); margin-top: 3px; }
+.pf-desc { font-size: 0.8rem; color: var(--muted); margin-top: 6px; line-height: 1.4; }
+
+/* card raise on hover (active/elevated look) */
+.pf-card.is-hot {
+  background: var(--s-2);
+  border-color: color-mix(in oklch, var(--accent) 45%, var(--line));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 34px 70px -28px rgba(0,0,0,0.85),
+              0 0 40px -14px color-mix(in oklch, var(--accent) 55%, transparent);
+}
+
+/* ---------- ecosystems ---------- */
+.pf-ecos { display: contents; }
+.pf-eco { position: absolute; top: 55%; transform: translateY(-50%); width: 250px; z-index: 6; }
+.pf-eco-left { left: 3.2%; }
+.pf-eco-right { right: 3.2%; }
+.pf-eco-head { margin-bottom: 17px; }
+.pf-eco-title { display: block; font-family: var(--mono); font-size: 15px; font-weight: 600; letter-spacing: 0.03em; }
+.pf-eco-left .pf-eco-title { color: #5FE6D0; }
+.pf-eco-right .pf-eco-title { color: #FFD24D; }
+.pf-eco-sub { font-size: 13.5px; color: var(--subtle); margin-top: 4px; display: block; }
+.pf-nodes { display: flex; flex-direction: column; gap: 11px; }
+.pf-node {
+  display: flex; align-items: center; gap: 11px; padding: 11px 15px;
+  border-radius: 9px; background: var(--s-1); border: 1px solid var(--line);
+  font-size: 14.5px; color: var(--body); will-change: transform, opacity;
+}
+.pf-node svg { width: 17px; height: 17px; flex: none; }
+.pf-eco-left .pf-node svg { color: #00D9C9; }
+.pf-eco-right .pf-node svg { color: #FFC500; }
+
+/* hover emphasis on ecosystems */
+.pf-eco { transition: opacity 0.3s var(--ease); }
+.platform[data-hot="studio"] .pf-eco-left,
+.platform[data-hot="fabric"] .pf-eco-left { opacity: 0.32; }
+.platform[data-hot="exchange"] .pf-eco-right { opacity: 0.32; }
+
+/* ---------- partner banner ---------- */
+.pf-banner { position: absolute; bottom: 6.5%; left: 50%; transform: translateX(-50%); z-index: 7; width: min(680px, 90vw); text-align: center; }
+.pf-banner .pill {
+  display: inline-flex; align-items: center; gap: 11px;
+  padding: 11px 22px; border-radius: var(--pill);
+  background: color-mix(in oklch, var(--s-2) 86%, transparent);
+  border: 1px solid var(--line-2); color: var(--body);
+  font-size: 13.5px; line-height: 1.4;
+  box-shadow: 0 18px 44px -22px rgba(0,0,0,0.85);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.pf-banner svg { width: 19px; height: 19px; color: var(--primary-lift); flex: none; }
+
+/* ---------- mark ---------- */
+.pf-mark { position: absolute; bottom: 3%; right: 3.2%; font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; color: var(--subtle); z-index: 7; }
+
+/* ============================================================
+   STATIC LAYOUT, narrow screens + reduced motion
+   ============================================================ */
+.platform.pf-static { height: auto; }
+.platform.pf-static .pf-stage {
+  position: static; height: auto; overflow: visible; perspective: none; transform-style: flat;
+  display: flex; flex-direction: column; align-items: center; gap: 38px;
+  padding: clamp(56px, 9vh, 110px) clamp(20px, 5vw, 64px);
+}
+.platform.pf-static .pf-floor,
+.platform.pf-static .pf-floor-glow,
+.platform.pf-static .pf-conns { display: none; }
+.platform.pf-static .pf-head,
+.platform.pf-static .pf-channels,
+.platform.pf-static .pf-deck,
+.platform.pf-static .pf-ecos,
+.platform.pf-static .pf-eco,
+.platform.pf-static .pf-banner,
+.platform.pf-static .pf-mark {
+  position: static; transform: none; inset: auto; left: auto; right: auto; top: auto; bottom: auto;
+  opacity: 1;
+}
+.platform.pf-static .pf-channels { flex-wrap: wrap; justify-content: center; max-width: 560px; }
+.platform.pf-static .pf-deck {
+  width: min(440px, 94vw); height: auto;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.platform.pf-static .pf-card { position: static; inset: auto; height: 116px; }
+.platform.pf-static .pf-ecos {
+  display: flex; gap: 26px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 620px;
+}
+.platform.pf-static .pf-eco { width: min(280px, 100%); flex: 1 1 240px; }
+.platform.pf-static .pf-eco-title { font-size: 15px; }
+.platform.pf-static .pf-mark { margin-top: 6px; }
+
+@media (max-width: 600px) {
+  .platform.pf-static .pf-ecos { flex-direction: column; align-items: center; }
+  .platform.pf-static .pf-card { height: auto; padding: 18px 18px; }
+}

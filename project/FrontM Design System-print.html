@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FrontM · Design System — Live Reconciliation</title>
+<link rel="stylesheet" href="site/fm.css">
+<style>
+  .ds-body { background: var(--bg); color: var(--body); min-height: 100vh; }
+  .ds-wrap { max-width: 1180px; margin-inline: auto; padding: clamp(40px, 7vh, 88px) clamp(20px, 5vw, 56px) 120px; }
+
+  /* ---------- header ---------- */
+  .ds-head { max-width: 760px; }
+  .ds-back { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--subtle); display: inline-flex; align-items: center; gap: 8px; margin-bottom: 28px; transition: color .2s; }
+  .ds-back:hover { color: var(--body); }
+  .ds-back svg { width: 14px; height: 14px; }
+  .ds-head h1 { font-size: clamp(2.1rem, 4.6vw, 3.1rem); color: var(--heading); letter-spacing: -0.025em; line-height: 1.05; }
+  .ds-head h1 em { font-style: normal; }
+  .ds-head .lede { margin-top: 16px; max-width: 620px; }
+  .ds-meta { display: flex; flex-wrap: wrap; gap: 8px 10px; margin-top: 22px; font-family: var(--mono); font-size: 11px; }
+  .ds-meta span { padding: 5px 11px; border-radius: var(--pill); border: 1px solid var(--line); color: var(--muted); letter-spacing: 0.03em; }
+  .ds-meta a { padding: 5px 12px; border-radius: var(--pill); border: 1px solid var(--line-2); color: #EDEFF7; display: inline-flex; gap: 7px; align-items: center; transition: background .2s, border-color .2s; }
+  .ds-meta a:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.32); }
+  .ds-meta a svg { width: 13px; height: 13px; }
+
+  /* ---------- scorecard ---------- */
+  .ds-score { display: grid; grid-template-columns: 280px 1fr; gap: 18px; margin-top: 44px; align-items: stretch; }
+  .ds-gauge { background: var(--s-1); border: 1px solid var(--line); border-radius: var(--r-xl); padding: 28px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); }
+  .ds-ring { position: relative; width: 150px; height: 150px; }
+  .ds-ring svg { transform: rotate(-90deg); }
+  .ds-ring .pct { position: absolute; inset: 0; display: grid; place-items: center; flex-direction: column; }
+  .ds-ring .pct b { font-size: 2.5rem; font-weight: 800; color: var(--heading); letter-spacing: -0.03em; line-height: 1; }
+  .ds-ring .pct small { display: block; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--subtle); margin-top: 5px; }
+  .ds-gauge p { font-size: 0.82rem; color: var(--muted); margin-top: 18px; line-height: 1.5; }
+
+  .ds-legend { background: var(--s-1); border: 1px solid var(--line); border-radius: var(--r-xl); padding: 26px 28px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); }
+  .ds-legend h3 { font-size: 0.78rem; font-family: var(--mono); font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--subtle); margin-bottom: 18px; }
+  .ds-bars { display: flex; flex-direction: column; gap: 13px; }
+  .ds-bar { display: grid; grid-template-columns: 130px 1fr 38px; align-items: center; gap: 14px; }
+  .ds-bar .lab { display: inline-flex; align-items: center; gap: 9px; font-size: 0.85rem; color: var(--body); }
+  .ds-bar .lab i { width: 9px; height: 9px; border-radius: 3px; flex-shrink: 0; }
+  .ds-bar .track { height: 7px; border-radius: 4px; background: rgba(255,255,255,0.05); overflow: hidden; }
+  .ds-bar .fill { height: 100%; border-radius: 4px; transition: width .9s var(--ease); }
+  .ds-bar .n { font-family: var(--mono); font-size: 0.85rem; color: var(--muted); text-align: right; }
+
+  /* ---------- filters ---------- */
+  .ds-filters { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 48px; padding-bottom: 22px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--bg); z-index: 5; padding-top: 14px; }
+  .ds-filters .fchip { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.04em; padding: 8px 15px; border-radius: var(--pill); border: 1px solid var(--line); color: var(--muted); transition: all .2s; display: inline-flex; align-items: center; gap: 8px; }
+  .ds-filters .fchip:hover { border-color: var(--line-2); color: var(--body); }
+  .ds-filters .fchip.on { background: #fff; color: #0A0B1E; border-color: #fff; }
+  .ds-filters .fchip .c { font-size: 10px; opacity: 0.7; }
+
+  /* ---------- section ---------- */
+  .ds-sec { margin-top: 40px; scroll-margin-top: 72px; }
+  .ds-sec.hide { display: none; }
+  .ds-sec-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 6px; flex-wrap: wrap; }
+  .ds-sec-head .num { font-family: var(--mono); font-size: 12px; color: var(--primary-lift); letter-spacing: 0.05em; }
+  .ds-sec-head h2 { font-size: 1.4rem; color: var(--heading); letter-spacing: -0.015em; font-weight: 700; }
+  .ds-sec-head .cnt { font-family: var(--mono); font-size: 11px; color: var(--subtle); margin-left: auto; }
+  .ds-sec .note { font-size: 0.86rem; color: var(--muted); max-width: 720px; margin-bottom: 18px; line-height: 1.55; }
+
+  .ds-table { border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; background: var(--s-1); }
+  .ds-row { display: grid; grid-template-columns: 1.5fr 1.6fr 1.6fr 132px; gap: 16px; padding: 14px 20px; align-items: center; border-top: 1px solid var(--line-soft); transition: background .15s; }
+  .ds-row:first-child { border-top: none; }
+  .ds-row:hover { background: rgba(255,255,255,0.018); }
+  .ds-row.r-hide { display: none; }
+  .ds-row .item { display: flex; flex-direction: column; gap: 3px; }
+  .ds-row .item b { font-weight: 600; color: var(--heading); font-size: 0.92rem; }
+  .ds-row .item span { font-family: var(--mono); font-size: 10.5px; color: var(--subtle); letter-spacing: 0.02em; }
+  .ds-val { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .ds-val .sw { width: 22px; height: 22px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.16); flex-shrink: 0; box-shadow: inset 0 1px 0 rgba(255,255,255,0.12); }
+  .ds-val .v { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .ds-val .v code { font-family: var(--mono); font-size: 12px; color: var(--body); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ds-val .v small { font-family: var(--mono); font-size: 10px; color: var(--faint); }
+  .ds-val.empty .v code { color: var(--faint); font-style: italic; }
+  .col-h { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint); padding: 12px 20px 0; display: grid; grid-template-columns: 1.5fr 1.6fr 1.6fr 132px; gap: 16px; }
+
+  .ds-status { justify-self: start; font-family: var(--mono); font-size: 10.5px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; padding: 5px 10px; border-radius: var(--r-xs); display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .ds-status i { width: 7px; height: 7px; border-radius: 50%; }
+  .st-match    { color: #4BE08A; background: rgba(24,201,92,0.13); }   .st-match i { background: #18C95C; }
+  .st-drift    { color: #FF9D5C; background: rgba(255,106,4,0.13); }    .st-drift i { background: #FF6A04; }
+  .st-deprecated { color: #FFD24A; background: rgba(255,197,0,0.12); }  .st-deprecated i { background: #FFC500; }
+  .st-missing  { color: #B7AFFF; background: rgba(122,107,255,0.16); }  .st-missing i { background: #9A86FF; }
+  .st-extra    { color: #5CC8FF; background: rgba(1,179,246,0.13); }    .st-extra i { background: #01B3F6; }
+
+  .ds-rownote { grid-column: 1 / -1; font-size: 0.8rem; color: var(--subtle); padding-top: 2px; line-height: 1.45; display: flex; gap: 8px; }
+  .ds-rownote::before { content: "↳"; color: var(--faint); flex-shrink: 0; }
+
+  .ds-foot { margin-top: 64px; padding-top: 26px; border-top: 1px solid var(--line); font-size: 0.84rem; color: var(--subtle); line-height: 1.6; max-width: 760px; }
+  .ds-foot b { color: var(--body); font-weight: 600; }
+
+  @media (max-width: 860px) {
+    .ds-score { grid-template-columns: 1fr; }
+    .col-h { display: none; }
+    .ds-row { grid-template-columns: 1fr 1fr; gap: 10px 16px; }
+    .ds-row .ds-status { grid-column: 1 / -1; }
+  }
+
+  /* ============ PRINT ============ */
+  @page { size: A4 portrait; margin: 1cm; }
+  @media print {
+    *, *::before, *::after {
+      -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+      animation-delay: -99s !important; animation-duration: .001s !important;
+      animation-iteration-count: 1 !important; animation-fill-mode: both !important;
+      animation-play-state: running !important; transition-duration: 0s !important;
+    }
+    html, body { background: #0A0B1E !important; }
+    .page-base, #hub-field { display: none !important; }
+    .ds-wrap { padding: 0 !important; max-width: 100% !important; }
+    .ds-back, .ds-filters { display: none !important; }
+    .ds-head { max-width: 100% !important; }
+    .ds-score { break-inside: avoid; }
+    .ds-sec { break-inside: auto; margin-top: 26px !important; }
+    .ds-sec-head, .ds-sec .note { break-after: avoid; }
+    .col-h { break-after: avoid; }
+    .ds-row { break-inside: avoid; }
+    .ds-table { break-inside: auto; }
+    .ds-foot { break-inside: avoid; }
+    .ds-row:hover, .ds-gauge, .ds-legend { transform: none !important; }
+  }
+</style>
+</head>
+<body class="ds-body">
+<div class="page-base" aria-hidden="true"></div>
+<canvas id="hub-field" aria-hidden="true" style="position:fixed;inset:0;z-index:-1;width:100vw;height:100vh;"></canvas>
+
+<div class="ds-wrap">
+  <a class="ds-back" href="FrontM Work Hub.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"></path></svg> Work Hub</a>
+
+  <header class="ds-head">
+    <span class="eyebrow"><span class="dot pulse"></span> Web Design Doc · §11 reconciliation</span>
+    <h1 style="margin-top:16px;">The doc says one thing.<br>The build says <em class="g-spectrum">another</em>.</h1>
+    <p class="lede">This is the living audit between the <b style="color:var(--body)">Web Design Doc</b> (the target system) and what's actually shipping in <code style="font-family:var(--mono);font-size:0.9em;color:var(--primary-lift)">site/fm.css</code>. Every token, side by side. Fix the code or fix the doc — never let them drift.</p>
+    <div class="ds-meta">
+      <span>Doc: Draft v3</span>
+      <span>Build: Homepage v2</span>
+      <span id="ds-asof"></span>
+      <a href="FrontM Web Design Doc.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path></svg> Full doc</a>
+    </div>
+  </header>
+
+  <section class="ds-score">
+    <div class="ds-gauge">
+      <div class="ds-ring">
+        <svg width="150" height="150" viewBox="0 0 150 150">
+          <circle cx="75" cy="75" r="64" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="11"></circle>
+          <circle id="ds-arc" cx="75" cy="75" r="64" fill="none" stroke="#18C95C" stroke-width="11" stroke-linecap="round" stroke-dasharray="402" stroke-dashoffset="402"></circle>
+        </svg>
+        <div class="pct"><div><b id="ds-pct">0%</b><small>Reconciled</small></div></div>
+      </div>
+      <p><span id="ds-mtotal">0</span> of <span id="ds-total">0</span> tokens match the doc exactly.</p>
+    </div>
+    <div class="ds-legend">
+      <h3>Audit breakdown — click to filter</h3>
+      <div class="ds-bars" id="ds-bars"></div>
+    </div>
+  </section>
+
+  <nav class="ds-filters" id="ds-filters"></nav>
+
+  <main id="ds-sections"></main>
+
+  <footer class="ds-foot">
+    <b>How to keep this current:</b> when you change a value in <code style="font-family:var(--mono)">site/fm.css</code> or in the doc, update the matching row in the <code style="font-family:var(--mono)">AUDIT</code> data at the bottom of this file and the scorecard re-tallies on reload. Each row is one token; flip its <code style="font-family:var(--mono)">status</code> to <code style="font-family:var(--mono)">match</code> once code and doc agree. The goal is 100% — that closes the §11 "reconcile against the live build" item.
+  </footer>
+</div>
+
+<script src="site/hub-field.js"></script>
+<script>
+/* ============================================================
+   AUDIT — single source of comparison.
+   target = Web Design Doc value · live = site/fm.css value
+   status: match | drift | deprecated | missing | extra
+   To update: edit a row, reload — scorecard re-tallies.
+   ============================================================ */
+const AUDIT = [
+  { num: "§3.1", title: "Surfaces — elevation ladder", note: "The six-step dark ladder is locked and matches 1:1. Two legacy surfaces still live in code and must be migrated off.", rows: [
+    { item: "Page base", tok: "--fm-bg → --bg", target: "#0A0B1E", live: "#0A0B1E", status: "match" },
+    { item: "Inset / wells", tok: "--fm-bg-inset → --inset", target: "#06071A", live: "#06071A", status: "match" },
+    { item: "Surface 1 (cards)", tok: "--fm-surface-1 → --s-1", target: "#12152F", live: "#12152F", status: "match" },
+    { item: "Surface 2 (raised)", tok: "--fm-surface-2 → --s-2", target: "#1A1E3D", live: "#1A1E3D", status: "match" },
+    { item: "Surface 3 (modals)", tok: "--fm-surface-3 → --s-3", target: "#23284E", live: "#23284E", status: "match" },
+    { item: "Surface 4 (overlays)", tok: "--fm-surface-4 → --s-4", target: "#2C3160", live: "#2C3160", status: "match" },
+    { item: "Soft wash", tok: "--bg-soft", target: "removed (deprecated)", live: "#10122A", status: "deprecated", note: "Doc lists #10122A as deprecated, but --bg-soft still drives --grad-page. Migrate the gradient onto the ladder, then delete." },
+    { item: "Deepest", tok: "--deepest", target: "—", live: "#0E1024", status: "extra", note: "Exists in code, not defined in the doc. Either promote it into the ladder spec or remove." },
+  ]},
+  { num: "§3.2", title: "Primary — violet / Engage", note: "Base purple matches. The on-dark, hover, active and tint variants have drifted or are missing — this is the biggest single-section gap.", rows: [
+    { item: "Primary fill", tok: "--fm-primary → --primary", target: "#6B5FD9", live: "#6B5FD9", status: "match" },
+    { item: "On dark (text/icon)", tok: "--fm-primary-on-dark → --primary-lift", target: "#9A86FF", live: "#A99BFF", status: "drift", note: "Doc spec is the electric #9A86FF (6.7:1). Code ships a lighter #A99BFF. Note --b-violet already = #9A86FF, so align --primary-lift to it." },
+    { item: "Hover (on dark)", tok: "--fm-primary-hover → --primary-hover", target: "#B7AFFF", live: "#5A4EC8", status: "drift", note: "Semantic mismatch: doc hover lightens for on-dark text; code darkens the fill. Decide which role this token plays." },
+    { item: "Active / pressed", tok: "--fm-primary-active", target: "#493CB6", live: "—", status: "missing" },
+    { item: "Tint / container", tok: "--fm-primary-bg", target: "rgba(122,107,255,0.16)", live: "—", status: "missing", note: "Used inline in places but never tokenized." },
+    { item: "Glow", tok: "--fm-glow-violet → --primary-glow", target: "rgba(154,134,255,0.45)", live: "rgba(154,134,255,0.55)", status: "drift", note: "Opacity drift — code glow is hotter (0.55 vs 0.45)." },
+  ]},
+  { num: "§3.3", title: "Brand spectrum", note: "The logo-derived spectrum is fully reconciled — all seven stops match. One bonus hue lives in code only.", rows: [
+    { item: "Blue (Connect)", tok: "--b-blue", target: "#01B3F6", live: "#01B3F6", status: "match" },
+    { item: "Aqua", tok: "--b-cyan", target: "#1FE6D4", live: "#1FE6D4", status: "match" },
+    { item: "Green (Care)", tok: "--b-green", target: "#18C95C", live: "#18C95C", status: "match" },
+    { item: "Lime (Train)", tok: "--b-green2", target: "#3CAD33", live: "#3CAD33", status: "match" },
+    { item: "Yellow (Inform)", tok: "--b-gold", target: "#FFC500", live: "#FFC500", status: "match" },
+    { item: "Orange (Entertain)", tok: "--b-orange", target: "#FF6A04", live: "#FF6A04", status: "match" },
+    { item: "Slate (Manage)", tok: "--b-slate", target: "#404858", live: "#404858", status: "match" },
+    { item: "Violet", tok: "--b-violet", target: "#9A86FF", live: "#9A86FF", status: "match" },
+    { item: "Indigo", tok: "--b-indigo", target: "—", live: "#435FE8", status: "extra", note: "Drives --grad-intel and the Maintain module. Add to the spectrum spec (sits between blue and violet)." },
+  ]},
+  { num: "§3.4", title: "Module accents", note: "Six of eight match. Care and Maintain drifted — Care is still on the deprecated pre-lift emerald.", rows: [
+    { item: "Connect", tok: "--m-connect", target: "#01B3F6", live: "#01B3F6", status: "match" },
+    { item: "Engage", tok: "--m-engage", target: "#6B5FD9", live: "#6B5FD9", status: "match" },
+    { item: "Care", tok: "--m-care", target: "#18C95C", live: "#079B33", status: "drift", note: "Code uses the OLD emerald (#079B33) the doc explicitly lifted away from. Bump to #18C95C to match §3.3." },
+    { item: "Inform", tok: "--m-inform", target: "#FFC500", live: "#FFC500", status: "match" },
+    { item: "Entertain", tok: "--m-entertain", target: "#FF6A04", live: "#FF6A04", status: "match" },
+    { item: "Train", tok: "--m-train", target: "#3CAD33", live: "#3CAD33", status: "match" },
+    { item: "Maintain", tok: "--m-maintain", target: "#4F6BFF", live: "#435FE8", status: "drift", note: "Doc spec is #4F6BFF; code ships #435FE8 (= --b-indigo). Pick one and converge." },
+    { item: "Manage", tok: "--m-manage", target: "#404858", live: "#404858", status: "match" },
+  ]},
+  { num: "§3.6", title: "Text — dark", note: "All four reading tokens match the doc. Code adds one extra step.", rows: [
+    { item: "Heading", tok: "--fm-text → --heading", target: "#FFFFFF", live: "#FFFFFF", status: "match" },
+    { item: "Body", tok: "--fm-text-body → --body", target: "#D6DAEA", live: "#D6DAEA", status: "match" },
+    { item: "Muted", tok: "--fm-text-muted → --muted", target: "#AEB5C9", live: "#AEB5C9", status: "match" },
+    { item: "Subtle", tok: "--fm-text-subtle → --subtle", target: "#8A92A8", live: "#8A92A8", status: "match" },
+    { item: "Faint", tok: "--faint", target: "—", live: "#6E7691", status: "extra", note: "A fifth, dimmer text step in code. Add a row to §3.6 if it's keeping it." },
+  ]},
+  { num: "§3.7", title: "Borders & hairlines", note: "All three hairline opacities run lighter in code than the doc specifies — subtle but systemic.", rows: [
+    { item: "Border subtle", tok: "--fm-border-subtle → --line", target: "rgba(255,255,255,0.12)", live: "rgba(255,255,255,0.08)", status: "drift", note: "Code hairline is fainter (0.08 vs 0.12). Affects every default card edge." },
+    { item: "Border default", tok: "--fm-border-default → --line-2", target: "rgba(255,255,255,0.18)", live: "rgba(255,255,255,0.14)", status: "drift" },
+    { item: "Border strong", tok: "--fm-border-strong", target: "rgba(255,255,255,0.28)", live: "—", status: "missing", note: "Code has --line-soft (0.05) instead; no strong step." },
+  ]},
+  { num: "§4", title: "Typography", note: "Family matches. The scale and heading weights are heavier in code than the doc's Figtree-tuned spec — and the forbidden 300 weight is being loaded.", rows: [
+    { item: "Family", tok: "--sans", target: "Figtree", live: "Figtree", status: "match" },
+    { item: "Weights loaded", tok: "@import", target: "400–800", live: "300–900", status: "drift", note: "Doc says 400 is the floor (300 shimmers on dark) — yet 300 is loaded. Trim the import to 400–800." },
+    { item: "H1 / display", tok: "h1 font-size", target: "46px · 700", live: "clamp(2.5,5.6vw,3.4rem) ≈ 54px · 800", status: "drift", note: "Code H1 is larger and heavier than spec. Reconcile to clamp(2rem,5vw,2.875rem) / 700." },
+    { item: "H2 / section", tok: "h2 font-size", target: "34px · 700", live: "clamp(1.9,3.6vw,2.55rem) ≈ 41px · 800", status: "drift" },
+    { item: "H3", tok: "h3 font-size", target: "24px · 600", live: "≈ 25.6px · 700", status: "drift", note: "Close on size; weight is 700 vs the doc's softer 600." },
+    { item: "Heading weight", tok: "h1–h4 font-weight", target: "700", live: "800", status: "drift", note: "Global headings render 800; doc baseline is 700 (800 reserved for stat numbers)." },
+    { item: "Display tracking", tok: "letter-spacing", target: "−0.02em", live: "−0.02em", status: "match" },
+  ]},
+  { num: "§6", title: "Border radius", note: "The whole scale matches by value. One token is named differently and the circle token is absent.", rows: [
+    { item: "Extra-small", tok: "--r-xs", target: "6px", live: "6px", status: "match" },
+    { item: "Small", tok: "--r-sm", target: "10px", live: "10px", status: "match" },
+    { item: "Medium", tok: "--r-md", target: "14px", live: "14px", status: "match" },
+    { item: "Large", tok: "--r-lg", target: "18px", live: "18px", status: "match" },
+    { item: "Extra-large", tok: "--r-xl", target: "24px", live: "24px", status: "match" },
+    { item: "Pill", tok: "--r-pill → --pill", target: "999px", live: "999px", status: "drift", note: "Value matches; token is named --pill in code, --r-pill in the doc. Rename for the 1:1 contract." },
+    { item: "Circle", tok: "--r-circle", target: "50%", live: "—", status: "missing", note: "Used inline as 50% throughout; never tokenized." },
+  ]},
+  { num: "§5", title: "Spacing & layout", note: "Max-width matches. Nav height and section rhythm drifted; the anchor offset isn't in the stylesheet.", rows: [
+    { item: "Content max-width", tok: "--maxw", target: "~1200px", live: "1200px", status: "match" },
+    { item: "Nav height", tok: "--nav-h", target: "60px", live: "68px", status: "drift", note: "Doc fixes nav at 60px; code runs 68px. Affects scroll-margin math." },
+    { item: "Section rhythm", tok: "--section-y", target: "104–130px", live: "clamp(80,12vh,160px)", status: "drift", note: "Code range is wider on both ends. Tighten to the doc band or update the doc." },
+    { item: "Anchor offset", tok: "scroll-margin-top", target: "80px", live: "— (not in fm.css)", status: "missing", note: "Doc requires 80px on [id] targets; not present in the global stylesheet — confirm it isn't only inline." },
+  ]},
+  { num: "§8", title: "Motion", note: "Easing exists under a different name; the standard transition duration is slower in code.", rows: [
+    { item: "Emphasized easing", tok: "--ease-emphasized → --ease", target: "(named token)", live: "cubic-bezier(.16,1,.3,1)", status: "drift", note: "Curve is fine; doc calls it --ease-emphasized, code calls it --ease. Alias or rename." },
+    { item: "Standard transition", tok: "duration", target: "~0.18s", live: "0.25s (buttons)", status: "drift", note: "Interactions run 0.25s vs the doc's 0.18s." },
+    { item: "Reduced motion", tok: "@media reduce", target: "respected", live: "respected", status: "match" },
+  ]},
+  { num: "§7", title: "Components (spot-check)", note: "Core button and card patterns are in place; a few details inherit the border/transition drifts above.", rows: [
+    { item: "Button radius", tok: ".btn", target: "--r-sm", live: "--r-sm", status: "match" },
+    { item: "Button weight", tok: ".btn", target: "600", live: "600", status: "match" },
+    { item: "Button transition", tok: ".btn", target: "0.18s", live: "0.25s", status: "drift", note: "Inherits the §8 duration drift." },
+    { item: "Card surface", tok: ".card", target: "--fm-surface-1", live: "--s-1", status: "match" },
+    { item: "Card border", tok: ".card", target: "subtle 0.12", live: "--line 0.08", status: "drift", note: "Inherits the §3.7 border drift — cards read fainter than spec." },
+    { item: "Focus ring", tok: ":focus-visible", target: "3px rgba(154,134,255,0.22)", live: "— (not global)", status: "missing", note: "No global focus-visible ring in fm.css. Add it — accessibility requirement (§9)." },
+  ]},
+];
+
+/* ---------- render ---------- */
+const STATUS = {
+  match:      { label: "Match",      order: 0 },
+  drift:      { label: "Drift",      order: 1 },
+  deprecated: { label: "Deprecated", order: 2 },
+  missing:    { label: "Missing",    order: 3 },
+  extra:      { label: "Extra",      order: 4 },
+};
+const isColor = v => /^#([0-9a-f]{3,8})$/i.test(v) || /^rgba?\(/i.test(v) || /^linear-gradient/i.test(v);
+
+function valCell(v) {
+  const empty = (v === "—" || /not in|removed|named token|respected/i.test(v) && !isColor(v));
+  const sw = isColor(v) ? `<span class="sw" style="background:${v}"></span>` : "";
+  return `<div class="ds-val${empty && !sw ? " empty" : ""}">${sw}<div class="v"><code>${v}</code></div></div>`;
+}
+
+function rowHTML(r) {
+  const st = STATUS[r.status];
+  return `<div class="ds-row" data-status="${r.status}">
+    <div class="item"><b>${r.item}</b><span>${r.tok}</span></div>
+    ${valCell(r.target)}
+    ${valCell(r.live)}
+    <span class="ds-status st-${r.status}"><i></i>${st.label}</span>
+    ${r.note ? `<div class="ds-rownote">${r.note}</div>` : ""}
+  </div>`;
+}
+
+const counts = { match:0, drift:0, deprecated:0, missing:0, extra:0 };
+let total = 0;
+AUDIT.forEach(s => s.rows.forEach(r => { counts[r.status]++; total++; }));
+
+// sections
+const secWrap = document.getElementById("ds-sections");
+secWrap.innerHTML = AUDIT.map(s => {
+  const c = {}; s.rows.forEach(r => c[r.status] = (c[r.status]||0)+1);
+  const matched = c.match || 0;
+  return `<section class="ds-sec" data-statuses="${[...new Set(s.rows.map(r=>r.status))].join(' ')}">
+    <div class="ds-sec-head"><span class="num">${s.num}</span><h2>${s.title}</h2><span class="cnt">${matched}/${s.rows.length} matched</span></div>
+    <p class="note">${s.note}</p>
+    <div class="col-h"><span>Token</span><span>Doc target</span><span>Live build</span><span>Status</span></div>
+    <div class="ds-table">${s.rows.map(rowHTML).join("")}</div>
+  </section>`;
+}).join("");
+
+// scorecard ring
+const pct = Math.round((counts.match / total) * 100);
+const arc = document.getElementById("ds-arc");
+const circ = 2 * Math.PI * 64;
+arc.style.strokeDasharray = circ;
+requestAnimationFrame(() => { arc.style.transition = "stroke-dashoffset 1.1s var(--ease)"; arc.style.strokeDashoffset = circ * (1 - counts.match/total); });
+document.getElementById("ds-pct").textContent = pct + "%";
+document.getElementById("ds-mtotal").textContent = counts.match;
+document.getElementById("ds-total").textContent = total;
+document.getElementById("ds-asof").textContent = "As of " + new Date().toLocaleDateString("en-GB", { day:"numeric", month:"short", year:"numeric" });
+
+// legend bars
+const COLOR = { match:"#18C95C", drift:"#FF6A04", deprecated:"#FFC500", missing:"#9A86FF", extra:"#01B3F6" };
+document.getElementById("ds-bars").innerHTML = Object.keys(STATUS).map(k => `
+  <div class="ds-bar">
+    <span class="lab"><i style="background:${COLOR[k]}"></i>${STATUS[k].label}</span>
+    <span class="track"><span class="fill" style="background:${COLOR[k]};width:0"></span></span>
+    <span class="n">${counts[k]}</span>
+  </div>`).join("");
+requestAnimationFrame(() => document.querySelectorAll(".ds-bar .fill").forEach((f,i) => {
+  const k = Object.keys(STATUS)[i];
+  setTimeout(() => f.style.width = (counts[k]/total*100) + "%", 80);
+}));
+
+// filters
+const filters = [
+  { key:"all", label:"All", n: total },
+  { key:"match", label:"Matched", n: counts.match },
+  { key:"needswork", label:"Needs work", n: counts.drift + counts.deprecated },
+  { key:"missing", label:"Gaps", n: counts.missing },
+  { key:"extra", label:"Code-only", n: counts.extra },
+];
+const fnav = document.getElementById("ds-filters");
+fnav.innerHTML = filters.map((f,i) => `<button class="fchip${i===0?" on":""}" data-f="${f.key}">${f.label} <span class="c">${f.n}</span></button>`).join("");
+
+function applyFilter(key) {
+  const want = {
+    all: ["match","drift","deprecated","missing","extra"],
+    match: ["match"],
+    needswork: ["drift","deprecated"],
+    missing: ["missing"],
+    extra: ["extra"],
+  }[key];
+  document.querySelectorAll(".ds-row").forEach(r => {
+    r.classList.toggle("r-hide", !want.includes(r.dataset.status));
+  });
+  document.querySelectorAll(".ds-sec").forEach(sec => {
+    const visible = sec.querySelectorAll(".ds-row:not(.r-hide)").length;
+    sec.classList.toggle("hide", visible === 0);
+  });
+}
+fnav.addEventListener("click", e => {
+  const b = e.target.closest(".fchip"); if (!b) return;
+  fnav.querySelectorAll(".fchip").forEach(c => c.classList.remove("on"));
+  b.classList.add("on");
+  applyFilter(b.dataset.f);
+});
+
+/* ---------- auto-print once fonts + render settle ---------- */
+(function () {
+  function go() { setTimeout(function () { window.print(); }, 500); }
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { requestAnimationFrame(go); });
+  } else {
+    window.addEventListener("load", go);
+  }
+})();
+</script>
+</body>
+</html>

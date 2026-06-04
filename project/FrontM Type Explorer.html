@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FrontM, Type Direction Explorer</title>
+<link rel="stylesheet" href="site/fm.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@300..800&family=DM+Serif+Display:ital@0;1&family=Space+Grotesk:wght@300..700&family=Playfair+Display:ital,wght@0,400..900;1,400..700&family=Manrope:wght@300..800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..700&family=Archivo:wght@300..800&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..600&family=Schibsted+Grotesk:wght@400..800&family=Spectral:ital,wght@0,300..700;1,300..600&family=Sora:wght@300..700&display=swap" rel="stylesheet">
+<style>
+  .tx-body {
+    background: var(--bg); color: var(--body);
+    --disp: "Instrument Serif", Georgia, serif;
+    --ui: "Hanken Grotesk", system-ui, sans-serif;
+    --disp-size: 4.6rem; --disp-track: -0.02em; --disp-weight: 400; --disp-style: normal;
+    --disp-line: 1.04;
+  }
+  .tx-wrap { max-width: 1180px; margin-inline: auto; padding: clamp(28px, 5vw, 64px) clamp(20px, 5vw, 56px) 120px; }
+
+  /* ---- masthead ---- */
+  .tx-mast { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; padding-bottom: 26px; border-bottom: 1px solid var(--line); }
+  .tx-mast .eyebrow { margin-bottom: 14px; }
+  .tx-mast h1 { font-family: var(--disp); font-weight: var(--disp-weight); font-style: var(--disp-style); font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.015em; color: var(--heading); line-height: 1.05; }
+  .tx-mast p { color: var(--muted); margin-top: 10px; max-width: 460px; font-size: 0.96rem; }
+  .tx-now { text-align: right; font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--subtle); line-height: 1.7; }
+  .tx-now b { color: var(--primary-lift); }
+
+  /* ---- pairing tabs ---- */
+  .tx-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 30px 0 26px; }
+  .tx-tab { padding: 9px 15px; border-radius: var(--pill); border: 1px solid var(--line); background: var(--s-1); color: var(--muted); font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.04em; transition: all .2s var(--ease); display: flex; align-items: center; gap: 8px; }
+  .tx-tab .n { color: var(--faint); }
+  .tx-tab:hover { border-color: var(--line-2); color: var(--body); }
+  .tx-tab.on { background: color-mix(in oklch, var(--primary) 16%, var(--s-1)); border-color: color-mix(in oklch, var(--primary-lift) 55%, var(--line)); color: #fff; box-shadow: 0 0 24px -8px var(--primary-glow); }
+  .tx-tab.on .n { color: var(--primary-lift); }
+
+  /* ---- controls ---- */
+  .tx-controls { display: flex; gap: 26px; flex-wrap: wrap; align-items: center; padding: 16px 20px; border-radius: var(--r-md); border: 1px solid var(--line); background: color-mix(in oklch, var(--s-1) 70%, transparent); margin-bottom: 34px; }
+  .tx-ctrl { display: flex; flex-direction: column; gap: 7px; }
+  .tx-ctrl label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--subtle); }
+  .tx-ctrl input[type=range] { width: 150px; accent-color: var(--primary-lift); }
+  .tx-seg { display: flex; gap: 0; border: 1px solid var(--line-2); border-radius: var(--r-sm); overflow: hidden; }
+  .tx-seg button { padding: 7px 13px; font-family: var(--mono); font-size: 11px; color: var(--muted); background: transparent; }
+  .tx-seg button.on { background: var(--primary); color: #fff; }
+  .tx-val { font-family: var(--mono); font-size: 11px; color: var(--body); }
+
+  /* ---- live stage ---- */
+  .tx-stage { position: relative; border-radius: var(--r-xl); border: 1px solid var(--line); overflow: hidden; background:
+      radial-gradient(120% 80% at 50% -20%, color-mix(in oklch, var(--s-1) 85%, transparent), transparent 58%), var(--inset);
+    padding: clamp(40px, 6vw, 76px) clamp(28px, 5vw, 72px); }
+  .tx-stage .eyebrow { margin-bottom: 22px; }
+  .tx-hero h2 {
+    font-family: var(--disp); font-weight: var(--disp-weight); font-style: var(--disp-style);
+    font-size: var(--disp-size); letter-spacing: var(--disp-track); line-height: var(--disp-line);
+    color: var(--heading); max-width: 16ch; text-wrap: balance;
+  }
+  .tx-hero h2 .accent { background: var(--grad-intel); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
+  .tx-hero h2 .ital { font-style: italic; }
+  .tx-hero .lede { font-family: var(--ui); font-size: clamp(1rem, 1.4vw, 1.18rem); line-height: 1.6; color: var(--body); max-width: 52ch; margin-top: 24px; font-weight: 400; }
+  .tx-hero .row { display: flex; gap: 14px; align-items: center; margin-top: 32px; flex-wrap: wrap; }
+  .tx-btn { font-family: var(--ui); font-weight: 600; font-size: 0.98rem; padding: 13px 22px; border-radius: var(--pill); background: var(--primary); color: #fff; box-shadow: 0 14px 30px -12px var(--primary-glow); }
+  .tx-meta { font-family: var(--ui); font-size: 0.86rem; color: var(--subtle); }
+
+  .tx-substage { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 26px; margin-top: 48px; align-items: start; }
+  .tx-card { border-radius: var(--r-lg); border: 1px solid var(--line); background: var(--s-1); padding: 26px 28px; }
+  .tx-card .k { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--primary-lift); margin-bottom: 14px; }
+  .tx-card h3 { font-family: var(--disp); font-weight: var(--disp-weight); font-style: var(--disp-style); font-size: clamp(1.5rem, 2.4vw, 2rem); letter-spacing: -0.01em; line-height: 1.1; color: var(--heading); }
+  .tx-card p { font-family: var(--ui); font-size: 0.96rem; line-height: 1.62; color: var(--muted); margin-top: 12px; }
+  .tx-specimens { border-radius: var(--r-lg); border: 1px solid var(--line); background: var(--s-1); padding: 26px 28px; }
+  .tx-specimens .k { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--subtle); margin-bottom: 16px; }
+  .tx-aa { font-family: var(--disp); font-weight: var(--disp-weight); font-style: var(--disp-style); font-size: 3.1rem; line-height: 1; color: var(--heading); letter-spacing: -0.01em; }
+  .tx-aa span { color: var(--faint); }
+  .tx-scale { margin-top: 20px; display: grid; gap: 9px; }
+  .tx-scale div { font-family: var(--ui); color: var(--body); line-height: 1.2; }
+  .tx-glyphs { margin-top: 18px; font-family: var(--ui); font-size: 0.92rem; color: var(--muted); letter-spacing: 0.02em; word-spacing: 2px; }
+
+  /* ---- specimen grid ---- */
+  .tx-gridhead { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin: 64px 0 22px; flex-wrap: wrap; }
+  .tx-gridhead h2 { font-family: var(--disp); font-weight: var(--disp-weight); font-style: var(--disp-style); font-size: clamp(1.6rem, 3vw, 2.3rem); color: var(--heading); letter-spacing: -0.01em; }
+  .tx-gridhead p { font-family: var(--ui); color: var(--subtle); font-size: 0.9rem; }
+  .tx-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  .tx-spec { text-align: left; border-radius: var(--r-lg); border: 1px solid var(--line); background: var(--s-1); padding: 26px 28px; transition: border-color .25s, transform .25s var(--ease), background .25s; position: relative; overflow: hidden; }
+  .tx-spec:hover { transform: translateY(-3px); border-color: var(--line-2); }
+  .tx-spec.on { border-color: color-mix(in oklch, var(--primary-lift) 55%, var(--line)); background: color-mix(in oklch, var(--primary) 8%, var(--s-1)); box-shadow: 0 0 34px -12px var(--primary-glow); }
+  .tx-spec .tag { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--subtle); margin-bottom: 18px; }
+  .tx-spec .tag .on-pill { color: var(--primary-lift); display: none; }
+  .tx-spec.on .tag .on-pill { display: inline; }
+  .tx-spec .big { font-size: 2.6rem; line-height: 1.05; color: var(--heading); letter-spacing: -0.015em; }
+  .tx-spec .sub { font-size: 1.02rem; margin-top: 10px; color: var(--primary-lift); }
+  .tx-spec .para { font-size: 0.92rem; line-height: 1.6; color: var(--muted); margin-top: 14px; }
+  .tx-spec .credit { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.04em; color: var(--faint); margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--line); display: flex; gap: 8px; flex-wrap: wrap; }
+  .tx-spec .credit b { color: var(--body); font-weight: 500; }
+
+  @media (max-width: 860px) {
+    .tx-substage { grid-template-columns: 1fr; }
+    .tx-grid { grid-template-columns: 1fr; }
+    .tx-body { --disp-size: 3rem; }
+  }
+</style>
+</head>
+<body class="tx-body">
+<div class="page-base" aria-hidden="true"></div>
+
+<div class="tx-wrap">
+
+  <header class="tx-mast">
+    <div>
+      <span class="eyebrow"><span class="dot"></span> Type Direction · Editorial</span>
+      <h1>A serif voice for FrontM.</h1>
+      <p>Six editorial serif + sans pairings, previewed live on real maritime copy. Pick one to drive the whole stage; scan the full set below.</p>
+    </div>
+    <div class="tx-now">Current site<br><b id="tx-current">Instrument Serif + Hanken Grotesk</b></div>
+  </header>
+
+  <div class="tx-tabs" id="tx-tabs"></div>
+
+  <div class="tx-controls">
+    <div class="tx-ctrl">
+      <label>Display size · <span class="tx-val" id="tx-size-v">4.6rem</span></label>
+      <input type="range" id="tx-size" min="3" max="7" step="0.1" value="4.6">
+    </div>
+    <div class="tx-ctrl">
+      <label>Tracking · <span class="tx-val" id="tx-track-v">-0.02em</span></label>
+      <input type="range" id="tx-track" min="-0.05" max="0.02" step="0.005" value="-0.02">
+    </div>
+    <div class="tx-ctrl">
+      <label>Headline style</label>
+      <div class="tx-seg" id="tx-style">
+        <button data-style="normal" class="on">Roman</button>
+        <button data-style="italic">Italic</button>
+      </div>
+    </div>
+    <div class="tx-ctrl">
+      <label>Accent word</label>
+      <div class="tx-seg" id="tx-accent">
+        <button data-accent="grad" class="on">Gradient</button>
+        <button data-accent="ital">Italic serif</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- live stage -->
+  <section class="tx-stage">
+    <div class="tx-hero">
+      <span class="eyebrow"><span class="dot pulse"></span> AI Native</span>
+      <h2>Maritime <span class="accent">operations</span> platform</h2>
+      <p class="lede">Unify operational workflows, ship-shore collaboration and remote workforce management, for safety, compliance, efficiency and welfare.</p>
+      <div class="row">
+        <span class="tx-btn">Book a Demo</span>
+        <span class="tx-meta">ISO 27001 · GDPR · HIPAA aligned</span>
+      </div>
+    </div>
+
+    <div class="tx-substage">
+      <div class="tx-card">
+        <div class="k">The solution</div>
+        <h3>FrontM is changing that.</h3>
+        <p>One maritime workflow at a time, on a modular and scalable operating platform that the whole fleet, ship, shore, crew and partners, can actually share.</p>
+      </div>
+      <div class="tx-specimens">
+        <div class="k">Specimen</div>
+        <div class="tx-aa">Ag <span>Mm</span></div>
+        <div class="tx-scale">
+          <div style="font-size:1.6rem;">Sovereign by design</div>
+          <div style="font-size:1.15rem;">Built for vessels at the edge</div>
+          <div style="font-size:0.95rem;">From the bridge to the broker's desk</div>
+        </div>
+        <div class="tx-glyphs">ABCDEFGHIJKLM · abcdefghijk · 0123456789 · &amp; ? ! @ %</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- specimen grid -->
+  <div class="tx-gridhead">
+    <h2>The six directions</h2>
+    <p>Click any card to preview it above</p>
+  </div>
+  <div class="tx-grid" id="tx-grid"></div>
+
+</div>
+
+<script>
+(function () {
+  var PAIRS = [
+    { id: 'instrument', name: 'Instrument + Hanken', disp: '"Instrument Serif", Georgia, serif', ui: '"Hanken Grotesk", system-ui, sans-serif', dispName: 'Instrument Serif', uiName: 'Hanken Grotesk', weight: 400, note: 'Airy, modern-editorial', track: '-0.02em' },
+    { id: 'dmserif',   name: 'DM Serif + Space',    disp: '"DM Serif Display", Georgia, serif', ui: '"Space Grotesk", system-ui, sans-serif', dispName: 'DM Serif Display', uiName: 'Space Grotesk', weight: 400, note: 'High-contrast + techy', track: '-0.015em' },
+    { id: 'playfair',  name: 'Playfair + Manrope',  disp: '"Playfair Display", Georgia, serif', ui: '"Manrope", system-ui, sans-serif', dispName: 'Playfair Display', uiName: 'Manrope', weight: 600, note: 'Luxe, classic editorial', track: '-0.01em' },
+    { id: 'bodoni',    name: 'Bodoni + Archivo',    disp: '"Bodoni Moda", Georgia, serif', ui: '"Archivo", system-ui, sans-serif', dispName: 'Bodoni Moda', uiName: 'Archivo', weight: 500, note: 'Fashion-magazine drama', track: '-0.005em' },
+    { id: 'newsreader', name: 'Newsreader + Schibsted', disp: '"Newsreader", Georgia, serif', ui: '"Schibsted Grotesk", system-ui, sans-serif', dispName: 'Newsreader', uiName: 'Schibsted Grotesk', weight: 500, note: 'Modern newsroom', track: '-0.015em' },
+    { id: 'spectral',  name: 'Spectral + Sora',     disp: '"Spectral", Georgia, serif', ui: '"Sora", system-ui, sans-serif', dispName: 'Spectral', uiName: 'Sora', weight: 600, note: 'Literary + geometric', track: '-0.01em' }
+  ];
+
+  var body = document.body;
+  var tabs = document.getElementById('tx-tabs');
+  var grid = document.getElementById('tx-grid');
+  var current = document.getElementById('tx-current');
+  var state = { pair: 0, size: 4.6, track: -0.02, style: 'normal', accent: 'grad' };
+
+  try { var saved = JSON.parse(localStorage.getItem('fm-type') || 'null'); if (saved) state = Object.assign(state, saved); } catch (e) {}
+
+  function persist() { try { localStorage.setItem('fm-type', JSON.stringify(state)); } catch (e) {} }
+
+  function applyPair() {
+    var p = PAIRS[state.pair];
+    body.style.setProperty('--disp', p.disp);
+    body.style.setProperty('--ui', p.ui);
+    body.style.setProperty('--disp-weight', p.weight);
+    current.textContent = p.dispName + ' + ' + p.uiName;
+  }
+  function applyVars() {
+    body.style.setProperty('--disp-size', state.size + 'rem');
+    body.style.setProperty('--disp-track', state.track + 'em');
+    body.style.setProperty('--disp-style', state.style);
+    document.getElementById('tx-size-v').textContent = state.size.toFixed(1) + 'rem';
+    document.getElementById('tx-track-v').textContent = state.track.toFixed(3) + 'em';
+    var acc = document.querySelector('.tx-hero h2 .accent');
+    acc.classList.toggle('ital', state.accent === 'ital');
+    acc.style.background = state.accent === 'ital' ? 'none' : '';
+    acc.style.webkitTextFillColor = state.accent === 'ital' ? 'currentColor' : '';
+    acc.style.color = state.accent === 'ital' ? 'var(--primary-lift)' : '';
+  }
+  function syncTabs() {
+    [].forEach.call(tabs.children, function (b, i) { b.classList.toggle('on', i === state.pair); });
+    [].forEach.call(grid.children, function (b, i) { b.classList.toggle('on', i === state.pair); });
+  }
+
+  // build tabs
+  PAIRS.forEach(function (p, i) {
+    var b = document.createElement('button');
+    b.className = 'tx-tab';
+    b.innerHTML = '<span class="n">' + (i + 1).toString().padStart(2, '0') + '</span> ' + p.name;
+    b.addEventListener('click', function () { state.pair = i; applyPair(); applyVars(); syncTabs(); persist(); });
+    tabs.appendChild(b);
+  });
+
+  // build specimen grid
+  PAIRS.forEach(function (p, i) {
+    var c = document.createElement('button');
+    c.className = 'tx-spec';
+    var tag = document.createElement('div'); tag.className = 'tag';
+    tag.innerHTML = '<span>Direction ' + (i + 1).toString().padStart(2, '0') + ' · ' + p.note + '</span><span class="on-pill">● Live</span>';
+    var big = document.createElement('div'); big.className = 'big'; big.textContent = 'Operations, unified';
+    big.style.fontFamily = p.disp; big.style.fontWeight = p.weight;
+    var sub = document.createElement('div'); sub.className = 'sub'; sub.textContent = 'One platform from ship to shore';
+    sub.style.fontFamily = p.ui;
+    var para = document.createElement('div'); para.className = 'para';
+    para.textContent = 'Owners, managers, charterers, class, ports and crew each run different tools today. FrontM gives them one operating layer, modular, sovereign and AI-native.';
+    para.style.fontFamily = p.ui;
+    var credit = document.createElement('div'); credit.className = 'credit';
+    credit.innerHTML = '<b>' + p.dispName + '</b> display &nbsp;·&nbsp; <b>' + p.uiName + '</b> text';
+    c.appendChild(tag); c.appendChild(big); c.appendChild(sub); c.appendChild(para); c.appendChild(credit);
+    c.addEventListener('click', function () { state.pair = i; applyPair(); applyVars(); syncTabs(); persist(); });
+    grid.appendChild(c);
+  });
+
+  // controls
+  var sizeEl = document.getElementById('tx-size');
+  var trackEl = document.getElementById('tx-track');
+  sizeEl.value = state.size; trackEl.value = state.track;
+  sizeEl.addEventListener('input', function () { state.size = parseFloat(this.value); applyVars(); persist(); });
+  trackEl.addEventListener('input', function () { state.track = parseFloat(this.value); applyVars(); persist(); });
+  document.getElementById('tx-style').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    state.style = b.dataset.style;
+    [].forEach.call(this.children, function (x) { x.classList.toggle('on', x === b); });
+    applyVars(); persist();
+  });
+  document.getElementById('tx-accent').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    state.accent = b.dataset.accent;
+    [].forEach.call(this.children, function (x) { x.classList.toggle('on', x === b); });
+    applyVars(); persist();
+  });
+
+  // init segmented from state
+  [].forEach.call(document.getElementById('tx-style').children, function (x) { x.classList.toggle('on', x.dataset.style === state.style); });
+  [].forEach.call(document.getElementById('tx-accent').children, function (x) { x.classList.toggle('on', x.dataset.accent === state.accent); });
+
+  applyPair(); applyVars(); syncTabs();
+})();
+</script>
+<script src="site/scroll-horizon.js"></script>
+</body>
+</html>
