@@ -115,16 +115,19 @@
      %-of-square basis (the native wheel's). Consumed by BOTH the DOM wheel
      render below and the pflow canvas convergence, so they line up exactly. */
   FM.wheelGeometry = function () {
-    var DEG = Math.PI / 180, rMod = 33, rStk = 45;
+    var DEG = Math.PI / 180, rMod = 33, rStkX = 47.5, rStkY = 43.5;
     var mods = FM.MODULES.map(function (m, i) {
       var a = (-90 + i * (360 / FM.MODULES.length)) * DEG;
       return { id: m.id, color: m.color, x: 50 + rMod * Math.cos(a), y: 50 + rMod * Math.sin(a) };
     });
+    /* 12 stakeholders, one every 30°, offset +15° so none sits dead-vertical —
+       slightly ELLIPTICAL ring (wider than tall) so the pill labels clear the
+       module ring at 3/9 o'clock and each other at 12/6 o'clock. */
     var stk = FM.WHEEL_STK.map(function (s, i) {
       var a = (-90 + i * (360 / FM.WHEEL_STK.length) + 15) * DEG;
-      return { n: s.n, x: 50 + rStk * Math.cos(a), y: 50 + rStk * Math.sin(a) };
+      return { n: s.n, x: 50 + rStkX * Math.cos(a), y: 50 + rStkY * Math.sin(a) };
     });
-    return { rMod: rMod, rStk: rStk, center: { x: 50, y: 50 }, mods: mods, stk: stk };
+    return { rMod: rMod, rStkX: rStkX, rStkY: rStkY, center: { x: 50, y: 50 }, mods: mods, stk: stk };
   };
 
   /* ---------- S4 · collaboration wheel ---------- */
@@ -133,7 +136,7 @@
     var G = FM.wheelGeometry();
 
     var ringLines = '<div class="cw-ring-line" style="width:' + (G.rMod * 2) + '%;height:' + (G.rMod * 2) + '%"></div>' +
-                    '<div class="cw-ring-line" style="width:' + (G.rStk * 2) + '%;height:' + (G.rStk * 2) + '%"></div>';
+                    '<div class="cw-ring-line" style="width:' + (G.rStkX * 2) + '%;height:' + (G.rStkY * 2) + '%"></div>';
 
     var spokes = '';
     var modHtml = FM.MODULES.map(function (m, i) {
@@ -147,7 +150,7 @@
 
     var stkHtml = FM.WHEEL_STK.map(function (s, i) {
       var x = G.stk[i].x, y = G.stk[i].y;
-      return '<div class="cw-node" style="left:' + x.toFixed(2) + '%;top:' + y.toFixed(2) + '%">' +
+      return '<div class="cw-node cw-node-stk" style="left:' + x.toFixed(2) + '%;top:' + y.toFixed(2) + '%">' +
         '<div class="cw-stk">' + ico(s.i) + '<span>' + s.n + '</span></div></div>';
     }).join('');
 
@@ -156,6 +159,13 @@
       '<svg class="cw-spokes" viewBox="0 0 100 100" preserveAspectRatio="none">' + spokes + '</svg>' +
       '<div class="cw-hub"><img src="assets/logos/frontm/frontm-mark.png" alt=""><span class="cw-hub-label">FrontM</span></div>' +
       modHtml + stkHtml;
+
+    /* narrow viewports: the radial pills become a wrapped legend BELOW the wheel
+       (CSS swaps visibility) so labels can never collide or overlap nodes */
+    stage.insertAdjacentHTML('afterend',
+      '<div class="cw-legend">' + FM.WHEEL_STK.map(function (s) {
+        return '<span class="cw-stk">' + ico(s.i) + '<span>' + s.n + '</span></span>';
+      }).join('') + '</div>');
   })();
 
   /* ---------- placeholder route CTAs (no live destinations yet) ---------- */

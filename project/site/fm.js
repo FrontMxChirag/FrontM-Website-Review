@@ -52,7 +52,8 @@
     var track = $('#marquee-track'); if (!track) return;
     var base = 'assets/logos/companies/';
     var html = FM.PARTNERS.map(function (p) {
-      var hs = p.h ? ' style="max-height:' + p.h + 'px"' : '';
+      /* p.h caps were tuned for the old 58px pill row — scale \u00d71.9 for the 112px squares */
+      var hs = p.h ? ' style="max-height:' + Math.round(p.h * 1.9) + 'px"' : '';
       return '<span class="logo" title="' + p.n + '"><img src="' + base + p.f + '" alt="' + p.n + '"' + hs + ' decoding="async"></span>';
     }).join('');
     track.innerHTML = html + html; // duplicate for seamless loop
@@ -65,7 +66,7 @@
       var spot = function () {
         if (!spotOn) { spotRaf = 0; return; }
         var r = mq.getBoundingClientRect();
-        var mid = r.left + r.width / 2, half = r.width * 0.44;
+        var mid = r.left + r.width / 2, half = r.width * 0.36;   // tighter falloff — spotlight concentrates on the centre
         for (var i = 0; i < logos.length; i++) {
           var lr = logos[i].getBoundingClientRect();
           if (lr.right < r.left || lr.left > r.right) { logos[i].style.setProperty('--w', '0'); continue; }

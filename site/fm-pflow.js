@@ -16,6 +16,7 @@
   var head = sec.querySelector('.pflow-head');
   var frHost = sec.querySelector('#pflow-friction');
   var stat = sec.querySelector('.pflow-stat');
+  var statCopy = sec.querySelector('.pflow-statcopy');
   var turn = null; /* "FrontM is changing that." beat REPLACED by the approach reveal */
   var approach = sec.querySelector('.pflow-approach');
   var headGlass = sec.querySelector('.pflow-head .pflow-glass');
@@ -27,8 +28,8 @@
   var cue = sec.querySelector('.pflow-cue');
   var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // ---- pin length — ONE named constant (tune here; CSS 560vh is the no-JS fallback)
-  var PIN_VH = 5.6;
+  // ---- pin length — ONE named constant (tune here; CSS 720vh is the no-JS fallback)
+  var PIN_VH = 7.2;
   // rest hold at p=1: the finished wheel stays pinned for this extra slice before unpin
   var PFLOW_TAIL_VH = 0.35;
 
@@ -136,10 +137,10 @@
     applyPhases();
     ctx.clearRect(0, 0, sW, sH);
 
-    var problem = smooth(0.10, 0.46, p);
-    var heal    = smooth(0.64, 0.84, p);              // chaos resolves (HEAL)
-    var gather  = smooth(0.84, 1.00, p);              // fragments converge onto WHEEL coords (FINALE)
-    var fade    = 1 - smooth(0.93, 1.00, p);          // canvas hands off to the DOM wheel at the very end
+    var problem = smooth(0.08, 0.40, p);
+    var heal    = smooth(0.56, 0.76, p);              // chaos resolves (HEAL)
+    var gather  = smooth(0.875, 0.975, p);            // fragments converge onto WHEEL coords (FINALE)
+    var fade    = 1 - smooth(0.935, 0.995, p);        // canvas hands off to the DOM wheel at the very end
     activeCount = Math.round(lerp(3, MAX, problem));
 
     // compute live positions
@@ -195,11 +196,11 @@
     }
 
     // failing signals while the problem deepens; recovering signals while it heals
-    if (p > 0.10 && p < 0.50){
+    if (p > 0.08 && p < 0.46){
       var rate = 0.05 + problem * 0.18;
       if (rnd() < rate && pulses.length < 16) spawnFail();
     }
-    if (p > 0.64 && p < 0.92){
+    if (p > 0.56 && p < 0.90){
       if (rnd() < 0.04 + heal * 0.10 && pulses.length < 16) spawnRecover();
     }
     for (i = pulses.length - 1; i >= 0; i--){
@@ -279,30 +280,54 @@
   }
   function applyPhases(){
     (window.__fmMotion || (window.__fmMotion = {})).pflow = p;
-    // ---- OPEN: headline pops in a GLASS card at centre ----
-    var gIn = smooth(0.02, 0.09, p);
-    var dock = smooth(0.13, 0.21, p);              // glass shines\u2192dot; headline docks to top
-    var hScanOut = smooth(0.55, 0.62, p);          // headline scans OUT L\u2192R at the turn
-    head.style.opacity = (gIn * (1 - smooth(0.60, 0.66, p))).toFixed(3);
-    head.style.top = lerp(50, 10, dock).toFixed(2) + '%';
-    head.style.transform = 'translate(-50%, ' + lerp(-50, 0, dock).toFixed(1) + '%) scale(' + (lerp(0.96, 1, gIn) * lerp(1, 0.76, dock)).toFixed(3) + ')';
-    scanClip(gapH2, smooth(0.03, 0.10, p), hScanOut);
-    scanClip(gapLead, smooth(0.06, 0.13, p), hScanOut);
-    scanOutBg(headGlass, dock);
+    /* ============================================================
+       BEAT MAP (strict sequence — no beat starts before the prior one ends)
+       0.012–0.052  glass + headline materialise at centre
+       0.100–0.148  1) GLASS SCAN-OUT — completes fully first
+       0.158–0.215  2) headline DOCKS to top (gentle rise, no snap)
+       0.228–0.368  3) five problem cards stagger in (only after dock)
+       0.382–0.415  4a) $52K metric pill
+       0.428–0.468  4b) supporting copy (only after pill is visible)
+       0.490–0.566  EXIT — unified L→R scan-out across the whole problem state
+       0.572–0.625  GLASS RESET — “One digital layer…” bridge (then breathe)
+       0.648–0.690  glass scan-out completes
+       0.698–0.748  “FrontM approach” docks at top
+       0.760–0.863  eight capability cards reveal (translateY + rotateX)
+       0.878–0.947  capabilities scan out · 0.900–0.958 wheel blooms
+       ============================================================ */
 
-    // ---- PROBLEM BUILD: friction cards one-by-one; they REMAIN until the flip ----
+    // ---- OPEN — glass card is the only active element; it scans out FIRST ----
+    var gIn  = smooth(0.012, 0.052, p);
+    var gOut = smooth(0.10, 0.148, p);             // 1) glass scan-out, completes before anything else moves
+    var dock = smooth(0.158, 0.215, p);            // 2) headline docks only after the glass is gone
+    var hOut = smooth(0.49, 0.538, p);             // exit: headline wipes L→R with the rest of the state
+    head.style.opacity = (gIn * (1 - smooth(0.545, 0.572, p))).toFixed(3);
+    head.style.top = lerp(50, 10, dock).toFixed(2) + '%';
+    head.style.transform = 'translate(-50%, ' + lerp(-50, 0, dock).toFixed(1) + '%) scale(' + (lerp(0.97, 1, gIn) * lerp(1, 0.78, dock)).toFixed(3) + ')';
+    scanClip(gapH2, smooth(0.022, 0.066, p), hOut);
+    scanClip(gapLead, smooth(0.04, 0.084, p), hOut);
+    scanOutBg(headGlass, gOut);
+
+    // ---- 3) PROBLEM BUILD: five cards stagger in; exit is a unified L→R scan, gently staggered ----
     cards.forEach(function (c, i){
-      var inT = smooth(0.20 + i * 0.05, 0.27 + i * 0.05, p);
-      var flip = smooth(0.62 + i * 0.02, 0.67 + i * 0.02, p);   // flip away to reveal the outcomes
-      c.style.opacity = (inT * (1 - smooth(0.64 + i * 0.02, 0.67 + i * 0.02, p))).toFixed(3);
-      c.style.transform = 'translateY(' + lerp(26, 0, inT).toFixed(1) + 'px) scale(' + lerp(0.94, 1, inT).toFixed(3) + ') rotateY(' + (flip * 90).toFixed(1) + 'deg)';
+      var inT = smooth(0.228 + i * 0.024, 0.272 + i * 0.024, p);
+      var out = smooth(0.498 + i * 0.006, 0.542 + i * 0.006, p);
+      c.style.opacity = inT.toFixed(3);
+      c.style.transform = 'translateY(' + lerp(22, 0, inT).toFixed(1) + 'px) translateX(' + (out * 18).toFixed(1) + 'px)';
+      if (out > 0){
+        c.style.clipPath = c.style.webkitClipPath = 'inset(0 0 0 ' + (out * 102).toFixed(1) + '%)';
+        c.style.filter = 'brightness(' + (1 + out * 0.5).toFixed(2) + ')';
+      } else {
+        c.style.clipPath = c.style.webkitClipPath = '';
+        c.style.filter = '';
+      }
     });
 
-    // ---- COST: stat pill in, then SCANS OUT L\u2192R (matches the headline/outcome exits) ----
-    var stIn = smooth(0.48, 0.53, p);
-    var stOut = smooth(0.54, 0.60, p);
+    // ---- 4) COST: metric pill first, supporting copy second (problem → impact) ----
+    var stIn = smooth(0.382, 0.415, p);
+    var stOut = smooth(0.512, 0.556, p);
     stat.style.opacity = stIn.toFixed(3);
-    stat.style.transform = 'translateX(calc(-50% + ' + (stOut * 20).toFixed(1) + 'px)) translateY(' + lerp(20, 0, stIn).toFixed(1) + 'px)';
+    stat.style.transform = 'translateX(calc(-50% + ' + (stOut * 20).toFixed(1) + 'px)) translateY(' + lerp(10, 0, stIn).toFixed(1) + 'px)';
     stat.style.borderRadius = ''; stat.style.boxShadow = '';
     if (stOut > 0){
       stat.style.clipPath = stat.style.webkitClipPath = 'inset(0 0 0 ' + (stOut * 102).toFixed(1) + '%)';
@@ -311,27 +336,40 @@
       stat.style.clipPath = stat.style.webkitClipPath = '';
       stat.style.filter = '';
     }
+    if (statCopy){
+      var cpIn = smooth(0.428, 0.468, p);
+      var cpOut = smooth(0.518, 0.562, p);
+      statCopy.style.opacity = cpIn.toFixed(3);
+      statCopy.style.transform = 'translateX(calc(-50% + ' + (cpOut * 20).toFixed(1) + 'px)) translateY(' + lerp(8, 0, cpIn).toFixed(1) + 'px)';
+      if (cpOut > 0){
+        statCopy.style.clipPath = statCopy.style.webkitClipPath = 'inset(0 0 0 ' + (cpOut * 102).toFixed(1) + '%)';
+      } else {
+        statCopy.style.clipPath = statCopy.style.webkitClipPath = '';
+      }
+    }
 
-    // ---- SOLUTION: approach pops in GLASS at centre (retimed: after the headline has left) ----
-    var aIn = smooth(0.60, 0.67, p);
-    var aDock = smooth(0.70, 0.78, p);
-    var aOut = smooth(0.86, 0.92, p);
+    // ---- GLASS RESET: “One digital layer…” bridge — appears only after the problem state is fully cleared,
+    //      breathes, scans out completely, and ONLY THEN docks as “The FrontM approach” ----
+    var aIn   = smooth(0.572, 0.615, p);           // glass returns calmly
+    var agOut = smooth(0.648, 0.69, p);            // glass scan-out completes
+    var aDock = smooth(0.698, 0.748, p);           // headline docks at top
+    var aOut  = smooth(0.885, 0.928, p);           // clears ahead of the wheel finale
     if (approach){
       approach.style.opacity = (aIn * (1 - aOut)).toFixed(3);
       approach.style.top = lerp(50, 8, aDock).toFixed(2) + '%';
-      approach.style.transform = 'translate(-50%, ' + lerp(-50, 0, aDock).toFixed(1) + '%) scale(' + (lerp(0.96, 1, aIn) * lerp(1, 0.78, aDock)).toFixed(3) + ')';
-      scanClip(paH, smooth(0.61, 0.69, p), smooth(0.86, 0.92, p));
-      scanClip(paP, smooth(0.64, 0.72, p), smooth(0.87, 0.93, p));
-      if (paEye) paEye.style.opacity = smooth(0.60, 0.66, p).toFixed(3);
-      scanOutBg(apprGlass, aDock);
+      approach.style.transform = 'translate(-50%, ' + lerp(-50, 0, aDock).toFixed(1) + '%) scale(' + (lerp(0.97, 1, aIn) * lerp(1, 0.78, aDock)).toFixed(3) + ')';
+      scanClip(paH, smooth(0.582, 0.628, p), smooth(0.885, 0.928, p));
+      scanClip(paP, smooth(0.736, 0.778, p), smooth(0.89, 0.932, p));   // support copy reveals AFTER the dock
+      if (paEye) paEye.style.opacity = (smooth(0.71, 0.755, p) * (1 - aOut)).toFixed(3); // eyebrow arrives with the dock
+      scanOutBg(apprGlass, agOut);
     }
 
-    // ---- the 8 outcomes FLIP IN where the friction cards were; later SCAN OUT L\u2192R ----
+    // ---- the 8 capabilities: soft translateY + rotateX reveal (subtle, controlled flip); later SCAN OUT L→R ----
     ocCards.forEach(function (c, i){
-      var fi = smooth(0.66 + i * 0.015, 0.71 + i * 0.015, p);
-      var oOut = smooth(0.84 + i * 0.006, 0.89 + i * 0.006, p);   // staggered scan-out — last card exits by ~0.93, before the wheel is live
+      var fi = smooth(0.76 + i * 0.009, 0.80 + i * 0.009, p);
+      var oOut = smooth(0.878 + i * 0.0045, 0.915 + i * 0.0045, p);   // staggered scan-out before the wheel is live
       c.style.opacity = fi.toFixed(3);
-      c.style.transform = 'rotateY(' + ((1 - fi) * -90).toFixed(1) + 'deg) translateX(' + (oOut * 20).toFixed(1) + 'px)';
+      c.style.transform = 'translateY(' + lerp(18, 0, fi).toFixed(1) + 'px) rotateX(' + ((1 - fi) * 8).toFixed(1) + 'deg) translateX(' + (oOut * 18).toFixed(1) + 'px)';
       c.style.borderRadius = ''; c.style.boxShadow = '';
       if (oOut > 0){
         // erased region grows from the left, with a slight brightness lift on the wipe
@@ -344,24 +382,24 @@
     });
 
     // FINALE: wheel blooms over the converged fragments
-    var wIn = smooth(0.86, 0.93, p);
+    var wIn = smooth(0.90, 0.958, p);
     if (wheelWrap){
       wheelWrap.style.opacity = wIn.toFixed(3);
-      wheelWrap.style.transform = 'translate(-50%, -50%) scale(' + lerp(0.92, 1, wIn).toFixed(3) + ')';
-      wheelWrap.classList.toggle('live', p > 0.93);
+      wheelWrap.style.transform = 'translate(-50%, -50%) scale(' + lerp(0.94, 1, wIn).toFixed(3) + ')';
+      wheelWrap.classList.toggle('live', p > 0.96);
       if (cwStage){
-        if (p > 0.87 && !cwStage.classList.contains('in')) cwStage.classList.add('in');
-        else if (p <= 0.85 && cwStage.classList.contains('in')) cwStage.classList.remove('in');
+        if (p > 0.905 && !cwStage.classList.contains('in')) cwStage.classList.add('in');
+        else if (p <= 0.885 && cwStage.classList.contains('in')) cwStage.classList.remove('in');
       }
     }
     if (wheelTitle){
-      var wtIn = smooth(0.88, 0.95, p);
+      var wtIn = smooth(0.92, 0.972, p);
       wheelTitle.style.opacity = wtIn.toFixed(3);
       wheelTitle.style.transform = 'translateY(' + lerp(14, 0, wtIn).toFixed(1) + 'px)';
     }
 
-    // cue fades once cards start
-    if (cue) cue.style.opacity = (1 - smooth(0.06, 0.16, p)).toFixed(3);
+    // cue fades once the glass starts its scan
+    if (cue) cue.style.opacity = (1 - smooth(0.03, 0.10, p)).toFixed(3);
   }
 
   /* ---- scroll + raf plumbing ---- */
@@ -376,9 +414,9 @@
   var dynamicOn = false, rafId = 0, visible = true;
 
   function clearInline(){
-    [head, stat, approach, wheelWrap, wheelTitle].forEach(function (el){ if (el){ el.style.opacity = ''; el.style.transform = ''; el.style.top = ''; } });
+    [head, stat, statCopy, approach, wheelWrap, wheelTitle].forEach(function (el){ if (el){ el.style.opacity = ''; el.style.transform = ''; el.style.top = ''; } });
     [gapH2, gapLead, paH, paP].forEach(function (el){ if (el){ el.style.clipPath = el.style.webkitClipPath = ''; el.style.transform = ''; } });
-    [headGlass, apprGlass, stat].forEach(function (el){ if (el){ el.style.borderRadius = ''; el.style.filter = ''; el.style.boxShadow = ''; el.style.transform = ''; el.style.opacity = ''; el.style.clipPath = el.style.webkitClipPath = ''; } });
+    [headGlass, apprGlass, stat, statCopy].forEach(function (el){ if (el){ el.style.borderRadius = ''; el.style.filter = ''; el.style.boxShadow = ''; el.style.transform = ''; el.style.opacity = ''; el.style.clipPath = el.style.webkitClipPath = ''; } });
     if (paEye) paEye.style.opacity = '';
     cards.forEach(function (c){ c.style.opacity = ''; c.style.transform = ''; });
     ocCards.forEach(function (c){ c.style.opacity = ''; c.style.transform = ''; c.style.borderRadius = ''; c.style.filter = ''; c.style.boxShadow = ''; c.style.clipPath = c.style.webkitClipPath = ''; });

@@ -94,20 +94,21 @@
 .cw-spokes { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .cw-spokes line { stroke: var(--line); stroke-width: 1; }
 
-/* center hub */
+/* center hub — mark + FRONTM wordmark as ONE unit, optically centred in the circle */
 .cw-hub {
   position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
   width: 22%; aspect-ratio: 1; border-radius: 50%;
-  display: grid; place-items: center; z-index: 3;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  z-index: 3;
   background: radial-gradient(circle at 50% 35%, var(--s-3), var(--s-1));
   border: 1px solid var(--line-2);
   box-shadow: 0 0 60px -10px var(--primary-glow), inset 0 1px 0 rgba(255,255,255,0.08);
 }
-.cw-hub img { width: 54%; height: 54%; object-fit: contain; }
+.cw-hub img { width: 40%; height: auto; object-fit: contain; }
 .cw-hub .cw-hub-label {
-  position: absolute; bottom: -34px; left: 50%; transform: translateX(-50%);
-  font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
-  color: var(--subtle); white-space: nowrap;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+  text-indent: 0.18em; /* optical: balances the trailing letter-space so the word sits dead-centre */
+  color: var(--body); white-space: nowrap; line-height: 1;
 }
 
 /* a positioned node wrapper (JS sets left/top) */
@@ -145,6 +146,22 @@
 .cw-stk span { font-size: 12.5px; color: var(--muted); }
 .cw-stk:hover { border-color: color-mix(in oklch, var(--primary) 50%, var(--line)); }
 .cw-stk:hover span { color: var(--body); }
+
+/* legend fallback — hidden on wide viewports; replaces the radial pills when
+   the ring gets too tight for labels to stay collision-free */
+.cw-legend { display: none; }
+@media (max-width: 720px) {
+  .cw-node-stk { display: none; }
+  .cw-legend {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+    margin: 20px auto 0; max-width: 560px;
+  }
+  .cw-legend .cw-stk { display: inline-flex; }
+}
+@media (max-width: 980px) {
+  .cw-stk { padding: 6px 10px; }
+  .cw-stk span { font-size: 11.5px; }
+}
 
 /* entrance: nodes scale in on reveal */
 .cw-stage .cw-node { opacity: 0; transform: translate(-50%, -50%) scale(.5); transition: opacity .6s var(--ease), transform .6s var(--ease); }
@@ -269,7 +286,7 @@
    ============================================================ */
 .impact-intro { max-width: 780px; margin-top: 14px; }
 .proof {
-  margin-top: 52px; border: 1px solid var(--line); border-radius: var(--r-lg);
+  margin-top: 0; border: 1px solid var(--line); border-radius: var(--r-lg);
   background: var(--s-1); overflow: hidden;
 }
 .proof-head {

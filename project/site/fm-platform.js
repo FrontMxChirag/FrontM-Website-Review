@@ -131,8 +131,12 @@
     return p[p.length-1];
   }
   function linkPts(ax,ay,bx,by){ return [[ax,ay],[bx,ay],[bx,by]]; }   // ambient L-route
-  // wired route: node -> out to a gutter BEYOND the card edge -> vertical -> short hop into the card
+  // wired route: node -> out to a gutter BEYOND the card edge -> vertical -> short hop into the card.
+  // The gutter leg is CLAMPED so it can never re-enter the ecosystem column on narrow stages
+  // (connectors must not cross or cover the node labels).
   function wirePtsOf(w){ var e = wireEnds(w); var bx = e[2] + Math.sign(e[0]-e[2]) * WIRE_GUTTER;
+    if (w.side === 'l'){ if (bx < e[0] + 14) bx = e[0] + 14; }
+    else               { if (bx > e[0] - 14) bx = e[0] - 14; }
     return [[e[0],e[1]],[bx,e[1]],[bx,e[3]],[e[2],e[3]]]; }
 
   function wireEnds(w){
@@ -346,11 +350,13 @@
     deck.style.opacity = seed.toFixed(3);
     deck.style.transform = 'translate(-50%,-50%) rotateX(' + (rx - cgy*2.2).toFixed(2) + 'deg) rotateY(' + (ry + cgx*3.4).toFixed(2) + 'deg) scale(' + slabScale.toFixed(3) + ')';
 
-    // SPLIT
+    // SPLIT — the vertical spread scales with stage height (fixed ±140px collided with
+    // the channel row on short viewports and starved the connector rail of its ≥18px gap)
     var split = smooth(PH.splitA, PH.splitB, s), content = smooth(PH.splitA + 0.05, PH.splitB - 0.02, s);
-    setCard(cards.exchange, lerp(0, -140, split), lerp(6, 60, split), content, hot === 'exchange');
+    var off = Math.max(124, Math.min(152, (ch || stage.clientHeight) * 0.135));
+    setCard(cards.exchange, lerp(0, -off, split), lerp(6, 60, split), content, hot === 'exchange');
     setCard(cards.studio,  0,                   0,                  content, hot === 'studio');
-    setCard(cards.fabric,  lerp(0, 140, split), lerp(-6, -60, split), content, hot === 'fabric');
+    setCard(cards.fabric,  lerp(0, off, split), lerp(-6, -60, split), content, hot === 'fabric');
 
     // CHANNELS (no connector lines)
     chans.style.opacity = smooth(PH.chA, PH.chB, s) > 0 ? 1 : 0;

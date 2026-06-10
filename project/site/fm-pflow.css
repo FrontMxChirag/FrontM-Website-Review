@@ -4,7 +4,7 @@
    Tokens/fonts/colours from fm.css. Driver: fm-pflow.js
    ============================================================ */
 
-.pflow { position: relative; height: 560vh; /* no-JS fallback; JS drives PIN_VH */ }
+.pflow { position: relative; height: 720vh; /* no-JS fallback; JS drives PIN_VH */ }
 .pflow-stage {
   position: sticky; top: 0; height: 100vh; overflow: hidden;
   display: grid; place-items: center;
@@ -30,41 +30,47 @@
   will-change: transform, opacity, filter;
 }
 
-/* ---- friction cards (revealed one-by-one, BIGGER, colour-coded icons) ---- */
+/* ---- friction cards (revealed one-by-one, BIGGER — they own the centre of the stage) ---- */
 .pflow-friction {
-  position: absolute; left: 50%; bottom: 16%; transform: translateX(-50%);
-  display: flex; gap: 16px; z-index: 5; width: max-content; max-width: 96vw;
+  position: absolute; left: 50%; top: 53%; transform: translate(-50%, -50%);
+  display: flex; gap: 18px; z-index: 5; width: max-content; max-width: 96vw;
   perspective: 1200px;
 }
 .pflow-fr {
-  width: 226px; padding: 24px 20px; border-radius: var(--r-lg); --cc: var(--b-orange);
+  width: clamp(208px, 16vw, 264px); padding: 28px 24px; border-radius: var(--r-lg); --cc: var(--b-orange);
   background: color-mix(in oklch, var(--s-1) 86%, transparent);
   border: 1px solid var(--line); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 18px 40px -24px rgba(0,0,0,0.8);
-  display: flex; flex-direction: column; gap: 12px;
+  display: flex; flex-direction: column; gap: 14px;
   will-change: opacity, transform;
 }
 .pflow-fr .pfr-ico {
-  width: 48px; height: 48px; border-radius: 7px; display: grid; place-items: center;
+  width: 52px; height: 52px; border-radius: 8px; display: grid; place-items: center;
   color: var(--cc);
   background: color-mix(in oklch, var(--cc) 16%, var(--s-2));
   border: 1px solid color-mix(in oklch, var(--cc) 38%, var(--line));
 }
-.pflow-fr .pfr-ico svg { width: 26px; height: 26px; }
-.pflow-fr .pfr-t { color: var(--heading); font-weight: 700; font-size: 1.05rem; }
-.pflow-fr .pfr-d { color: var(--muted); font-size: 0.92rem; line-height: 1.5; }
+.pflow-fr .pfr-ico svg { width: 28px; height: 28px; }
+.pflow-fr .pfr-t { color: var(--heading); font-weight: 700; font-size: 1.12rem; }
+.pflow-fr .pfr-d { color: var(--muted); font-size: 0.95rem; line-height: 1.55; }
 
-/* ---- cost stat ---- */
+/* ---- cost stat: metric pill first, supporting copy beneath ---- */
 .pflow-stat {
-  position: absolute; left: 50%; bottom: 7%; transform: translateX(-50%);
+  position: absolute; left: 50%; bottom: 19%; transform: translateX(-50%);
   display: flex; align-items: center; gap: 14px; z-index: 5;
-  padding: 14px 24px; border-radius: var(--pill);
+  padding: 14px 30px; border-radius: var(--pill);
   background: color-mix(in oklch, var(--b-orange) 12%, var(--s-1));
   border: 1px solid color-mix(in oklch, var(--b-orange) 32%, var(--line));
   will-change: opacity, transform; white-space: nowrap; max-width: 94vw;
 }
-.pflow-stat .gx { font-family: var(--disp); font-size: clamp(1.4rem, 2.6vw, 2rem); color: var(--b-orange); line-height: 1; }
+.pflow-stat .gx { font-family: var(--disp); font-size: clamp(1.5rem, 2.8vw, 2.1rem); color: var(--b-orange); line-height: 1; }
 .pflow-stat .gt { color: var(--body); font-size: clamp(0.85rem, 1.3vw, 1rem); white-space: normal; }
+.pflow-statcopy {
+  position: absolute; left: 50%; bottom: 12.5%; transform: translateX(-50%);
+  z-index: 5; width: max-content; max-width: min(620px, 90vw); text-align: center;
+  color: var(--muted); font-size: clamp(0.95rem, 1.35vw, 1.1rem); line-height: 1.55;
+  white-space: normal; opacity: 0; will-change: opacity, transform; margin: 0;
+}
 
 /* ---- the approach reveal: pops in glass at CENTRE, docks to top ---- */
 .pflow-approach {
@@ -138,6 +144,7 @@
 .pflow.pf-static .pflow-head,
 .pflow.pf-static .pflow-friction,
 .pflow.pf-static .pflow-stat,
+.pflow.pf-static .pflow-statcopy,
 .pflow.pf-static .pflow-approach,
 .pflow.pf-static .pflow-outcomes,
 .pflow.pf-static .pflow-wheelwrap,
@@ -151,7 +158,8 @@
   flex-wrap: wrap; justify-content: center; width: 100%; max-width: 1000px; margin: 0 auto 28px;
 }
 .pflow.pf-static .pflow-fr { width: 200px; }
-.pflow.pf-static .pflow-stat { margin: 0 auto 56px; }
+.pflow.pf-static .pflow-stat { margin: 0 auto 14px; width: max-content; }
+.pflow.pf-static .pflow-statcopy { margin: 0 auto 56px; width: auto; max-width: 620px; text-align: center; }
 .pflow.pf-static .pflow-approach { max-width: 820px; margin-bottom: 32px; }
 .pflow.pf-static .pflow-fr, .pflow.pf-static .pflow-oc { opacity: 1 !important; transform: none !important; }
 .pflow.pf-static .pflow-wheelwrap { pointer-events: auto; margin-bottom: 12px; width: 100%; }
@@ -167,6 +175,8 @@
   width: 100%; max-width: 900px; margin: 0 auto 56px;
 }
 
-@media (max-width: 1100px) {
-  .pflow-fr { width: 188px; }
+@media (max-width: 1240px) {
+  .pflow-fr { width: 192px; padding: 22px 18px; }
+  .pflow-fr .pfr-t { font-size: 1.02rem; }
+  .pflow-fr .pfr-d { font-size: 0.9rem; }
 }
