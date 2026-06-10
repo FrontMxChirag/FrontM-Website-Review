@@ -2,7 +2,7 @@
    FrontM, marketing homepage · design system
    Dark mode only. Tokens lifted from the brand styleguide.
    ============================================================ */
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@400;500;600;700&display=swap');
 
 *, *::before, *::after { box-sizing: border-box; }
 * { margin: 0; padding: 0; }
@@ -70,10 +70,10 @@
   --grad-intel:    linear-gradient(135deg, #01B3F6, #435FE8 50%, #6B5FD9);
   --grad-page:     radial-gradient(circle at top, var(--s-1) 0%, var(--bg) 48%, var(--inset) 100%);
 
-  /* type */
-  --sans: "Hanken Grotesk", system-ui, -apple-system, sans-serif;
-  --disp: "Instrument Serif", Georgia, serif;
-  --mono: "JetBrains Mono", ui-monospace, monospace;
+  /* type — IBM Plex family (locked 8 Jun 2026): Condensed = display, Sans = body, Mono = eyebrows/meta */
+  --sans: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --disp: "IBM Plex Sans Condensed", "IBM Plex Sans", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
 
   /* radius */
   --r-xs: 6px;  --r-sm: 10px; --r-md: 14px;
@@ -118,7 +118,7 @@ button { font: inherit; color: inherit; cursor: pointer; background: none; borde
 .section { padding-block: var(--section-y); position: relative; z-index: 1; }
 
 /* ---------- type ---------- */
-h1, h2, h3 { font-family: var(--disp); font-weight: 400; line-height: 1.06; letter-spacing: 0; color: var(--heading); text-wrap: balance; }
+h1, h2, h3 { font-family: var(--disp); font-weight: 600; line-height: 1.06; letter-spacing: -0.01em; color: var(--heading); text-wrap: balance; } /* 600/-0.01em: parity for Plex Sans Condensed (serif 400 carried more visual weight) */
 h1 { font-size: clamp(2.8rem, 6vw, 5rem); }
 h2 { font-size: clamp(2.1rem, 4vw, 3.2rem); }
 h3 { font-size: clamp(1.5rem, 2.4vw, 2rem); }

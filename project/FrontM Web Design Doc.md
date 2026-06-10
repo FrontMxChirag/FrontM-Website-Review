@@ -181,7 +181,17 @@ Dark-first; light is scoped to long-form reading (blog/article, docs, legal, may
 
 ## 4 · Typography
 
-**Family:** `Figtree` (variable, weights 400–800 loaded). Fallback: `system-ui, -apple-system, "Segoe UI", sans-serif`. Load via `next/font`.
+**Families (locked 8 Jun 2026 — IBM Plex set):**
+
+| Role | Family | Weights | Token |
+|---|---|---|---|
+| Display / headings (H1–H3) | `IBM Plex Sans Condensed` | 400–700 (600 default for headings) | `--disp` |
+| Body / UI / lede | `IBM Plex Sans` | 400–700 | `--sans` |
+| Eyebrows / meta / code | `IBM Plex Mono` | 400–600 | `--mono` |
+
+Fallbacks: `system-ui, -apple-system, "Segoe UI", sans-serif` (sans/disp) · `ui-monospace, monospace` (mono). Load via `next/font` in production; Google Fonts `<link>` in prototypes. Condensed is display-only — body stays regular Plex Sans for long-form legibility (expanded persona panels, Value Bridge).
+
+> Supersedes the earlier `Figtree` spec and the prototype's interim Instrument Serif + Hanken Grotesk pairing.
 
 ### Type scale (tuned for Figtree, dark-first)
 
