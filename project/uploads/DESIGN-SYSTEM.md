@@ -29,115 +29,188 @@ Positioning line: **AI-Native Maritime Operations Platform**
 
 ---
 
-## §3 Color
+## §3 Color — Colour System v3 (three-tier)
 
-### §3.1 Surfaces — elevation ladder
+**Adopted 4 Jun 2026 (Option 2 — doc-leads).** This section is rebased on the **Colour System v3 Reference** (`uploads/FrontM Colors Reference.html`), the single canonical source for every colour decision across web, product UI, marketing, and video. It supersedes the earlier flat token model. `site/fm.css` still ships the old flat tokens — those are tracked as **drift in §11** and will be migrated section by section. Until then, this doc describes the **target**, not the current code.
 
-Six-step dark ladder. Ascending surface index = closer to the viewer.
+### §3.0 Architecture — three tiers
+
+| Tier | What | Rule |
+|------|------|------|
+| **1 · Primitives** | 10 ramps × 10 stops (`--graphite-50 … --alert-900`) | The bedrock. **Never referenced directly in component code** — only when defining Tier-2/semantic tokens. Enables theming + rebasing. |
+| **2 · Surfaces / ink / glass** | Dark ladder, ink scale, hairlines, glass | Named, mode-aware foundations built from Tier 1. |
+| **3 · Gradients / glows / elevation** | Composite effects | Built from Tier 1 + 2. |
+| **Semantic** | `--color-*` intent tokens | What components actually consume. Describe **purpose, not colour**; switch automatically light/dark. |
+
+**Golden rule:** components reference **semantic** tokens (`--color-text-primary`), never primitives (`--graphite-900`). Logo hexes (§3.9) never appear in UI code.
+
+---
+
+### §3.1 Tier 1 — Primitive ramps
+
+Ten ramps, ten stops each (50 = lightest → 900 = darkest). The **brand anchor** is the stop used in logos / high-visibility UI.
+
+| Ramp | Role | Brand anchor | 50 → 900 |
+|------|------|-------------|----------|
+| **Operational Graphite** | neutrals · text · surfaces · borders · Manage | 500 | `#F7F8FB` `#EEF0F5` `#DDE1EB` `#C4CAD8` `#9AA1B4` `#6E7689` `#525A6E` `#3B4253` `#272D3B` `#161A24` |
+| **Voyage Violet** | product layer · primary · focus | 500 | `#F1EEFF` `#E5E0FF` `#CFC6FF` `#B7AFFF` `#9A86FF` `#6B5FD9` `#5A4EC8` `#493CB6` `#372C8E` `#241B5E` |
+| **Signal Blue** | Connect · links · live data | 400 | `#E6F7FF` `#C7ECFE` `#8FD8FB` `#4CC4F8` `#01B3F6` `#0090CC` `#0077A8` `#0A5C82` `#0E4A68` `#0E3247` |
+| **Crew Green** | Care · success · wellbeing | 400 | `#E6F7EF` `#C5EFD8` `#92E0B6` `#5BD98B` `#18C95C` `#0F9B45` `#057029` `#0A5A24` `#0B441D` `#082C13` |
+| **Reef Lime** | Engage · community | — | `#ECFBEA` `#D6F5D2` `#AEEAA6` `#7FD974` `#4DC243` `#3CAD33` `#2E8C27` `#27701F` `#1F5419` `#143810` |
+| **Beacon Amber** | Inform · warning · highlight | 400 | `#FFF7D6` `#FFEFAE` `#FFE16B` `#FFD22E` `#FFC500` `#D99F00` `#A77100` `#8A5B00` `#6B4500` `#472D00` |
+| **Cargo Orange** | Entertain · callouts · campaign | 400 | `#FFF0E6` `#FFDCC4` `#FFB98C` `#FF8F4D` `#FF6A04` `#D9550A` `#B94700` `#963700` `#732A00` `#4D1C00` |
+| **Depth Indigo** | Info · eSIM · status | — | `#EAF0FF` `#D3E0FF` `#A9C2FF` `#7799FF` `#4F6BF0` `#2457D6` `#1C46AE` `#173A8E` `#122C6B` `#0C1D47` |
+| **Anchor Steel** | interactive borders · input states | — | `#EDF2F7` `#D7E1EC` `#B4C4D6` `#85A0B8` `#5E7E9C` `#4D6B86` `#3C5670` `#2F4459` `#23323F` `#172029` |
+| **Alert Red** | error · destructive | — | `#FDEAEA` `#FAD1D1` `#F4A8A8` `#EC7676` `#E04545` `#C93434` `#A92626` `#8A1F1F` `#681818` `#451010` |
+
+---
+
+### §3.2 Tier 2 — Dark surface ladder
+
+Six named steps, each lighter than the one below. Never skip steps — graduation creates spatial hierarchy without borders.
 
 | Token | Value | Role |
 |-------|-------|------|
-| `--bg` | `#0A0B1E` | Page base |
-| `--inset` | `#06071A` | Wells, inset panels |
-| `--s-1` | `#12152F` | Cards |
-| `--s-2` | `#1A1E3D` | Raised elements |
-| `--s-3` | `#23284E` | Modals |
-| `--s-4` | `#2C3160` | Overlays |
+| `--abyss` | `#06071A` | Sunken / inset — input wells, code blocks |
+| `--canvas` | `#0A0B1E` | Page base — the ground everything sits on |
+| `--hull` | `#12152F` | Default card / panel / modal surface |
+| `--deck` | `#1A1E3D` | Raised card (always pair with `--elev`) |
+| `--bridge` | `#23284E` | Overlay — dialogs, drawers, sheets |
+| `--helm` | `#2C3160` | Highest — floating panels, tooltips |
 
-**Removed:** `--bg-soft` (`#10122A`) — deprecated. Migrate any gradient that references it onto the ladder tokens above, then delete.
-
-**Removed:** `--deepest` (`#0E1024`) — not promoted. Remove from `fm.css`.
+> Darkest brand value is `--abyss` `#06071A`. **Never use pure black `#000`** — off-brand.
 
 ---
 
-### §3.2 Primary — violet / Engage
+### §3.3 Tier 2 — Ink scale & hairlines
 
-| Token | Value | Role |
+| Token | Value | Role | A11y on `--canvas` |
+|-------|-------|------|------|
+| `--ink` | `#FFFFFF` | Headings, primary copy | AAA |
+| `--ink-2` | `#D6DAEA` | Secondary — sub-labels, descriptions | AA |
+| `--ink-3` | `#AEB5C9` | Tertiary — captions, timestamps | AA |
+| `--ink-4` | `#8A92A8` | Muted — disabled & placeholders only | — |
+| `--line` | `rgba(255,255,255,0.10)` | Hairline — dividers, default card edges |
+| `--line-2` | `rgba(255,255,255,0.18)` | Border — prominent / elevated strokes |
+
+> Highlights cap at `#D6DAEA`; let `--signal-400` be the brightest accent point.
+
+---
+
+### §3.4 Tier 2 — Glass system
+
+Every glass panel pairs a **fill + border + blur**, plus a composite shadow when elevated.
+
+**Dark glass — weight scale:** `--glass-dk-thin` `rgba(255,255,255,.04)` (ghost) · `--glass-dk` `.07` (default) · `--glass-dk-medium` `.11` (hover/active) · `--glass-dk-heavy` `.17` (elevated).
+**Light glass:** `--glass-lt-thin` `rgba(255,255,255,.60)` · `--glass-lt` `.80` · `--glass-lt-heavy` `.92`.
+**Borders:** `--glass-dk-border` `rgba(255,255,255,.10)` · `--glass-dk-border-strong` `.20` · `--glass-lt-border` `rgba(107,95,217,.16)` · `--glass-lt-border-strong` `.28`.
+**Chromatic tints:** `--glass-voyage` `rgba(107,95,217,.15)` · `--glass-signal` `rgba(1,179,246,.10)` · `--glass-crew` `rgba(24,201,92,.09)` · `--glass-beacon` `rgba(255,197,0,.08)` — always paired with `--glass-dk-border`.
+**Blur levels:** `--glass-blur-sm` `8px` (hint) · `--glass-blur` `24px` (standard product glass) · `--glass-blur-heavy` `56px` (deep frost / hero).
+**Shadows:** `--glass-dk-shadow` `0 8px 32px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.16)` · `--glass-lt-shadow` `0 8px 32px rgba(26,24,48,.14), inset 0 1px 0 rgba(255,255,255,.90)`.
+
+---
+
+### §3.5 Tier 3 — Gradients, glows, elevation
+
+| Token | Construction | Use |
+|-------|-------------|-----|
+| `--gradient-spectrum` | `linear-gradient(90deg,#01B3F6,#18C95C,#FFC500,#FF6A04)` | Bars, accent lines, accent words — **never body text** |
+| `--gradient-operational` | `linear-gradient(160deg,#0A0B1E,#141A3A,#1F2A55)` | Dark cinematic — the default backdrop |
+| `--gradient-intelligence` | `linear-gradient(120deg,#01B3F6,#4F6BF0,#9A86FF)` | AI / smart-feature visuals |
+| `--glow-voyage` / `-signal` / `-crew` | `0 0 26px rgba(…,0.40–0.45)` | Ambient depth on violet / blue / green |
+| `--elev` | `inset 0 1px 0 rgba(255,255,255,.06), 0 18px 44px rgba(0,0,0,.55)` | Raised-surface depth (top-light + deep shadow) |
+
+---
+
+### §3.6 Core identity — six colours, one voice
+
+| Colour | Value | Token | Role |
+|--------|-------|-------|------|
+| **Operational Navy** | `#0A0B1E` | `--color-bg-canvas` | The deep canvas the whole product composes on |
+| **Voyage Violet** | `#6B5FD9` | `voyage.500` | Product layer — primary actions, focus, selection |
+| **Signal Blue** | `#01B3F6` | `signal.400` | Connect, links, live data, active indicators |
+| **Crew Green** | `#18C95C` | `crew.400` | Care, wellbeing, success, completion |
+| **Beacon Amber** | `#FFC500` | `beacon.400` | Inform, attention, markers, highlights |
+| **Cargo Orange** | `#FF6A04` | `cargo.400` | Entertain, callouts, campaign accents |
+
+---
+
+### §3.7 Module palettes (×9)
+
+Each module owns a ramp + brand anchor. **accent** → pills, icon fills, active tabs. **text-safe** → coloured copy on white. **soft bg** → tinted section backgrounds on light.
+
+| Module | Ramp | Accent | Text-safe | Soft bg | Purpose |
+|--------|------|--------|-----------|---------|---------|
+| **Connect** | Signal Blue 400 | `#01B3F6` | `#0077A8` | `#E6F7FF` | Ship-to-shore comms, messaging, links |
+| **Care** | Crew Green 400 | `#18C95C` | `#057029` | `#E6F7EF` | Crew wellbeing, health, check-ins |
+| **Engage** | Reef Lime 400 | `#4DC243` | `#2E8C27` | `#ECFBEA` | Community, learning, social |
+| **Inform** | Beacon Amber 400 | `#FFC500` | `#8A5B00` | `#FFF7D6` | Notices, bulletins, announcements |
+| **Entertain** | Cargo Orange 400 | `#FF6A04` | `#963700` | `#FFF0E6` | Media, content, recreation |
+| **Sailor Cart** | Crew Green 500 | `#0F9B45` | `#0A5A24` | `#E6F7EF` | Onboard commerce, purchases |
+| **eSIM** | Depth Indigo 400 | `#4F6BF0` | `#1C46AE` | `#EAF0FF` | Connectivity, data plans, Airalo |
+| **OnShip Mentorship** | Voyage Violet 400 | `#9A86FF` | `#493CB6` | `#F1EEFF` | Peer learning, growth, skills |
+| **Manage** | Graphite 500 | `#6E7689` | `#3B4253` | `#EEF0F5` | Platform admin, settings, ops |
+
+> **Changed from old model:** `Engage` is now **Reef Lime `#4DC243`** (was the violet primary); **Train / Maintain** are dropped; **Sailor Cart, eSIM, OnShip Mentorship** added. Voyage Violet is the **product/primary layer**, not a module accent.
+
+---
+
+### §3.8 Semantic layer (light + dark)
+
+Components reference these — never primitives. Each resolves per mode.
+
+| Token | Light | Dark |
 |-------|-------|------|
-| `--primary` | `#6B5FD9` | Fill, interactive elements |
-| `--primary-lift` | `#9A86FF` | On-dark text / icon (= `--b-violet`) |
-| `--primary-hover` | `#B7AFFF` | On-dark text/icon hover — **lightens**, does not darken |
-| `--primary-active` | `#493CB6` | Pressed / active fill |
-| `--primary-bg` | `rgba(122,107,255,0.16)` | Tint / container background |
-| `--primary-glow` | `rgba(154,134,255,0.45)` | Ambient glow |
+| `--color-bg-canvas` | graphite-50 `#F7F8FB` | `#0A0B1E` |
+| `--color-bg-surface` | `#FFFFFF` | hull |
+| `--color-bg-raised` | `#FFF` + `--elev` | deck |
+| `--color-bg-sunken` | graphite-100 | abyss |
+| `--color-bg-overlay` | — | bridge |
+| `--color-text-primary` | graphite-900 | `#FFFFFF` (AAA) |
+| `--color-text-secondary` | graphite-600 | ink-2 (AA) |
+| `--color-text-tertiary` | graphite-500 | ink-3 (AA) |
+| `--color-text-muted` | graphite-400 | ink-4 (disabled only) |
+| `--color-text-link` | signal-700 | signal-400 |
+| `--color-border-interactive` | steel-400 | steel-300 (3:1 min) |
+| `--color-border-focus` | voyage-400 | voyage-400 |
 
-**Note on `--primary-hover`:** This token represents an on-dark text/icon hover state (it lightens). It is not a fill-hover darkening token. If a fill-hover is needed, create a separate `--primary-fill-hover` rather than reusing this one.
-
----
-
-### §3.3 Brand spectrum
-
-Logo-derived hues. One per module family.
-
-| Token | Value | Module / role |
-|-------|-------|---------------|
-| `--b-blue` | `#01B3F6` | Connect |
-| `--b-cyan` | `#1FE6D4` | Aqua |
-| `--b-green` | `#18C95C` | Care |
-| `--b-green2` | `#3CAD33` | Train / Lime |
-| `--b-gold` | `#FFC500` | Inform / Yellow |
-| `--b-orange` | `#FF6A04` | Entertain |
-| `--b-slate` | `#404858` | Manage |
-| `--b-violet` | `#9A86FF` | Engage / Primary lift |
-| `--b-indigo` | `#435FE8` | Maintain / Intelligence gradients |
-
-**Decision 4 Jun 2026:** `--b-indigo` promoted from code-only to spec. It sits between `--b-blue` and `--b-violet` in the spectrum and drives `--grad-intel` and the Maintain module accent.
+**Feedback (semantic):** success → crew · warning → beacon · error → alert · info → signal. Never colour alone — pair with icon/label/shape.
 
 ---
 
-### §3.4 Module accents
+### §3.9 Logo anchors — measured, kept separate
 
-One accent per product module. Must reference the spectrum values above.
+Six anchors extracted pixel-by-pixel from `FM-logo-no-text.png` (451×531). These are the **exact values inside the artwork** — source of truth for logo reproduction only (favicons, app icons, watermark bugs, brand-mark animations).
 
-| Token | Value | Maps to |
-|-------|-------|---------|
-| `--m-connect` | `#01B3F6` | `--b-blue` |
-| `--m-engage` | `#6B5FD9` | `--primary` |
-| `--m-care` | `#18C95C` | `--b-green` |
-| `--m-inform` | `#FFC500` | `--b-gold` |
-| `--m-entertain` | `#FF6A04` | `--b-orange` |
-| `--m-train` | `#3CAD33` | `--b-green2` |
-| `--m-maintain` | `#4F6BFF` | — (distinct from `--b-indigo`) |
-| `--m-manage` | `#404858` | `--b-slate` |
+| Anchor | Hex | Nearest system token | Verdict |
+|--------|-----|----------------------|---------|
+| Sky Dot Blue | `#01ADFF` | signal-400 `#01B3F6` | harmonised |
+| Signal Body (gradient) | `#0096DB → #00B2EE` | signal-500 → 400 | in family |
+| Heritage Green | `#019934` | crew-500 `#0F9B45` | harmonised |
+| Reef Lime | `≈#40AE33` | reef-500 `#3CAD33` | match |
+| Gold (gradient) | `#FFB600 → #FFCC00` | beacon-400 `#FFC500` | exact (mid-gradient) |
+| Flame Orange | `#FF6600` | cargo-400 `#FF6A04` | harmonised |
 
-**Note on `--m-maintain`:** Doc spec is `#4F6BFF`. Code ships `#435FE8` (= `--b-indigo`). These are distinct — do not conflate them. `--m-maintain` must be corrected to `#4F6BFF`.
+> **Rule:** Logo hexes **never** appear in component code or section backgrounds. "Logo green" outside the mark → `crew-500 #0F9B45` (UI) or `crew-400 #18C95C` (brand accent), never `#019934`.
 
 ---
 
-### §3.5 Gradients
+### §3.10 Migration map — old flat tokens → v3
 
-| Token | Construction |
-|-------|-------------|
-| `--grad-page` | `radial-gradient(circle at top, var(--s-1) 0%, var(--bg) 48%, var(--inset) 100%)` |
-| `--grad-intel` | Uses `--b-indigo` — exact value defined in `fm.css` |
+`site/fm.css` still uses the old flat names. Target mapping for the code migration tracked in §11:
 
-`--grad-page` must not reference `--bg-soft`. Migrate to the ladder tokens above.
-
----
-
-### §3.6 Text — dark backgrounds
-
-| Token | Value | Role |
-|-------|-------|------|
-| `--heading` | `#FFFFFF` | Headings, display |
-| `--body` | `#D6DAEA` | Body copy |
-| `--muted` | `#AEB5C9` | Supporting text |
-| `--subtle` | `#8A92A8` | Captions, metadata |
-| `--faint` | `#6E7691` | Disabled, placeholder, fine print |
-
-**Decision 4 Jun 2026:** `--faint` promoted from code-only to spec as a fifth text step.
-
----
-
-### §3.7 Borders & hairlines
-
-| Token | Value | Role |
-|-------|-------|------|
-| `--line` | `rgba(255,255,255,0.12)` | Default card edges, dividers |
-| `--line-2` | `rgba(255,255,255,0.18)` | Elevated / prominent borders |
-| `--line-strong` | `rgba(255,255,255,0.28)` | High-contrast strokes |
-
-`--line-soft` (0.05) is not part of the spec. Remove or alias to `--line` if anything references it.
+| Old (`fm.css`, current) | v3 target |
+|-------------------------|-----------|
+| `--bg` | `--canvas` (same value `#0A0B1E`) |
+| `--inset` | `--abyss` |
+| `--s-1 / -2 / -3 / -4` | `--hull / --deck / --bridge / --helm` |
+| `--heading / body / muted / subtle / faint` | `--ink / ink-2 / ink-3 / ink-4` (+ map `--faint` onto graphite) |
+| `--line` `0.12` | `--line` `0.10` ⚠️ value change |
+| `--line-strong` | not in v3 — fold into `--line-2` |
+| `--b-*` spectrum | primitive ramp `*-400/500` brand anchors |
+| `--m-engage` `#6B5FD9` | `--reef-400` `#4DC243` ⚠️ hue change |
+| `--m-train`, `--m-maintain` | removed (modules dropped) |
+| `--primary*` | `voyage.*` ramp |
 
 ---
 
@@ -285,84 +358,35 @@ Reduced motion:
 | 4 Jun 2026 | `--section-y` / `--nav-h` | Doc wins. Code must be patched. Scroll-margin audit required after `--nav-h` change. |
 | 4 Jun 2026 | `--m-maintain` | Doc wins: `#4F6BFF`. Code's `#435FE8` is `--b-indigo` and must not bleed into the module accent. |
 | 4 Jun 2026 | Typeface | **Direction change (Option A):** display/headings move to **Instrument Serif** (Roman, 400); body/UI to **Hanken Grotesk**. Supersedes Figtree. Accent word takes the shifting `.g-spectrum` gradient. Adopted from Type Explorer pairing 01 and applied across Homepage v2. |
+| 4 Jun 2026 | **Colour System v3** | **Architecture change (Option 2 — doc-leads):** §3 rebased on the Colour System v3 Reference — 3-tier tokens, 10 primitive ramps, named surface ladder (abyss…helm), ink scale, 17-token glass system, semantic light/dark layer, 9 module palettes, 6 measured logo anchors. Supersedes the flat token model. `fm.css` still ships flat tokens — tracked as drift in §11; code migrates section by section. |
 
 ---
 
 ## §11 Reconciliation — live audit
 
-**Doc:** Draft v3 · **Build:** Homepage v2 · **As of:** 4 Jun 2026
+**Doc:** v3 (Colour System v3) · **Build:** Homepage v2 · **As of:** 4 Jun 2026
 
-Score after planned fixes: **~100% (66/66 tokens)**
-Remaining gaps after fixes: 3 code-only tokens now promoted (b-indigo, faint) or removed (deepest), plus any tokens still pending Claude Code patch.
+**Live tracker:** `FrontM Design System.html` (the interactive dashboard) is the source of record for reconciliation status. This table is a summary.
 
-### §3.1 Surfaces
+**Colour:** ~38% reconciled. Type, spacing, radius, motion and components are on-spec from the earlier reconciliation; the **entire colour layer is now mid-migration** because §3 was rebased on Colour System v3 while `fm.css` still ships the old flat tokens.
 
-| Token | Spec | Status |
-|-------|------|--------|
-| `--bg` | `#0A0B1E` | ✅ Match |
-| `--inset` | `#06071A` | ✅ Match |
-| `--s-1` | `#12152F` | ✅ Match |
-| `--s-2` | `#1A1E3D` | ✅ Match |
-| `--s-3` | `#23284E` | ✅ Match |
-| `--s-4` | `#2C3160` | ✅ Match |
-| `--bg-soft` | Removed | 🔧 Migrate `--grad-page`, then delete |
-| `--deepest` | Removed | 🔧 Delete from `fm.css` |
+### §3 Colour — v3 migration status
 
-### §3.2 Primary
+The doc target is now **Colour System v3** (§3). `fm.css` ships the old flat tokens, so the colour layer is mid-migration. Summary by group:
 
-| Token | Spec | Status |
-|-------|------|--------|
-| `--primary` | `#6B5FD9` | ✅ Match |
-| `--primary-lift` | `#9A86FF` | 🔧 Fix: code has `#A99BFF` |
-| `--primary-hover` | `#B7AFFF` | 🔧 Fix: code has `#5A4EC8` |
-| `--primary-active` | `#493CB6` | 🔧 Add: missing from `fm.css` |
-| `--primary-bg` | `rgba(122,107,255,0.16)` | 🔧 Add: missing from `fm.css` |
-| `--primary-glow` | `rgba(154,134,255,0.45)` | 🔧 Fix: code has `0.55` opacity |
+| v3 group | Target | Code today (`fm.css`) | Status |
+|----------|--------|------------------------|--------|
+| Tier 1 — primitive ramps | 10 ramps × 10 stops (`--graphite-50…--alert-900`) | none — flat `--b-*` only | 🔧 Add |
+| Surface ladder | `--abyss / canvas / hull / deck / bridge / helm` | `--inset / bg / s-1…s-4` (same values) | 🔧 Rename |
+| Ink scale | `--ink / ink-2 / ink-3 / ink-4` | `--heading / body / muted / subtle / faint` | 🔧 Rename |
+| Hairlines | `--line` `0.10`, `--line-2` `0.18` | `--line` `0.12`, `--line-2` `0.18`, `--line-strong` `0.28` | 🔧 Fix `--line`; drop `--line-strong` |
+| Glass system | 17 tokens | none | 🔧 Add |
+| Gradients / glows / elev | spectrum · operational · intelligence · glows · `--elev` | partial (`--grad-*`) | 🔧 Extend |
+| Module palettes | 9 (incl. Reef-Lime Engage, Sailor Cart, eSIM, OnShip) | 8 (violet Engage, Train, Maintain) | 🔧 Re-map |
+| Semantic layer | `--color-*` light + dark | none (flat values inline) | 🔧 Add |
+| Logo anchors | 6 measured, kept separate | n/a | ✅ Documented |
 
-### §3.3 Brand spectrum
-
-| Token | Spec | Status |
-|-------|------|--------|
-| `--b-blue` | `#01B3F6` | ✅ Match |
-| `--b-cyan` | `#1FE6D4` | ✅ Match |
-| `--b-green` | `#18C95C` | ✅ Match |
-| `--b-green2` | `#3CAD33` | ✅ Match |
-| `--b-gold` | `#FFC500` | ✅ Match |
-| `--b-orange` | `#FF6A04` | ✅ Match |
-| `--b-slate` | `#404858` | ✅ Match |
-| `--b-violet` | `#9A86FF` | ✅ Match |
-| `--b-indigo` | `#435FE8` | ✅ Promoted — now in spec |
-
-### §3.4 Module accents
-
-| Token | Spec | Status |
-|-------|------|--------|
-| `--m-connect` | `#01B3F6` | ✅ Match |
-| `--m-engage` | `#6B5FD9` | ✅ Match |
-| `--m-care` | `#18C95C` | 🔧 Fix: code has old `#079B33` |
-| `--m-inform` | `#FFC500` | ✅ Match |
-| `--m-entertain` | `#FF6A04` | ✅ Match |
-| `--m-train` | `#3CAD33` | ✅ Match |
-| `--m-maintain` | `#4F6BFF` | 🔧 Fix: code has `#435FE8` |
-| `--m-manage` | `#404858` | ✅ Match |
-
-### §3.6 Text
-
-| Token | Spec | Status |
-|-------|------|--------|
-| `--heading` | `#FFFFFF` | ✅ Match |
-| `--body` | `#D6DAEA` | ✅ Match |
-| `--muted` | `#AEB5C9` | ✅ Match |
-| `--subtle` | `#8A92A8` | ✅ Match |
-| `--faint` | `#6E7691` | ✅ Promoted — now in spec |
-
-### §3.7 Borders
-
-| Token | Spec | Status |
-|-------|------|--------|
-| `--line` | `rgba(255,255,255,0.12)` | 🔧 Fix: code has `0.08` |
-| `--line-2` | `rgba(255,255,255,0.18)` | 🔧 Fix: code has `0.14` |
-| `--line-strong` | `rgba(255,255,255,0.28)` | 🔧 Add: missing from `fm.css` |
+> The interactive dashboard (`FrontM Design System.html`) tracks this group-by-group. Flip rows to ✅ as `fm.css` adopts each v3 group.
 
 ### §4 Typography
 

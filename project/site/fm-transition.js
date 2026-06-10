@@ -154,7 +154,23 @@
     // cursor parallax across the whole scene + scroll-driven curved horizon
     mcx += (mtx - mcx) * 0.06; mcy += (mty - mcy) * 0.06;
     if (par) par.style.transform = 'translate(' + (mcx * 26).toFixed(1) + 'px,' + (mcy * 18).toFixed(1) + 'px)';
-    if (horizon) { horizon.style.transform = 'translateX(-50%) translateY(' + hy.toFixed(1) + 'px)'; horizon.style.opacity = hOp.toFixed(3); }
+    if (horizon) {
+      // SEAM WORK: this scene's horizon is the SAME line as the global one (scroll-horizon.js),
+      // handed off by a matched-geometry crossfade — never two curves at once. Track the live
+      // global crest so entry & exit are positionally invisible; add a gentle rise that is ZERO
+      // at both seams; crossfade opacity against the global line; borrow its drifting colour.
+      var thVH = window.innerHeight, thBase = 0.54 * thVH;     // .t-horizon crest baseline (bottom:-54vh)
+      var H = window.__fmHorizon;
+      var thG = (H && isFinite(H.crestY)) ? H.crestY : thBase;
+      var thBump = -0.085 * thVH * Math.sin(Math.PI * smooth(0.0, 0.72, p));
+      horizon.style.transform = 'translateX(-50%) translateY(' + ((thG + thBump) - thBase).toFixed(1) + 'px)';
+      var gMax = (H && H.maxOp) || 0.5, gOp = (H && isFinite(H.opacity)) ? H.opacity : 0;
+      var fillIn = clamp(1 - gOp / gMax);                       // 1 when global hidden, 0 when global full
+      var recede = lerp(1, 0.16, smooth(0.55, 0.86, p));        // network resolves -> line recedes
+      hOp = fillIn * recede;
+      horizon.style.opacity = hOp.toFixed(3);
+      if (H && H.bloomColor) horizon.style.borderTopColor = H.bloomColor;
+    }
 
     // ---- eclipse sun: rides the curved horizon line at the cursor's x ----
     if (sun) {
@@ -307,9 +323,8 @@
     var lineDraw = smooth(0.86, 0.97, p);
     for (i = 0; i < lines.length; i++) { lines[i].el.style.strokeDashoffset = lines[i].len * (1 - lineDraw); }
 
-    // curved horizon: rises gently then recedes as the network resolves
-    hy = lerp(0, -150, smooth(0.0, 0.72, p));
-    hOp = lerp(1, 0.16, smooth(0.55, 0.86, p));
+    // curved horizon position + opacity are now driven each frame in renderCanvas() from the
+    // live global crest (__fmHorizon), so the global<->transition handoff is seamless. (no-op here)
   }
 
   function scanIn(el, a, b, prog) {

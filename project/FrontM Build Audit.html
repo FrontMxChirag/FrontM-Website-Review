@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FrontM · Website Build Audit</title>
+<link rel="stylesheet" href="site/fm.css">
+<style>
+  .au-body { background: var(--bg); color: var(--body); min-height: 100vh; }
+  .au-wrap { max-width: 1240px; margin-inline: auto; padding: clamp(40px,7vh,84px) clamp(20px,5vw,56px) 130px; }
+
+  /* header */
+  .au-back { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--subtle); display: inline-flex; align-items: center; gap: 8px; margin-bottom: 30px; transition: color .2s; }
+  .au-back:hover { color: var(--body); }
+  .au-back svg { width: 14px; height: 14px; }
+  .au-head h1 { font-size: clamp(2.4rem,5vw,3.6rem); letter-spacing: -0.01em; line-height: 1.02; }
+  .au-head h1 em { font-style: italic; }
+  .au-head .lede { margin-top: 16px; max-width: 660px; }
+  .au-meta { display: flex; flex-wrap: wrap; gap: 8px 10px; margin-top: 24px; font-family: var(--mono); font-size: 11px; }
+  .au-meta span { padding: 5px 11px; border-radius: var(--r-pill); border: 1px solid var(--line); color: var(--muted); letter-spacing: 0.03em; }
+  .au-meta a { padding: 5px 12px; border-radius: var(--r-pill); border: 1px solid var(--line-2); color: #EDEFF7; display: inline-flex; gap: 7px; align-items: center; transition: background .2s,border-color .2s; }
+  .au-meta a:hover { background: rgba(255,255,255,0.05); border-color: var(--line-strong); }
+  .au-meta a svg { width: 13px; height: 13px; }
+
+  /* scorecards */
+  .au-cards { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-top: 40px; }
+  .au-card { background: var(--s-1); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 20px 22px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); }
+  .au-card .k { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--subtle); }
+  .au-card .v { font-family: var(--disp); font-size: 2.7rem; line-height: 1; color: var(--heading); margin-top: 12px; }
+  .au-card .v small { font-size: 1.1rem; color: var(--faint); }
+  .au-card .sub { font-size: 0.8rem; color: var(--muted); margin-top: 9px; line-height: 1.45; }
+  .au-card .barline { height: 5px; border-radius: 3px; background: rgba(255,255,255,0.06); margin-top: 14px; overflow: hidden; }
+  .au-card .barline i { display: block; height: 100%; border-radius: 3px; }
+
+  /* section shells */
+  .au-sec { margin-top: 58px; scroll-margin-top: 24px; }
+  .au-sec > .h { display: flex; align-items: baseline; gap: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--line); margin-bottom: 26px; }
+  .au-sec > .h .num { font-family: var(--mono); font-size: 13px; color: var(--primary-lift); }
+  .au-sec > .h h2 { font-size: clamp(1.5rem,2.6vw,2rem); letter-spacing: -0.01em; }
+  .au-sec > .h .desc { margin-left: auto; font-size: 0.82rem; color: var(--subtle); max-width: 340px; text-align: right; }
+
+  /* sub-block grid (gap lists) */
+  .au-grid { display: grid; gap: 16px; }
+  .au-grid.c2 { grid-template-columns: repeat(2,1fr); }
+  .au-grid.c3 { grid-template-columns: repeat(3,1fr); }
+  .au-block { background: var(--s-1); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 20px 22px; }
+  .au-block.accent { border-left: 3px solid var(--bl, var(--primary-lift)); }
+  .au-block h3 { font-family: var(--sans); font-weight: 600; font-size: 0.95rem; letter-spacing: 0; color: var(--heading); display: flex; align-items: center; gap: 9px; margin-bottom: 4px; }
+  .au-block h3 .cnt { margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--faint); font-weight: 400; }
+  .au-block .tag { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--subtle); display: block; margin-bottom: 12px; }
+  .au-list { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+  .au-list li { display: flex; gap: 10px; font-size: 0.875rem; line-height: 1.45; color: var(--body); align-items: flex-start; }
+  .au-list li::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--dot, var(--faint)); margin-top: 7px; flex: none; }
+  .au-list li b { color: var(--heading); font-weight: 600; }
+  .au-list li .m { color: var(--subtle); }
+  .au-list.ok li::before { background: var(--b-green); }
+  .au-list.warn li::before { background: var(--b-orange); }
+  .au-list.gap li::before { background: var(--primary-lift); }
+  .au-list.info li::before { background: var(--b-blue); }
+
+  /* status pill */
+  .pill { font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; padding: 4px 9px; border-radius: var(--r-xs); display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .pill i { width: 6px; height: 6px; border-radius: 50%; }
+  .st-built    { color: #4BE08A; background: rgba(24,201,92,0.13); }   .st-built i { background: var(--b-green); }
+  .st-progress { color: #FFB871; background: rgba(255,106,4,0.13); }   .st-progress i { background: var(--b-orange); }
+  .st-design   { color: #8CC9FF; background: rgba(1,179,246,0.13); }   .st-design i { background: var(--b-blue); }
+  .st-planned  { color: #C2B6FF; background: rgba(122,107,255,0.16); } .st-planned i { background: var(--primary-lift); }
+  .st-none     { color: var(--subtle); background: rgba(255,255,255,0.05); } .st-none i { background: var(--faint); }
+
+  .prio { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.05em; padding: 3px 8px; border-radius: var(--r-xs); }
+  .p-P0 { color: #FF8A8A; background: rgba(201,52,52,0.18); }
+  .p-P1 { color: #FFB871; background: rgba(255,106,4,0.14); }
+  .p-P2 { color: #8CC9FF; background: rgba(1,179,246,0.13); }
+  .p-P3 { color: var(--subtle); background: rgba(255,255,255,0.05); }
+
+  /* tracker table */
+  .au-track-tools { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; align-items: center; }
+  .au-track-tools .fchip { font-family: var(--mono); font-size: 11px; letter-spacing: 0.03em; padding: 7px 13px; border-radius: var(--r-pill); border: 1px solid var(--line); color: var(--muted); transition: all .18s; }
+  .au-track-tools .fchip:hover { border-color: var(--line-2); color: var(--body); }
+  .au-track-tools .fchip.on { background: #fff; color: #0A0B1E; border-color: #fff; }
+  .au-track-tools .fchip .c { opacity: .6; }
+
+  .au-table { border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; background: var(--s-1); }
+  .au-thead, .au-row { display: grid; grid-template-columns: 1.7fr 90px 1.5fr 1fr 0.9fr; gap: 14px; padding: 13px 20px; align-items: center; }
+  .au-thead { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); border-bottom: 1px solid var(--line); }
+  .au-row { border-top: 1px solid var(--line); cursor: pointer; transition: background .15s; }
+  .au-row:first-of-type { border-top: none; }
+  .au-row:hover { background: rgba(255,255,255,0.02); }
+  .au-row .pg { display: flex; flex-direction: column; gap: 3px; }
+  .au-row .pg b { color: var(--heading); font-weight: 600; font-size: 0.92rem; }
+  .au-row .pg .url { font-family: var(--mono); font-size: 10.5px; color: var(--subtle); }
+  .au-row .who { font-size: 0.82rem; color: var(--muted); }
+  .au-row .csd { display: flex; gap: 5px; }
+  .au-mini { font-family: var(--mono); font-size: 9px; letter-spacing: 0.04em; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; }
+  .mini-done { color: #4BE08A; background: rgba(24,201,92,0.12); }
+  .mini-part { color: #FFB871; background: rgba(255,106,4,0.12); }
+  .mini-todo { color: var(--subtle); background: rgba(255,255,255,0.05); }
+  .au-row .cta { font-size: 0.8rem; color: var(--muted); }
+  .au-detail { grid-column: 1/-1; padding: 4px 2px 6px; font-size: 0.84rem; color: var(--subtle); line-height: 1.5; display: none; }
+  .au-detail.open { display: block; }
+  .au-detail b { color: var(--body); font-weight: 600; }
+  .au-row.is-open { background: rgba(255,255,255,0.025); }
+
+  /* roadmap */
+  .au-road { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+  .au-lane { background: var(--s-1); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 22px; }
+  .au-lane .when { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 8px; padding: 5px 11px; border-radius: var(--r-pill); }
+  .au-lane.now .when { color: #FF8A8A; background: rgba(201,52,52,0.16); }
+  .au-lane.next .when { color: #FFB871; background: rgba(255,106,4,0.13); }
+  .au-lane.later .when { color: #8CC9FF; background: rgba(1,179,246,0.12); }
+  .au-lane h3 { font-family: var(--sans); font-weight: 600; font-size: 0.95rem; color: var(--heading); margin: 16px 0 4px; }
+  .au-lane ol { list-style: none; counter-reset: s; display: flex; flex-direction: column; gap: 12px; margin-top: 14px; }
+  .au-lane ol li { counter-increment: s; display: flex; gap: 11px; font-size: 0.875rem; line-height: 1.45; }
+  .au-lane ol li::before { content: counter(s); font-family: var(--mono); font-size: 11px; color: var(--primary-lift); border: 1px solid var(--line-2); border-radius: 50%; width: 22px; height: 22px; display: grid; place-items: center; flex: none; }
+  .au-lane ol li b { color: var(--heading); font-weight: 600; }
+
+  .au-foot { margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 0.84rem; color: var(--subtle); line-height: 1.6; max-width: 780px; }
+  .au-foot b { color: var(--body); }
+
+  @media (max-width: 1000px) {
+    .au-cards { grid-template-columns: repeat(2,1fr); }
+    .au-grid.c3, .au-grid.c2 { grid-template-columns: 1fr; }
+    .au-road { grid-template-columns: 1fr; }
+    .au-thead { display: none; }
+    .au-row { grid-template-columns: 1fr 90px; gap: 8px 12px; }
+    .au-row .who, .au-row .cta { grid-column: 1/-1; }
+    .au-sec > .h .desc { display: none; }
+  }
+</style>
+</head>
+<body class="au-body">
+<div class="page-base" aria-hidden="true"></div>
+<canvas id="signal-field" aria-hidden="true" style="position:fixed;inset:0;z-index:-1;width:100vw;height:100vh;"></canvas>
+
+<div class="au-wrap">
+  <a class="au-back" href="FrontM Work Hub.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"></path></svg> Work Hub</a>
+
+  <header class="au-head">
+    <span class="eyebrow"><span class="dot pulse"></span> Website build audit</span>
+    <h1 style="margin-top:16px;">One page is live. The <em>site</em> is not.</h1>
+    <p class="lede">A working inventory of what's planned, designed, built, and missing across the FrontM marketing site — measured against the homepage as it ships today and the IA declared in the nav and footer. Every link below currently points to <code style="font-family:var(--mono);font-size:0.9em;color:var(--primary-lift)">#</code>.</p>
+    <div class="au-meta">
+      <span id="au-asof"></span>
+      <span>Source: Homepage v2 + nav/footer IA</span>
+      <a href="FrontM Web Design Doc.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path></svg> Design Doc</a>
+      <a href="FrontM Homepage v2.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg> Homepage</a>
+    </div>
+  </header>
+
+  <section class="au-cards" id="au-cards"></section>
+
+  <!-- 1 · HOMEPAGE -->
+  <section class="au-sec" id="s1">
+    <div class="h"><span class="num">01</span><h2>Homepage status</h2><span class="desc">13 sections shipping in Homepage v2. The build is strong; the gaps are proof, pricing and second CTAs.</span></div>
+
+    <div class="au-grid c2">
+      <div class="au-block accent" style="--bl:var(--b-green);">
+        <h3>Built &amp; shipping <span class="cnt">13 sections</span></h3>
+        <span class="tag">Planned · Designed · Built</span>
+        <ul class="au-list ok">
+          <li><b>Hero</b> + "Trusted by" logo marquee</li>
+          <li><b>Signature transition</b> — "FrontM is changing that" scroll piece</li>
+          <li><b>Intelligent infrastructure</b> — frontm.ai pillars</li>
+          <li><b>Platform / modules</b> explorer — all 8 modules</li>
+          <li><b>Pathways</b> by role (Fleet Ops, HSQE, Crewing…)</li>
+          <li><b>Introducing the Platform</b> — 3D scroll assembly</li>
+          <li><b>Platform narrative</b> + <b>Impact</b> stat block</li>
+          <li><b>onship</b> community block</li>
+          <li><b>Resources / blog</b> teaser · <b>Testimonials</b> slider</li>
+          <li><b>Footer</b> — newsletter, careers, full sitemap · <b>Book-a-Demo</b> modal</li>
+        </ul>
+      </div>
+      <div class="au-block accent" style="--bl:var(--b-orange);">
+        <h3>Missing from the homepage <span class="cnt">6 gaps</span></h3>
+        <span class="tag">Not yet planned or designed</span>
+        <ul class="au-list warn">
+          <li><b>Pricing / packaging teaser</b> — no signal of cost or how to buy anywhere on the page</li>
+          <li><b>Security &amp; compliance band</b> — ISO 27001 only appears as footer text; no trust strip</li>
+          <li><b>Integrations / ecosystem</b> — "APIs &amp; Integrations" promised in footer, shown nowhere</li>
+          <li><b>Partner / reseller</b> entry — no path for service providers to engage</li>
+          <li><b>Quantified outcomes</b> — Impact stats read as placeholders, not sourced numbers</li>
+          <li><b>"How it works"</b> in plain language — the story is evocative but light on concrete mechanics</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="au-grid c3" style="margin-top:16px;">
+      <div class="au-block">
+        <h3>Messaging gaps</h3>
+        <ul class="au-list warn">
+          <li>Strong on vision, thin on <b>"what do I actually get?"</b></li>
+          <li>No explicit <b>ICP framing</b> per visitor type beyond pathways</li>
+          <li>Positioning still straddles "toolbox" ↔ "AI-native platform" <span class="m">(Design Doc §10)</span></li>
+        </ul>
+      </div>
+      <div class="au-block">
+        <h3>CTA gaps</h3>
+        <ul class="au-list info">
+          <li><b>Book a Demo</b> is the only real CTA — repeated everywhere</li>
+          <li>No <b>onship download</b>, <b>contact sales</b>, or <b>partner inquiry</b> as distinct actions</li>
+          <li>Newsletter exists but is <b>not wired</b> (onsubmit returns false)</li>
+        </ul>
+      </div>
+      <div class="au-block">
+        <h3>Proof / trust gaps</h3>
+        <ul class="au-list gap">
+          <li>Marquee logos present — confirm <b>usage rights</b></li>
+          <li>Testimonials likely <b>unattributed / placeholder</b></li>
+          <li><b>Case studies</b> linked but not built — the strongest missing proof</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 · SITEMAP -->
+  <section class="au-sec" id="s2">
+    <div class="h"><span class="num">02</span><h2>Sitemap status</h2><span class="desc">IA declared across 5 nav megamenus + 6 footer columns. The homepage absorbs the overview level; everything below needs builds.</span></div>
+    <div class="au-grid c2">
+      <div class="au-block accent" style="--bl:var(--b-green);">
+        <h3>Covered by the homepage <span class="cnt">overview level</span></h3>
+        <span class="tag">As sections, not dedicated pages</span>
+        <ul class="au-list ok">
+          <li>Platform overview · the 8 modules at a glance</li>
+          <li>Industries (via role pathways)</li>
+          <li>onship community · frontm.ai</li>
+          <li>Blog / resources teaser · careers teaser</li>
+        </ul>
+      </div>
+      <div class="au-block accent" style="--bl:var(--primary-lift);">
+        <h3>Need dedicated builds <span class="cnt">~30 pages</span></h3>
+        <span class="tag">Declared in nav/footer, not built</span>
+        <ul class="au-list gap">
+          <li><b>8 module</b> product pages (Connect → Manage)</li>
+          <li><b>Platform</b> sub-pages: Marketplace, Superapp PaaS, Low-Code Studio, APIs</li>
+          <li><b>6 Industries</b> pages · <b>onship</b> app page</li>
+          <li><b>Resources hub</b> + Case Studies + Blog index + post template</li>
+          <li><b>About · Contact · Careers · Pricing · Partners</b></li>
+        </ul>
+      </div>
+      <div class="au-block">
+        <h3>Can be merged (phase 1)</h3>
+        <ul class="au-list info">
+          <li>8 module pages → one <b>Products</b> page with anchors first</li>
+          <li>Privacy / Terms / Security / Cookies → one <b>Legal hub</b></li>
+          <li>Seafarers / Professionals / Cadets / Mentors → one <b>onship / Community</b> page</li>
+          <li>Industries → <b>2–3 grouped</b> pages, not 6 thin ones</li>
+        </ul>
+      </div>
+      <div class="au-block">
+        <h3>Low priority / later</h3>
+        <ul class="au-list">
+          <li>Per-app pages (Drop Local, Spinnet, Emma AI, Loft Meeting, Seasurfer)</li>
+          <li>Status page · Cadets / Mentors sub-pages</li>
+          <li>Dev Docs portal (Partners → Build)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="au-block accent" style="--bl:var(--b-orange); margin-top:16px;">
+      <h3>Missing from the current IA entirely</h3>
+      <ul class="au-list warn">
+        <li><b>Pricing</b> — no node anywhere in nav or footer</li>
+        <li><b>Security / Trust center</b> — compliance claimed, no destination</li>
+        <li><b>Demo confirmation / thank-you</b> page (modal handles it, but no shareable URL)</li>
+        <li><b>Search · 404 · sitemap.xml</b> — standard utility pages</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 3 · PAGE BUILD TRACKER -->
+  <section class="au-sec" id="s3">
+    <div class="h"><span class="num">03</span><h2>Page build tracker</h2><span class="desc">Click any row for purpose, assets and notes. Owners are unassigned — fill in as the team forms.</span></div>
+    <div class="au-track-tools" id="au-filters"></div>
+    <div class="au-table">
+      <div class="au-thead"><span>Page · URL</span><span>Priority</span><span>Audience · Purpose</span><span>Copy / Design / Dev</span><span>Status</span></div>
+      <div id="au-rows"></div>
+    </div>
+  </section>
+
+  <!-- 4 · CONTENT GAPS -->
+  <section class="au-sec" id="s4">
+    <div class="h"><span class="num">04</span><h2>Content gap list</h2><span class="desc">What's needed before pages can be built — copy, data and assets.</span></div>
+    <div class="au-grid c3">
+      <div class="au-block"><h3>Missing copy</h3><ul class="au-list gap">
+        <li>Per-module value props &amp; feature copy (×8)</li>
+        <li>Industry-specific pages &amp; outcomes</li>
+        <li>About / company story · pricing &amp; packaging</li>
+        <li>Partner program details</li>
+      </ul></div>
+      <div class="au-block"><h3>Missing stats</h3><ul class="au-list warn">
+        <li>Real Impact numbers (currently placeholder)</li>
+        <li>Per-module proof metrics</li>
+        <li>Fleet / vessel / user counts for credibility</li>
+      </ul></div>
+      <div class="au-block"><h3>Missing testimonials</h3><ul class="au-list gap">
+        <li>Attributed quotes (name, role, company, logo)</li>
+        <li>2–3 full <b>case studies</b> with outcomes</li>
+        <li>Permission / sign-off from named customers</li>
+      </ul></div>
+      <div class="au-block"><h3>Missing screenshots</h3><ul class="au-list info">
+        <li>Product UI for each module</li>
+        <li>onship app store-ready screens</li>
+        <li>Dashboard / admin views for industries pages</li>
+      </ul></div>
+      <div class="au-block"><h3>Missing product explanations</h3><ul class="au-list gap">
+        <li>"How it works" architecture diagram</li>
+        <li>Superapp PaaS &amp; Low-Code Studio explainers</li>
+        <li>API / integration docs &amp; list</li>
+      </ul></div>
+      <div class="au-block"><h3>Missing legal / compliance</h3><ul class="au-list warn">
+        <li>Privacy Policy · Terms · Cookie policy</li>
+        <li>Security / ISO 27001 trust page · GDPR statement</li>
+        <li>DPA &amp; sub-processor list</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <!-- 5 · CONVERSION GAPS -->
+  <section class="au-sec" id="s5">
+    <div class="h"><span class="num">05</span><h2>Conversion gap list</h2><span class="desc">One path works end-to-end. The rest are absent or unwired.</span></div>
+    <div id="au-conv" class="au-grid c2"></div>
+  </section>
+
+  <!-- 6 · NEXT ACTIONS -->
+  <section class="au-sec" id="s6">
+    <div class="h"><span class="num">06</span><h2>Recommended next actions</h2><span class="desc">Sequenced to ship proof and conversion first, then scale the IA.</span></div>
+    <div class="au-road">
+      <div class="au-lane now">
+        <span class="when"><span class="dot" style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span> This week</span>
+        <ol>
+          <li><b>Wire the demo + newsletter</b> to a real endpoint (Formspree per Design Doc) — stop dropping leads.</li>
+          <li><b>Replace placeholder Impact stats &amp; testimonials</b> with real, attributed numbers — or pull them until sourced.</li>
+          <li><b>Confirm marquee logo rights</b>; remove any you can't use.</li>
+          <li><b>Stand up Contact + Legal hub</b> (Privacy/Terms/Cookies) — lowest effort, highest compliance risk.</li>
+        </ol>
+      </div>
+      <div class="au-lane next">
+        <span class="when"><span class="dot" style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span> Next 2 weeks</span>
+        <ol>
+          <li><b>Products page</b> — one page, 8 module anchors, real screenshots + value props.</li>
+          <li><b>About + Careers</b> pages (careers already teased in footer).</li>
+          <li><b>Pricing teaser</b> — even "contact for pricing" beats silence.</li>
+          <li><b>Resources hub + 1 case study</b> — the strongest missing proof asset.</li>
+          <li><b>Security / Trust page</b> to back the ISO 27001 claim.</li>
+        </ol>
+      </div>
+      <div class="au-lane later">
+        <span class="when"><span class="dot" style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span> Later</span>
+        <ol>
+          <li><b>Split modules</b> into dedicated pages once traffic justifies it.</li>
+          <li><b>Industries pages</b> (grouped 2–3), <b>Partner program</b> + Dev Docs.</li>
+          <li><b>onship app</b> page with store links &amp; download path.</li>
+          <li><b>Blog engine</b> + post template; per-app pages.</li>
+          <li>Utility: search, 404, sitemap.xml, status page.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <footer class="au-foot">
+    <b>How this stays current:</b> the page tracker reads from the <code style="font-family:var(--mono)">PAGES</code> array at the bottom of this file — edit a row's <code style="font-family:var(--mono)">status</code> / <code style="font-family:var(--mono)">copy/design/dev</code> as work lands and the scorecards re-tally on reload. This audit reflects Homepage v2 and the IA declared in its nav + footer; re-run it whenever the IA changes.
+  </footer>
+</div>
+
+<script src="site/fm-data.js" defer></script>
+<script src="site/scroll-horizon.js" defer></script>
+<script src="site/signal-field.js" defer></script>
+<script>
+/* ============================================================
+   PAGES — single source for the build tracker.
+   status: built | progress | design | planned | none
+   copy/design/dev: done | part | todo
+   ============================================================ */
+const PAGES = [
+  { name:"Homepage", url:"/", prio:"P0", aud:"All visitors", purpose:"Position FrontM, drive demo bookings.", status:"built", copy:"part", design:"done", dev:"done", cta:"Book a Demo", assets:"Real stats, attributed testimonials", notes:"Shipping as Homepage v2. Copy marked 'part' — Impact stats & testimonials are placeholders; demo+newsletter not wired to an endpoint." },
+  { name:"Products (modules)", url:"/products", prio:"P1", aud:"Buyers, evaluators", purpose:"Explain the 8 modules with proof.", status:"planned", copy:"todo", design:"part", dev:"todo", cta:"Book a Demo", assets:"Module UI screenshots, value props ×8", notes:"Phase 1 = one page with 8 anchors (Connect→Manage), reusing the homepage module explorer. Split later." },
+  { name:"Contact", url:"/contact", prio:"P0", aud:"All", purpose:"Capture sales & general inquiries.", status:"none", copy:"todo", design:"todo", dev:"todo", cta:"Send message", assets:"Form → inbox, office/region info", notes:"No contact path exists today beyond the demo modal. Fast to build, removes a hard gap." },
+  { name:"Legal hub", url:"/legal", prio:"P0", aud:"Buyers, legal, security", purpose:"Privacy, Terms, Cookies, GDPR.", status:"none", copy:"todo", design:"todo", dev:"todo", cta:"—", assets:"Legal copy (counsel)", notes:"Footer links exist but dead. Compliance risk; needs real legal copy, not placeholder." },
+  { name:"Security / Trust", url:"/security", prio:"P1", aud:"IT, security, procurement", purpose:"Back the ISO 27001 claim.", status:"none", copy:"todo", design:"todo", dev:"todo", cta:"Request DPA", assets:"Certs, sub-processor list, DPA", notes:"Claimed in footer & hero badges; no destination. Maritime buyers will ask." },
+  { name:"Pricing", url:"/pricing", prio:"P1", aud:"Buyers", purpose:"Signal cost / how to buy.", status:"none", copy:"todo", design:"todo", dev:"todo", cta:"Contact sales", assets:"Packaging decision", notes:"Not in the IA at all. Even 'contact for pricing' beats total silence." },
+  { name:"About", url:"/about", prio:"P1", aud:"All, press, talent", purpose:"Company story & credibility.", status:"none", copy:"todo", design:"todo", dev:"todo", cta:"See careers", assets:"Team, mission, milestones", notes:"Linked in footer Company column. Pairs with Careers." },
+  { name:"Careers", url:"/careers", prio:"P2", aud:"Candidates", purpose:"Recruit (12 roles teased).", status:"design", copy:"part", design:"part", dev:"todo", cta:"View roles", assets:"Live role list / ATS link", notes:"Already teased in the footer careers card — extend into a page." },
+  { name:"Resources hub", url:"/resources", prio:"P1", aud:"Researchers, buyers", purpose:"Case studies, whitepapers, news.", status:"planned", copy:"todo", design:"todo", dev:"todo", cta:"—", assets:"At least 1 case study", notes:"Blog teaser exists on homepage; needs an index + content engine." },
+  { name:"Case study (template)", url:"/resources/case/*", prio:"P1", aud:"Buyers", purpose:"Concrete proof with outcomes.", status:"none", copy:"todo", design:"todo", dev:"todo", cta:"Book a Demo", assets:"Named customer + numbers + sign-off", notes:"Strongest missing proof asset. Build 1 template, fill with 1 real story." },
+  { name:"Blog index + post", url:"/blog", prio:"P2", aud:"SEO, returning", purpose:"Field notes, thought leadership.", status:"planned", copy:"part", design:"part", dev:"todo", cta:"Subscribe", assets:"Post template, 3+ posts", notes:"3 posts already written as homepage teasers — needs index + post layout." },
+  { name:"onship app", url:"/onship", prio:"P2", aud:"Seafarers, community", purpose:"Explain onship, drive downloads.", status:"planned", copy:"part", design:"part", dev:"todo", cta:"Download onship", assets:"App store links, app screenshots", notes:"Homepage block + nav megamenu exist; no download path yet." },
+  { name:"Industries (grouped)", url:"/industries", prio:"P2", aud:"Segment buyers", purpose:"Tailored value per segment.", status:"planned", copy:"todo", design:"part", dev:"todo", cta:"Book a Demo", assets:"Segment copy, screenshots", notes:"6 segments in footer; ship as 2–3 grouped pages, reuse pathways content." },
+  { name:"Platform sub-pages", url:"/platform/*", prio:"P2", aud:"Technical buyers, devs", purpose:"Marketplace, PaaS, Studio, APIs.", status:"none", copy:"todo", design:"todo", dev:"todo", cta:"Book a Demo", assets:"Architecture diagram, API list", notes:"4 sub-pages promised in footer Platform column." },
+  { name:"Partners", url:"/partners", prio:"P3", aud:"Resellers, service providers", purpose:"Build / Distribute / Dev Docs.", status:"none", copy:"todo", design:"todo", dev:"todo", cta:"Become a partner", assets:"Program terms, dev docs", notes:"In Design Doc §10 IA; no partner inquiry path anywhere today." },
+  { name:"Per-app pages", url:"/apps/*", prio:"P3", aud:"App-specific", purpose:"Drop Local, Spinnet, Emma AI…", status:"none", copy:"todo", design:"todo", dev:"todo", cta:"Book a Demo", assets:"Per-app copy & UI", notes:"Design Doc §10. Lowest priority until module pages exist." },
+  { name:"Utility (404 / search / sitemap)", url:"/*", prio:"P3", aud:"All / crawlers", purpose:"Navigation safety net & SEO.", status:"none", copy:"todo", design:"todo", dev:"todo", cta:"—", assets:"—", notes:"Standard hygiene. 404 + sitemap.xml first; search once content volume warrants." },
+];
+
+const CONV = [
+  { name:"Demo path", dot:"ok", status:"built", note:"Multi-step Book-a-Demo modal (day → time → details → success). <b>Backend not wired</b> — submit doesn't reach an inbox yet.", st:"st-progress", lbl:"Works, unwired" },
+  { name:"Contact path", dot:"warn", status:"none", note:"No general contact form or sales path beyond the demo modal. A buyer who isn't ready for a demo has nowhere to go.", st:"st-none", lbl:"Missing" },
+  { name:"Partner inquiry path", dot:"warn", status:"none", note:"No way for service providers / resellers to register interest. Partners page + form needed.", st:"st-none", lbl:"Missing" },
+  { name:"onship download path", dot:"gap", status:"none", note:"onship is featured but there are no app-store links or download CTA anywhere on the site.", st:"st-none", lbl:"Missing" },
+  { name:"Lead magnet path", dot:"gap", status:"none", note:"No gated asset (whitepaper, ROI calc, benchmark) to capture top-of-funnel leads who won't book.", st:"st-none", lbl:"Missing" },
+  { name:"Newsletter / resource path", dot:"info", status:"progress", note:"Footer newsletter form exists but <b>onsubmit returns false</b> — not connected. Resource subscribe likewise pending.", st:"st-progress", lbl:"Unwired" },
+];
+
+/* ---- render scorecards ---- */
+const total = PAGES.length;
+const built = PAGES.filter(p=>p.status==="built").length;
+const inflight = PAGES.filter(p=>p.status==="progress"||p.status==="design").length;
+const notStarted = PAGES.filter(p=>p.status==="none").length;
+const p0 = PAGES.filter(p=>p.prio==="P0").length;
+const cards = [
+  { k:"Pages in IA", v:total, sub:"Declared across nav + footer", bar:built/total, col:"var(--b-green)", barlbl:built+" built" },
+  { k:"Live & shipping", v:built, suffix:"/"+total, sub:"Only the homepage is public", bar:built/total, col:"var(--b-green)" },
+  { k:"Not started", v:notStarted, sub:"No copy, design or dev yet", bar:notStarted/total, col:"var(--b-orange)" },
+  { k:"P0 — urgent", v:p0, sub:"Homepage wiring, Contact, Legal", bar:p0/total, col:"#FF8A8A" },
+];
+document.getElementById("au-cards").innerHTML = cards.map(c=>`
+  <div class="au-card">
+    <div class="k">${c.k}</div>
+    <div class="v">${c.v}${c.suffix?`<small>${c.suffix}</small>`:""}</div>
+    <div class="sub">${c.sub}</div>
+    <div class="barline"><i style="width:${Math.round(c.bar*100)}%;background:${c.col}"></i></div>
+  </div>`).join("");
+
+/* ---- tracker ---- */
+const STLABEL = { built:"Built", progress:"In progress", design:"In design", planned:"Planned", none:"Not started" };
+const CSLABEL = { done:"done", part:"part", todo:"todo" };
+function miniClass(v){ return v==="done"?"mini-done":v==="part"?"mini-part":"mini-todo"; }
+function rowHTML(p,i){
+  return `<div class="au-row" data-status="${p.status}" data-i="${i}">
+    <div class="pg"><b>${p.name}</b><span class="url">${p.url}</span></div>
+    <div><span class="prio p-${p.prio}">${p.prio}</span></div>
+    <div class="who"><b style="color:var(--body)">${p.aud}</b> — ${p.purpose}</div>
+    <div class="csd">
+      <span class="au-mini ${miniClass(p.copy)}" title="Copy">C·${CSLABEL[p.copy]}</span>
+      <span class="au-mini ${miniClass(p.design)}" title="Design">D·${CSLABEL[p.design]}</span>
+      <span class="au-mini ${miniClass(p.dev)}" title="Dev">▶·${CSLABEL[p.dev]}</span>
+    </div>
+    <div><span class="pill st-${p.status}"><i></i>${STLABEL[p.status]}</span></div>
+    <div class="au-detail" id="det-${i}"><b>CTA:</b> ${p.cta} &nbsp;·&nbsp; <b>Assets needed:</b> ${p.assets} &nbsp;·&nbsp; <b>Owner:</b> <span style="color:var(--faint)">unassigned</span><br><b>Notes:</b> ${p.notes}</div>
+  </div>`;
+}
+const rowsEl = document.getElementById("au-rows");
+rowsEl.innerHTML = PAGES.map(rowHTML).join("");
+rowsEl.addEventListener("click", e=>{
+  const r = e.target.closest(".au-row"); if(!r) return;
+  const det = r.querySelector(".au-detail");
+  det.classList.toggle("open"); r.classList.toggle("is-open");
+});
+
+/* ---- filters ---- */
+const filters = [
+  { key:"all", label:"All", n:total },
+  { key:"built", label:"Built", n:built },
+  { key:"active", label:"In flight", n:inflight },
+  { key:"planned", label:"Planned", n:PAGES.filter(p=>p.status==="planned").length },
+  { key:"none", label:"Not started", n:notStarted },
+];
+const fEl = document.getElementById("au-filters");
+fEl.innerHTML = filters.map((f,i)=>`<button class="fchip${i===0?" on":""}" data-f="${f.key}">${f.label} <span class="c">${f.n}</span></button>`).join("");
+fEl.addEventListener("click", e=>{
+  const b = e.target.closest(".fchip"); if(!b) return;
+  fEl.querySelectorAll(".fchip").forEach(c=>c.classList.remove("on")); b.classList.add("on");
+  const k = b.dataset.f;
+  const want = { all:["built","progress","design","planned","none"], built:["built"], active:["progress","design"], planned:["planned"], none:["none"] }[k];
+  rowsEl.querySelectorAll(".au-row").forEach(r=> r.style.display = want.includes(r.dataset.status) ? "" : "none");
+});
+
+/* ---- conversion ---- */
+document.getElementById("au-conv").innerHTML = CONV.map(c=>`
+  <div class="au-block accent" style="--bl:${c.dot==='ok'?'var(--b-green)':c.dot==='warn'?'var(--b-orange)':c.dot==='info'?'var(--b-blue)':'var(--primary-lift)'};">
+    <h3>${c.name} <span class="cnt"><span class="pill ${c.st}"><i></i>${c.lbl}</span></span></h3>
+    <p style="font-size:0.875rem;color:var(--muted);line-height:1.5;margin-top:8px;">${c.note}</p>
+  </div>`).join("");
+
+document.getElementById("au-asof").textContent = "As of " + new Date().toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
+</script>
+</body>
+</html>

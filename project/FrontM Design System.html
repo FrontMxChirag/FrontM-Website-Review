@@ -109,7 +109,7 @@
     <h1 style="margin-top:16px;">The doc says one thing.<br>The build says <em class="g-spectrum">another</em>.</h1>
     <p class="lede">This is the living audit between the <b style="color:var(--body)">Web Design Doc</b> (the target system) and what's actually shipping in <code style="font-family:var(--mono);font-size:0.9em;color:var(--primary-lift)">site/fm.css</code>. Every token, side by side. Fix the code or fix the doc — never let them drift.</p>
     <div class="ds-meta">
-      <span>Doc: Draft v3</span>
+      <span>Doc: Colour System v3</span>
       <span>Build: Homepage v2</span>
       <span id="ds-asof"></span>
       <a href="FrontM Web Design Doc.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path></svg> Full doc</a>
@@ -151,56 +151,80 @@
    To update: edit a row, reload — scorecard re-tallies.
    ============================================================ */
 const AUDIT = [
-  { num: "§3.1", title: "Surfaces — elevation ladder", note: "Reconciled. The six-step ladder matches 1:1 and both legacy surfaces have been removed from fm.css (--grad-page, .pf-stage and .phone migrated onto the ladder).", rows: [
-    { item: "Page base", tok: "--bg", target: "#0A0B1E", live: "#0A0B1E", status: "match" },
-    { item: "Inset / wells", tok: "--inset", target: "#06071A", live: "#06071A", status: "match" },
-    { item: "Surface 1 (cards)", tok: "--s-1", target: "#12152F", live: "#12152F", status: "match" },
-    { item: "Surface 2 (raised)", tok: "--s-2", target: "#1A1E3D", live: "#1A1E3D", status: "match" },
-    { item: "Surface 3 (modals)", tok: "--s-3", target: "#23284E", live: "#23284E", status: "match" },
-    { item: "Surface 4 (overlays)", tok: "--s-4", target: "#2C3160", live: "#2C3160", status: "match" },
-    { item: "Soft wash", tok: "--bg-soft", target: "removed", live: "removed ✓", status: "match", note: "Deleted; --grad-page + .pf-stage migrated onto the ladder." },
-    { item: "Deepest", tok: "--deepest", target: "removed", live: "removed ✓", status: "match", note: "Deleted; .phone migrated to --inset." },
+  { num: "§3.0", title: "Architecture — three tiers", note: "Colour System v3 (adopted 4 Jun 2026, Option 2 — doc-leads). The target is now a 3-tier token model; fm.css still ships the old flat tokens, so the colour layer is mid-migration. Type, spacing, radius, motion and components remain on-spec from the earlier reconciliation.", rows: [
+    { item: "Token architecture", tok: "tiers", target: "Primitives → Surfaces → Effects → Semantic", live: "flat (single layer)", status: "drift", note: "v3 separates 4 layers; fm.css is flat. Components must consume semantic tokens, never primitives." },
+    { item: "Naming rule", tok: "—", target: "components ref semantic only", live: "components ref flat vars", status: "drift" },
   ]},
-  { num: "§3.2", title: "Primary — violet / Engage", note: "Reconciled. All variants now match the spec; a separate --primary-fill-hover was added for solid-button hover so --primary-hover stays the on-dark text/icon hover.", rows: [
-    { item: "Primary fill", tok: "--primary", target: "#6B5FD9", live: "#6B5FD9", status: "match" },
-    { item: "On dark (text/icon)", tok: "--primary-lift", target: "#9A86FF", live: "#9A86FF", status: "match", note: "Corrected from #A99BFF; = --b-violet, 6.7:1 on --bg." },
-    { item: "Hover (on dark)", tok: "--primary-hover", target: "#B7AFFF", live: "#B7AFFF", status: "match", note: "Now lightens per §3.2; no longer reused as the fill-hover." },
-    { item: "Active / pressed", tok: "--primary-active", target: "#493CB6", live: "#493CB6", status: "match", note: "Added." },
-    { item: "Tint / container", tok: "--primary-bg", target: "rgba(122,107,255,0.16)", live: "rgba(122,107,255,0.16)", status: "match", note: "Added." },
-    { item: "Glow", tok: "--primary-glow", target: "rgba(154,134,255,0.45)", live: "rgba(154,134,255,0.45)", status: "match", note: "Opacity corrected from 0.55." },
+  { num: "§3.1", title: "Tier 1 — Primitive ramps", note: "Ten ramps × ten stops (--graphite-50 … --alert-900). The bedrock of v3 — none of this exists in fm.css yet, which only has flat --b-* spectrum hues.", rows: [
+    { item: "Operational Graphite", tok: "--graphite-50…900", target: "#6E7689 (anchor 500)", live: "—", status: "missing" },
+    { item: "Voyage Violet", tok: "--voyage-50…900", target: "#6B5FD9 (anchor 500)", live: "—", status: "missing" },
+    { item: "Signal Blue", tok: "--signal-50…900", target: "#01B3F6 (anchor 400)", live: "—", status: "missing" },
+    { item: "Crew Green", tok: "--crew-50…900", target: "#18C95C (anchor 400)", live: "—", status: "missing" },
+    { item: "Reef Lime", tok: "--reef-50…900", target: "#4DC243", live: "—", status: "missing" },
+    { item: "Beacon Amber", tok: "--beacon-50…900", target: "#FFC500 (anchor 400)", live: "—", status: "missing" },
+    { item: "Cargo Orange", tok: "--cargo-50…900", target: "#FF6A04 (anchor 400)", live: "—", status: "missing" },
+    { item: "Depth Indigo", tok: "--depth-50…900", target: "#4F6BF0", live: "—", status: "missing" },
+    { item: "Anchor Steel", tok: "--steel-50…900", target: "#5E7E9C", live: "—", status: "missing" },
+    { item: "Alert Red", tok: "--alert-50…900", target: "#E04545", live: "—", status: "missing" },
   ]},
-  { num: "§3.3", title: "Brand spectrum", note: "Fully reconciled — all nine stops match, with --b-indigo now promoted to spec.", rows: [
-    { item: "Blue (Connect)", tok: "--b-blue", target: "#01B3F6", live: "#01B3F6", status: "match" },
-    { item: "Aqua", tok: "--b-cyan", target: "#1FE6D4", live: "#1FE6D4", status: "match" },
-    { item: "Green (Care)", tok: "--b-green", target: "#18C95C", live: "#18C95C", status: "match" },
-    { item: "Lime (Train)", tok: "--b-green2", target: "#3CAD33", live: "#3CAD33", status: "match" },
-    { item: "Yellow (Inform)", tok: "--b-gold", target: "#FFC500", live: "#FFC500", status: "match" },
-    { item: "Orange (Entertain)", tok: "--b-orange", target: "#FF6A04", live: "#FF6A04", status: "match" },
-    { item: "Slate (Manage)", tok: "--b-slate", target: "#404858", live: "#404858", status: "match" },
-    { item: "Violet", tok: "--b-violet", target: "#9A86FF", live: "#9A86FF", status: "match" },
-    { item: "Indigo", tok: "--b-indigo", target: "#435FE8", live: "#435FE8", status: "match", note: "Promoted to spec (sits between blue and violet)." },
+  { num: "§3.2", title: "Tier 2 — Surface ladder", note: "Same six values, renamed to the v3 nautical ladder. A straight rename in fm.css closes this group.", rows: [
+    { item: "Sunken / inset", tok: "--abyss", target: "#06071A", live: "--inset #06071A", status: "drift", note: "Rename --inset → --abyss." },
+    { item: "Page base", tok: "--canvas", target: "#0A0B1E", live: "--bg #0A0B1E", status: "drift", note: "Rename --bg → --canvas." },
+    { item: "Default card", tok: "--hull", target: "#12152F", live: "--s-1 #12152F", status: "drift", note: "Rename --s-1 → --hull." },
+    { item: "Raised", tok: "--deck", target: "#1A1E3D", live: "--s-2 #1A1E3D", status: "drift", note: "Rename --s-2 → --deck." },
+    { item: "Overlay", tok: "--bridge", target: "#23284E", live: "--s-3 #23284E", status: "drift", note: "Rename --s-3 → --bridge." },
+    { item: "Highest", tok: "--helm", target: "#2C3160", live: "--s-4 #2C3160", status: "drift", note: "Rename --s-4 → --helm." },
   ]},
-  { num: "§3.4", title: "Module accents", note: "Reconciled. Care lifted off the old emerald and Maintain set to its distinct spec value.", rows: [
-    { item: "Connect", tok: "--m-connect", target: "#01B3F6", live: "#01B3F6", status: "match" },
-    { item: "Engage", tok: "--m-engage", target: "#6B5FD9", live: "#6B5FD9", status: "match" },
-    { item: "Care", tok: "--m-care", target: "#18C95C", live: "#18C95C", status: "match", note: "Lifted from the old #079B33." },
-    { item: "Inform", tok: "--m-inform", target: "#FFC500", live: "#FFC500", status: "match" },
-    { item: "Entertain", tok: "--m-entertain", target: "#FF6A04", live: "#FF6A04", status: "match" },
-    { item: "Train", tok: "--m-train", target: "#3CAD33", live: "#3CAD33", status: "match" },
-    { item: "Maintain", tok: "--m-maintain", target: "#4F6BFF", live: "#4F6BFF", status: "match", note: "Corrected from #435FE8 (kept distinct from --b-indigo)." },
-    { item: "Manage", tok: "--m-manage", target: "#404858", live: "#404858", status: "match" },
+  { num: "§3.3", title: "Tier 2 — Ink scale", note: "Same role, renamed; v3 has four ink steps (fm.css has five — --faint folds onto graphite).", rows: [
+    { item: "Primary text", tok: "--ink", target: "#FFFFFF", live: "--heading #FFFFFF", status: "drift", note: "Rename --heading → --ink." },
+    { item: "Secondary", tok: "--ink-2", target: "#D6DAEA", live: "--body #D6DAEA", status: "drift" },
+    { item: "Tertiary", tok: "--ink-3", target: "#AEB5C9", live: "--muted #AEB5C9", status: "drift" },
+    { item: "Muted", tok: "--ink-4", target: "#8A92A8", live: "--subtle #8A92A8", status: "drift" },
+    { item: "Fifth step", tok: "--faint", target: "fold onto graphite-500", live: "--faint #6E7691", status: "drift", note: "v3 has no fifth ink step; map to --graphite-500 #6E7689." },
   ]},
-  { num: "§3.6", title: "Text — dark", note: "Reconciled. --faint is now promoted to spec as the fifth step.", rows: [
-    { item: "Heading", tok: "--heading", target: "#FFFFFF", live: "#FFFFFF", status: "match" },
-    { item: "Body", tok: "--body", target: "#D6DAEA", live: "#D6DAEA", status: "match" },
-    { item: "Muted", tok: "--muted", target: "#AEB5C9", live: "#AEB5C9", status: "match" },
-    { item: "Subtle", tok: "--subtle", target: "#8A92A8", live: "#8A92A8", status: "match" },
-    { item: "Faint", tok: "--faint", target: "#6E7691", live: "#6E7691", status: "match", note: "Promoted to spec." },
+  { num: "§3.4", title: "Tier 2 — Hairlines", note: "One real value change: --line drops to 0.10. --line-strong is not in v3.", rows: [
+    { item: "Hairline", tok: "--line", target: "rgba(255,255,255,0.10)", live: "rgba(255,255,255,0.12)", status: "drift", note: "v3 lowers to 0.10." },
+    { item: "Border", tok: "--line-2", target: "rgba(255,255,255,0.18)", live: "rgba(255,255,255,0.18)", status: "match" },
+    { item: "Strong border", tok: "--line-strong", target: "not in v3", live: "rgba(255,255,255,0.28)", status: "drift", note: "Fold into --line-2 or drop." },
   ]},
-  { num: "§3.7", title: "Borders & hairlines", note: "Reconciled. Both hairlines bumped to spec opacity and --line-strong added; --line-soft kept as a temporary alias to --line.", rows: [
-    { item: "Border subtle", tok: "--line", target: "rgba(255,255,255,0.12)", live: "rgba(255,255,255,0.12)", status: "match", note: "Bumped from 0.08." },
-    { item: "Border default", tok: "--line-2", target: "rgba(255,255,255,0.18)", live: "rgba(255,255,255,0.18)", status: "match", note: "Bumped from 0.14." },
-    { item: "Border strong", tok: "--line-strong", target: "rgba(255,255,255,0.28)", live: "rgba(255,255,255,0.28)", status: "match", note: "Added." },
+  { num: "§3.5", title: "Tier 2 — Glass system", note: "A full 17-token glass system in v3 — absent from fm.css. Needed for product UI, video overlays and hero frosting.", rows: [
+    { item: "Dark glass weights", tok: "--glass-dk-thin…heavy", target: ".04 / .07 / .11 / .17", live: "—", status: "missing" },
+    { item: "Light glass weights", tok: "--glass-lt-thin…heavy", target: ".60 / .80 / .92", live: "—", status: "missing" },
+    { item: "Glass borders", tok: "--glass-*-border", target: "dk .10/.20 · lt voyage .16/.28", live: "—", status: "missing" },
+    { item: "Chromatic tints", tok: "--glass-voyage/signal/crew/beacon", target: "module-tinted fills", live: "—", status: "missing" },
+    { item: "Blur levels", tok: "--glass-blur-sm/-/-heavy", target: "8 / 24 / 56px", live: "—", status: "missing" },
+    { item: "Glass shadows", tok: "--glass-*-shadow", target: "composite dk + lt", live: "—", status: "missing" },
+  ]},
+  { num: "§3.6", title: "Module palettes (×9)", note: "v3 re-maps the modules: Engage becomes Reef-Lime (was violet), Train/Maintain are dropped, and Sailor Cart, eSIM, OnShip Mentorship are added. Voyage Violet is the product/primary layer, not a module.", rows: [
+    { item: "Connect", tok: "signal-400", target: "#01B3F6", live: "--m-connect #01B3F6", status: "match" },
+    { item: "Care", tok: "crew-400", target: "#18C95C", live: "--m-care #079B33", status: "drift", note: "fm.css still on the old emerald." },
+    { item: "Engage", tok: "reef-400", target: "#4DC243", live: "--m-engage #6B5FD9", status: "drift", note: "v3 hue change: violet → reef-lime." },
+    { item: "Inform", tok: "beacon-400", target: "#FFC500", live: "--m-inform #FFC500", status: "match" },
+    { item: "Entertain", tok: "cargo-400", target: "#FF6A04", live: "--m-entertain #FF6A04", status: "match" },
+    { item: "Sailor Cart", tok: "crew-500", target: "#0F9B45", live: "—", status: "missing", note: "New module." },
+    { item: "eSIM", tok: "depth-400", target: "#4F6BF0", live: "—", status: "missing", note: "New module." },
+    { item: "OnShip Mentorship", tok: "voyage-400", target: "#9A86FF", live: "—", status: "missing", note: "New module." },
+    { item: "Manage", tok: "graphite-500", target: "#6E7689", live: "--m-manage #404858", status: "drift", note: "Re-map to graphite-500." },
+    { item: "Train / Maintain", tok: "—", target: "removed in v3", live: "--m-train / --m-maintain", status: "drift", note: "Delete dropped modules." },
+  ]},
+  { num: "§3.7", title: "Semantic layer (light + dark)", note: "v3 introduces intent tokens that resolve per mode (--color-text-primary, etc.) so components decouple from primitives and mode-switching is automatic. fm.css has no semantic layer.", rows: [
+    { item: "Backgrounds", tok: "--color-bg-canvas/surface/raised/sunken/overlay", target: "light + dark pairs", live: "—", status: "missing" },
+    { item: "Text", tok: "--color-text-primary/secondary/tertiary/muted/link", target: "light + dark pairs", live: "—", status: "missing" },
+    { item: "Borders", tok: "--color-border-interactive/focus", target: "steel / voyage", live: "—", status: "missing" },
+    { item: "Feedback", tok: "--color-feedback-*", target: "crew/beacon/alert/signal", live: "inline values", status: "missing" },
+  ]},
+  { num: "§3.8", title: "Tier 3 — Gradients, glows, elevation", note: "Partially present in fm.css; v3 formalises the set and renames.", rows: [
+    { item: "Spectrum", tok: "--gradient-spectrum", target: "#01B3F6→#18C95C→#FFC500→#FF6A04", live: "--grad-spectrum (similar)", status: "drift", note: "Align name + stops." },
+    { item: "Operational", tok: "--gradient-operational", target: "160deg navy wash", live: "partial", status: "drift" },
+    { item: "Intelligence", tok: "--gradient-intelligence", target: "#01B3F6→#4F6BF0→#9A86FF", live: "--grad-intel (similar)", status: "drift" },
+    { item: "Glows", tok: "--glow-voyage/signal/crew", target: "0 0 26px", live: "--primary-glow only", status: "drift" },
+    { item: "Elevation", tok: "--elev", target: "inset top-light + deep shadow", live: "ad-hoc shadows", status: "drift" },
+  ]},
+  { num: "§3.9", title: "Logo anchors (reference)", note: "Six measured logo hexes, kept deliberately separate from system tokens. Documentation-only — never used in UI code, so nothing to migrate.", rows: [
+    { item: "Sky Dot Blue", tok: "logo", target: "#01ADFF → signal-400", live: "documented", status: "match" },
+    { item: "Heritage Green", tok: "logo", target: "#019934 → crew-500", live: "documented", status: "match" },
+    { item: "Gold", tok: "logo", target: "#FFB600→#FFCC00 → beacon-400", live: "documented", status: "match" },
+    { item: "Flame Orange", tok: "logo", target: "#FF6600 → cargo-400", live: "documented", status: "match" },
   ]},
   { num: "§4", title: "Typography", note: "Reconciled. Decision 4 Jun 2026 (Option A): display/headings are Instrument Serif (Roman, 400), body/UI is Hanken Grotesk, accent word takes the shifting gradient. Adopted from Type Explorer pairing 01 — supersedes Figtree across the build and the doc.", rows: [
     { item: "Display family", tok: "--disp", target: "Instrument Serif (Roman, 400)", live: "Instrument Serif (Roman, 400)", status: "match" },
