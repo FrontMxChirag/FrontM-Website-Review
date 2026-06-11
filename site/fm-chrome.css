@@ -76,7 +76,7 @@
 /* ---------- hero ---------- */
 .hero { min-height: 100svh; display: flex; flex-direction: column; align-items: center; text-align: center; padding: calc(var(--nav-h) + 40px) 0 44px; }
 .hero-main { flex: 1 1 auto; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-inline: var(--pad); }
-.hero-inner { max-width: 880px; margin-inline: auto; display: flex; flex-direction: column; align-items: center; }
+.hero-inner { max-width: 960px; margin-inline: auto; display: flex; flex-direction: column; align-items: center; }
 .hero-badge { padding: 8px 16px; border-radius: var(--pill); border: 1px solid color-mix(in oklch, var(--primary-lift) 32%, var(--line)); background: color-mix(in oklch, var(--primary) 10%, transparent); color: #fff; box-shadow: 0 0 24px -6px var(--primary-glow); }
 .hero h1 { margin: 22px 0 0; font-size: clamp(2.2rem, 5vw, 54px); max-width: min(947px, 100%); font-weight: 500; letter-spacing: 1.3px; line-height: 1.2; text-align: center; }
 .hero .lede { max-width: min(744px, 100%); margin: 22px auto 0; font-size: 15px; }
