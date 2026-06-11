@@ -3,7 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>document.documentElement.className += ' js';</script><!-- gates .reveal's hidden state — no-JS users see content -->
 <title>FrontM — The AI-native operating platform for maritime</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <meta name="description" content="FrontM is the digital layer for maritime: fleet operators, maritime companies, and industry partners modernise operations, launch AI-powered services, and scale digital transformation across ships and shore.">
 <meta name="robots" content="noindex"><!-- review site — lifts at production launch on Vercel (plan WS1.4) -->
 <meta property="og:title" content="FrontM — The AI-native operating platform for maritime">
@@ -411,7 +415,7 @@
   <div class="modal" role="dialog" aria-modal="true" aria-label="Book a demo">
     <button class="modal-close" id="modal-close" aria-label="Close"><svg viewBox="0 0 24 24" width="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     <div class="eyebrow">Book a 20-minute demo</div>
-    <h3>See FrontM running against your real bulletin in 20 minutes.</h3>
+    <h3>See FrontM running against your fleet's workflows in 20 minutes.</h3>
     <div class="modal-steps">
       <div class="st active">1 · Day</div><div class="st">2 · Time</div><div class="st">3 · Details</div>
     </div>
@@ -425,20 +429,22 @@
       <div class="tz-group"><div class="tz-label">CET</div><div class="chip-grid"><button class="chip" data-time="CET 09:00">09:00</button><button class="chip" data-time="CET 11:00">11:00</button><button class="chip" data-time="CET 14:00">14:00</button><button class="chip" data-time="CET 16:00">16:00</button></div></div>
       <div class="tz-group"><div class="tz-label">SGT</div><div class="chip-grid"><button class="chip" data-time="SGT 10:30">10:30</button><button class="chip" data-time="SGT 13:30">13:30</button><button class="chip" data-time="SGT 15:30">15:30</button></div></div>
       <div class="tz-group"><div class="tz-label">EST</div><div class="chip-grid"><button class="chip" data-time="EST 09:00">09:00</button><button class="chip" data-time="EST 11:00">11:00</button><button class="chip" data-time="EST 14:00">14:00</button></div></div>
+      <button class="btn btn-secondary" type="button" data-back="1" style="margin-top:16px;">← Back to day</button>
     </div>
 
     <div class="modal-pane" data-step="3">
       <form id="demo-form">
-        <div class="field"><label>Name</label><input type="text" required placeholder="Your name"></div>
-        <div class="field"><label>Work email</label><input type="email" required placeholder="you@operator.com"></div>
-        <div class="field"><label>Fleet size</label>
-          <select required><option value="">Select…</option><option>Under 10 vessels</option><option>10-30 vessels</option><option>30-80 vessels</option><option>80-200 vessels</option><option>200+ vessels</option></select>
+        <div class="field"><label for="demo-name">Name</label><input id="demo-name" name="name" type="text" required autocomplete="name" placeholder="Your name"></div>
+        <div class="field"><label for="demo-email">Work email</label><input id="demo-email" name="email" type="email" required autocomplete="email" placeholder="you@operator.com"></div>
+        <div class="field"><label for="demo-fleet">Fleet size</label>
+          <select id="demo-fleet" name="fleet" required><option value="">Select…</option><option>Under 10 vessels</option><option>10-30 vessels</option><option>30-80 vessels</option><option>80-200 vessels</option><option>200+ vessels</option></select>
         </div>
         <button class="btn btn-primary" type="submit" style="width:100%;">Confirm booking</button>
+        <button class="btn btn-secondary" type="button" data-back="2" style="width:100%;margin-top:10px;">← Back to time</button>
       </form>
     </div>
 
-    <div class="modal-pane modal-success" id="demo-success">
+    <div class="modal-pane modal-success" id="demo-success" aria-live="polite">
       <div class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 13l4 4L19 7"/></svg></div>
       <h3 style="margin-bottom:8px;">You're on the calendar.</h3>
       <p class="muted">We'll send a calendar invite and a short prep note. See you soon.</p>

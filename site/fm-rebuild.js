@@ -4,7 +4,9 @@
    in fm.js pick up the nodes rendered here.
    ============================================================ */
 (function () {
-  var FM = window.FM, ico = FM.ico;
+  var FM = window.FM;
+  if (!FM) { if (window.console) console.error('[fm-rebuild] window.FM missing — fm-data.js failed to load; aborting render'); return; }
+  var ico = FM.ico;
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return [].slice.call((r || document).querySelectorAll(s)); };
 

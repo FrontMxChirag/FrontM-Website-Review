@@ -2,7 +2,8 @@
    FrontM, marketing homepage · design system
    Dark mode only. Tokens lifted from the brand styleguide.
    ============================================================ */
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+/* Fonts load via <link> in each page's <head> (preconnect + stylesheet) — the @import here
+   created a render-blocking 3-hop chain (HTML → this CSS → fonts CSS → woff2). WS1.7. */
 
 *, *::before, *::after { box-sizing: border-box; }
 /* reflow guard: nothing may force sideways scroll (WCAG 1.4.10) */
@@ -194,15 +195,18 @@ p  { text-wrap: pretty; }
 /* spectrum hairline */
 .hairline { height: 2px; width: 96px; border-radius: 2px; background: var(--grad-spectrum); }
 
-/* ---------- reveal on scroll ---------- */
-.reveal { opacity: 0; transform: translateY(26px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
+/* ---------- reveal on scroll ----------
+   Hidden state is gated on .js (set by an inline <head> script) so users
+   without JavaScript see all content instead of a blank page. WS1.6. */
+.reveal { transition: opacity .8s var(--ease), transform .8s var(--ease); }
+.js .reveal:not(.in) { opacity: 0; transform: translateY(26px); }
 .reveal.in { opacity: 1; transform: none; }
 .reveal[data-d="1"] { transition-delay: .08s; }
 .reveal[data-d="2"] { transition-delay: .16s; }
 .reveal[data-d="3"] { transition-delay: .24s; }
 .reveal[data-d="4"] { transition-delay: .32s; }
 @media (prefers-reduced-motion: reduce) {
-  .reveal { opacity: 1; transform: none; transition: none; }
+  .reveal, .js .reveal:not(.in) { opacity: 1; transform: none; transition: none; }
   .g-spectrum, .g-intel, .g-cycle { animation: none; }
   * { scroll-behavior: auto !important; }
 }
