@@ -236,8 +236,8 @@
 .transition.t-static .t-net .node.is-stk { display: none; }  /* keep the 8 module chips; drop 12 stakeholder pills for a clean mobile payoff */
 
 /* ---------- demo modal ---------- */
-.modal-scrim { position: fixed; inset: 0; z-index: 120; background: rgba(4,5,15,0.7); backdrop-filter: blur(8px); display: grid; place-items: center; padding: 20px; opacity: 0; visibility: hidden; transition: opacity .3s, visibility .3s; }
-.modal-scrim.open { opacity: 1; visibility: visible; }
+.modal-scrim { position: fixed; inset: 0; z-index: 120; background: rgba(4,5,15,0.7); backdrop-filter: blur(8px); display: grid; place-items: center; padding: 20px; opacity: 0; visibility: hidden; transition: opacity .3s, visibility 0s .3s; }
+.modal-scrim.open { opacity: 1; visibility: visible; transition: opacity .3s, visibility 0s; } /* visibility flips instantly on open (focusable immediately); only delays on close */
 .modal { position: relative; width: min(560px, 100%); max-height: 90vh; overflow-y: auto; background: var(--s-1); border: 1px solid var(--line); border-radius: var(--r-xl); padding: 30px; transform: translateY(18px) scale(0.98); transition: transform .35s var(--ease); }
 .modal-scrim.open .modal { transform: none; }
 .modal .eyebrow { color: var(--primary-lift); margin-bottom: 12px; }
