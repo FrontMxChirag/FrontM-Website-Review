@@ -34,7 +34,7 @@
         title: 'The connected operating layer',
         grid: [
           ['Platform Overview', 'How the four-layer maritime stack fits together'],
-          ['App Marketplace', 'Partner apps installed across 15,000+ vessels'],
+          ['App Marketplace', 'Partner apps installed across 1,500+ vessels'],
           ['Superapp PaaS', 'Build maritime apps on shared platform infrastructure'],
           ['Low-Code Framework', 'Drag-and-drop workflow studio with AI assist'],
           ['frontm.ai', 'AI-assisted workflows for shore teams'],
@@ -96,8 +96,8 @@
         body: 'Identity, permissions, data and audit shared across modules, and out to crewing systems, ERP and partner services.',
         checks: ['Single identity layer across ship + shore', 'Shared permissions, audit and data fabric', 'Open APIs for crewing, ERP, satcom, partners', 'Module-to-module data flow built in'] },
       { name: 'Scalable', color: '#FF6A04', icon: I.scalable,
-        body: 'One operating layer, twelve stakeholder roles, 15,000+ vessels. Multi-tenant. Multi-region. Multi-fleet.',
-        checks: ['15,000+ vessels live across 40+ flag states', 'Multi-tenant, multi-region deployment', '12 stakeholder roles per workspace', '99% uptime SLA, low-bandwidth optimised'] }
+        body: 'One operating layer, twelve stakeholder roles, 1,500+ vessels. Multi-tenant. Multi-region. Multi-fleet.',
+        checks: ['1,500+ vessels reached across 40+ flag states', 'Multi-tenant, multi-region deployment', '12 stakeholder roles per workspace', 'Low-bandwidth optimised'] }
     ],
 
     MODULES: [
@@ -131,7 +131,7 @@
       { t: 'Fleet Operators', icon: I.ship, d: 'See vessel status, route comms by rank or department, and track outcomes across your fleet from one dashboard.' },
       { t: 'Technical & HSQE', icon: I.shield, d: 'Publish HSEQ campaigns to onboard screens, see who acknowledged each safety bulletin, and close the gaps that drive audit findings.' },
       { t: 'Crewing & Workforce', icon: I.users, d: 'Run wellness campaigns, collect structured feedback, connect crew to healthcare partners, and build community across distributed teams.' },
-      { t: 'Maritime Service Providers', icon: I.api, d: 'Distribute your service to 15,000+ vessels. Use platform identity, permissions and data. Build with the low-code studio or open APIs.' },
+      { t: 'Maritime Service Providers', icon: I.api, d: 'Distribute your service to 1,500+ vessels. Use platform identity, permissions and data. Build with the low-code studio or open APIs.' },
       { t: 'Maritime Ecosystem Organisations', icon: I.network, d: 'Reach members across operators, run multi-org safety campaigns, and distribute welfare resources at scale, without rebuilding the channel each time.' }
     ],
 

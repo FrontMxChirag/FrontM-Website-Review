@@ -5,10 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FrontM — The AI-native operating platform for maritime</title>
 <meta name="description" content="FrontM is the digital layer for maritime: fleet operators, maritime companies, and industry partners modernise operations, launch AI-powered services, and scale digital transformation across ships and shore.">
+<meta name="robots" content="noindex"><!-- review site — lifts at production launch on Vercel (plan WS1.4) -->
 <meta property="og:title" content="FrontM — The AI-native operating platform for maritime">
 <meta property="og:description" content="Make ship-shore operations Connected, Measurable, and AI Ready.">
 <meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0B0E1A">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "FrontM",
+  "url": "https://frontm.com",
+  "logo": "https://frontm.com/assets/logos/frontm/frontm-mark.png",
+  "description": "The AI-native operating platform for maritime — ship-shore communication, crew welfare, telemedicine, training and workflow automation for fleet operators and maritime companies.",
+  "sameAs": []
+}
+</script>
 <link rel="icon" type="image/png" href="assets/logos/frontm/frontm-mark.png">
 <link rel="stylesheet" href="site/fm.css">
 <link rel="stylesheet" href="site/fm-chrome.css">
@@ -45,12 +58,11 @@
     <div class="hero-main">
       <div class="hero-inner">
         <span class="eyebrow hero-badge reveal"><span class="dot pulse"></span> The AI-native operating platform for maritime</span>
-        <h1 class="reveal hero-scan" data-d="1" style="font-weight: 500; text-align: center; opacity: 1; border-width: 0px; border-style: solid; letter-spacing: 1.3px; line-height: 1.2; font-family: &quot;IBM Plex Sans Condensed&quot;; font-size: 54px; width: 947px">Make ship-shore operations <span class="g-cycle g-cycle-1">Connected</span>, <span class="g-cycle g-cycle-2">Measurable</span>, and <span class="g-cycle g-cycle-3">AI Ready</span></h1>
-        <p class="lede reveal" data-d="2" style="font-size: 15px; width: 744px; height: 77px">FrontM is the new digital layer for maritime, where fleet operators, maritime companies, and industry partners come together to modernise operations, launch AI-powered services, and scale digital transformation across ships and shore.</p>
+        <h1 class="reveal hero-scan" data-d="1">Make ship-shore operations <span class="g-cycle g-cycle-1">Connected</span>, <span class="g-cycle g-cycle-2">Measurable</span>, and <span class="g-cycle g-cycle-3">AI Ready</span></h1>
+        <p class="lede reveal" data-d="2">FrontM is the new digital layer for maritime, where fleet operators, maritime companies, and industry partners come together to modernise operations, launch AI-powered services, and scale digital transformation across ships and shore.</p>
         <div class="hero-cta reveal" data-d="3">
-          <a class="btn btn-primary btn-pill" href="#" data-route="pricing">Explore the Platform <span class="arr">→</span></a>
-          <a class="btn btn-secondary btn-pill" href="#" data-route="frontm-ai">Build on frontm.ai</a>
-          <a class="btn btn-secondary btn-pill" href="#" data-route="marketplace">Join the Marketplace</a>
+          <button class="btn btn-primary btn-pill" data-open-demo>Book a Demo <span class="arr">→</span></button>
+          <a class="btn btn-secondary btn-pill" href="#" data-route="platform">Explore the Platform</a>
         </div>
       </div>
     </div>
@@ -158,8 +170,8 @@
       <h3>Build the business case for your fleet.</h3>
       <p>See how FrontM can help your organisation reduce operational friction, accelerate digitalisation, improve workforce outcomes, and create the data foundation for AI-ready maritime operations.</p>
       <div class="cta-row center">
-        <a class="btn btn-primary btn-pill" href="#" data-route="pricing">Explore Platform Plans</a>
-        <button class="btn btn-secondary btn-pill" data-open-demo data-demo-fn="value-assessment">Book a Value Assessment</button>
+        <button class="btn btn-primary btn-pill" data-open-demo data-demo-fn="value-assessment">Book a Value Assessment</button>
+        <a class="btn btn-secondary btn-pill" href="#" data-route="pricing">Explore Platform Plans</a>
       </div>
       <p class="micro">Actual value depends on fleet size, workflows, service mix, adoption levels, partner ecosystem, and operating model.</p>
     </div>
@@ -333,6 +345,18 @@
         <button class="arrow" id="t-prev" aria-label="Previous"><svg viewBox="0 0 24 24" width="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg></button>
         <div class="dots" id="t-dots"></div>
         <button class="arrow" id="t-next" aria-label="Next"><svg viewBox="0 0 24 24" width="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CLOSING CTA ============ -->
+  <section class="section wrap" data-screen-label="Closing CTA">
+    <div class="impact-cta reveal">
+      <h3>See it on your fleet.</h3>
+      <p>A 20-minute walkthrough against your own workflows — crewing, HSQE, technical, operations or welfare. No deck, no obligation.</p>
+      <div class="cta-row center">
+        <button class="btn btn-primary btn-pill" data-open-demo>Book a Demo <span class="arr">→</span></button>
+        <a class="btn btn-secondary btn-pill" href="#" data-route="pricing">Explore Platform Plans</a>
       </div>
     </div>
   </section>

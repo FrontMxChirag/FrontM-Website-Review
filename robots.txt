@@ -1,0 +1,3 @@
+# Review site — not for indexing. Production launches on frontm.com (Vercel).
+User-agent: *
+Disallow: /
