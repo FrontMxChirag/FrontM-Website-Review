@@ -61,8 +61,12 @@
       scrim.classList.add('open');
       document.body.style.overflow = 'hidden';
       gotoStep(1);
-      var first = modal ? modal.querySelector(FOCUSABLE) : null;
-      if (first) first.focus();
+      // focus must wait for the scrim's visibility transition to begin —
+      // a synchronous .focus() lands while computed visibility is still 'hidden' and silently fails
+      setTimeout(function () {
+        var first = modal ? modal.querySelector(FOCUSABLE) : null;
+        if (first && scrim.classList.contains('open')) first.focus();
+      }, 80);
     }
     function close() {
       scrim.classList.remove('open');
