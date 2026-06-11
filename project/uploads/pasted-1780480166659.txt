@@ -1,3 +1,0 @@
-assets/logos/
-
-Give me the full directory
