@@ -49,43 +49,60 @@
     }).join('');
   })();
 
-  /* ---------- S6 · function accordions ---------- */
+  /* ---------- S6 · function explorer — master–detail (the old modules layout,
+     now carrying the six teams; modules section fully replaced) ---------- */
   (function () {
-    var host = $('#fn-list'); if (!host) return;
-    host.innerHTML = FM.FUNCTIONS.map(function (f, fi) {
-      var helps = f.x.helps.map(function (h) {
+    var rail = $('#fn-rail'), detail = $('#fn-detail');
+    if (!rail || !detail) return;
+    var COLS = ['#01B3F6', '#9A86FF', '#18C95C', '#FFC500', '#1FE6D4', '#FF6A04'];
+    rail.innerHTML = FM.FUNCTIONS.map(function (f, i) {
+      return '<button class="fnx-item' + (i === 0 ? ' on' : '') + '" data-i="' + i + '" style="--cc:' + COLS[i % COLS.length] + '">' +
+        '<span class="fnx-ico">' + ico(f.icon) + '</span>' +
+        '<span class="fnx-text"><b>' + f.title + '</b><span>' + f.tag + '</span></span>' +
+        '<svg class="fnx-arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>' +
+      '</button>';
+    }).join('');
+    /* all six panes pre-rendered (buttons get their global bindings at load);
+       switching only toggles classes — cheap + keeps the fade transition */
+    detail.innerHTML = FM.FUNCTIONS.map(function (f, i) {
+      var helps = f.x.helps.slice(0, 6).map(function (h) {
         return '<li>' + ico(FM.I.check) + '<span><b>' + h[0] + '</b><span class="l">' + h[1] + '</span></span></li>';
       }).join('');
-      var chips = f.x.uses.map(function (u) { return '<span>' + u + '</span>'; }).join('');
-      var next = f.x.next.map(function (n) { return '<div class="nx"><b>Best fit:</b><span>' + n + '</span></div>'; }).join('');
-      return '<article class="fn-card reveal" data-d="' + (fi % 3) + '" data-fn="' + f.id + '">' +
-        '<div class="fn-head" role="button" tabindex="0" aria-expanded="false">' +
-          '<div class="fn-ico">' + ico(f.icon) + '</div>' +
-          '<div class="fn-htext"><h3>' + f.title + '</h3><div class="fn-tag">' + f.tag + '</div></div>' +
-          '<div class="fn-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>' +
-        '</div>' +
-        '<div class="fn-impact"><b>Impact:</b> ' + f.impact + '</div>' +
-        '<div class="fn-panel"><div class="fn-panel-inner"><div class="fn-body">' +
-          '<h4>' + f.x.h + '</h4><p>' + f.x.p + '</p>' +
-          '<span class="fn-helps-label">FrontM helps ' + f.hl + ':</span>' +
-          '<ul class="fn-helps">' + helps + '</ul>' +
-          '<span class="fn-uses-label">Common use cases</span><div class="fn-chips">' + chips + '</div>' +
-          '<span class="fn-next-label">Recommended next step</span><div class="fn-next">' + next + '</div>' +
-        '</div></div></div>' +
-        '<div class="fn-cta">' + platBtn('Explore Platform Plans', 'pricing', true) + demoBtn(f.demo, f.id) + '</div>' +
-      '</article>';
+      return '<div class="fnx-pane' + (i === 0 ? ' show' : '') + '" style="--cc:' + COLS[i % COLS.length] + '">' +
+        '<div class="fnx-pill">' + ico(f.icon) + '<span>' + f.title + '</span></div>' +
+        '<h3>' + f.x.h + '</h3>' +
+        '<p class="fnx-p">' + f.x.p + '</p>' +
+        '<div class="fnx-impact"><b>Impact:</b> ' + f.impact + '</div>' +
+        '<ul class="fnx-helps">' + helps + '</ul>' +
+        '<div class="fnx-cta">' + platBtn('Explore Platform Plans', 'pricing', true) + demoBtn(f.demo, f.id) + '</div>' +
+      '</div>';
     }).join('');
-
-    function toggle(card) {
-      var open = card.classList.toggle('open');
-      var head = $('.fn-head', card); if (head) head.setAttribute('aria-expanded', open ? 'true' : 'false');
+    var items = $$('.fnx-item', rail), panes = $$('.fnx-pane', detail);
+    var cur = 0, manualUntil = 0;
+    function show(i) {
+      cur = i;
+      items.forEach(function (el, k) { el.classList.toggle('on', k === i); });
+      panes.forEach(function (el, k) { el.classList.toggle('show', k === i); });
     }
-    $$('.fn-head', host).forEach(function (head) {
-      head.addEventListener('click', function () { toggle(head.closest('.fn-card')); });
-      head.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(head.closest('.fn-card')); }
-      });
+    items.forEach(function (el) {
+      el.addEventListener('click', function () { manualUntil = Date.now() + 6000; show(+el.dataset.i); });
     });
+    /* mobile: auto-walk the six teams as the explorer scrolls through view
+       (a tap pauses auto-select for a few seconds) */
+    var fnxWrap = rail.parentElement, fnxTick = false;
+    function fnxAuto() {
+      fnxTick = false;
+      if (!matchMedia('(max-width: 980px)').matches) return;
+      if (Date.now() < manualUntil) return;
+      var r = fnxWrap.getBoundingClientRect(), vh = window.innerHeight || 1;
+      var p = (vh * 0.72 - r.top) / Math.max(1, r.height + vh * 0.25);
+      if (p < -0.05 || p > 1.1) return;
+      var idx = Math.max(0, Math.min(items.length - 1, Math.floor(p * items.length)));
+      if (idx !== cur) show(idx);
+    }
+    window.addEventListener('scroll', function () {
+      if (!fnxTick) { fnxTick = true; requestAnimationFrame(fnxAuto); }
+    }, { passive: true });
   })();
 
   /* ---------- S7 · proof row ---------- */
@@ -145,14 +162,14 @@
       var x = G.mods[i].x, y = G.mods[i].y;
       spokes += '<line x1="50" y1="50" x2="' + x.toFixed(2) + '" y2="' + y.toFixed(2) + '"></line>';
       var soon = m.soon ? '<span class="cw-soon">Soon</span>' : '';
-      return '<div class="cw-node" style="left:' + x.toFixed(2) + '%;top:' + y.toFixed(2) + '%">' +
+      return '<div class="cw-node" style="left:' + x.toFixed(2) + '%;top:' + y.toFixed(2) + '%;--d:' + (0.18 + i * 0.07).toFixed(2) + 's">' +
         '<div class="cw-mod" style="--cc:' + m.color + '"><div class="cw-chip">' + ico(m.icon) + '</div>' +
         '<span class="cw-name">' + m.id + soon + '</span></div></div>';
     }).join('');
 
     var stkHtml = FM.WHEEL_STK.map(function (s, i) {
       var x = G.stk[i].x, y = G.stk[i].y;
-      return '<div class="cw-node cw-node-stk" style="left:' + x.toFixed(2) + '%;top:' + y.toFixed(2) + '%">' +
+      return '<div class="cw-node cw-node-stk" style="left:' + x.toFixed(2) + '%;top:' + y.toFixed(2) + '%;--d:' + (0.62 + i * 0.045).toFixed(2) + 's">' +
         '<div class="cw-stk">' + ico(s.i) + '<span>' + s.n + '</span></div></div>';
     }).join('');
 
@@ -168,6 +185,55 @@
       '<div class="cw-legend">' + FM.WHEEL_STK.map(function (s) {
         return '<span class="cw-stk">' + ico(s.i) + '<span>' + s.n + '</span></span>';
       }).join('') + '</div>');
+
+    /* ---- subtle pointer reactivity ----
+       The LIVE wheel tilts a few degrees toward the cursor; the two rings
+       parallax at different depths (outer ring travels further) and the hub
+       counter-shifts. Fine pointers only; reduced-motion opts out; the tilt
+       waits for the entrance bloom to finish so it never fights it. */
+    if (matchMedia('(pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches){
+      var tNodes = [].slice.call(stage.querySelectorAll('.cw-node'));
+      var tHub = stage.querySelector('.cw-hub');
+      var tX = 0, tY = 0, cX = 0, cY = 0, tRaf = 0, tOn = false;
+      var inAt = stage.classList.contains('in') ? performance.now() : 0;
+      var clearTilt = function (){
+        if (!tOn) return;
+        tOn = false;
+        stage.style.transform = '';
+        tNodes.forEach(function (n){ n.style.transform = ''; n.style.transition = ''; });
+        if (tHub){ tHub.style.transform = ''; tHub.style.transition = ''; }
+      };
+      new MutationObserver(function (){
+        if (stage.classList.contains('in')){ if (!inAt) inAt = performance.now(); }
+        else { inAt = 0; clearTilt(); }
+      }).observe(stage, { attributes: true, attributeFilter: ['class'] });
+      var tilt = function (){
+        tRaf = 0;
+        if (!inAt || performance.now() - inAt < 1600){ clearTilt(); return; }
+        cX += (tX - cX) * 0.07; cY += (tY - cY) * 0.07;
+        if (!tOn){
+          tOn = true;
+          tNodes.forEach(function (n){ n.style.transition = 'transform .25s cubic-bezier(.22,.6,.36,1)'; });
+          if (tHub) tHub.style.transition = 'transform .25s cubic-bezier(.22,.6,.36,1)';
+        }
+        stage.style.transform = 'perspective(1100px) rotateX(' + (-cY * 3.2).toFixed(2) + 'deg) rotateY(' + (cX * 3.2).toFixed(2) + 'deg)';
+        for (var ti = 0; ti < tNodes.length; ti++){
+          var dp = tNodes[ti].classList.contains('cw-node-stk') ? 10 : 6;
+          tNodes[ti].style.transform = 'translate(calc(-50% + ' + (cX * dp).toFixed(1) + 'px), calc(-50% + ' + (cY * dp).toFixed(1) + 'px))';
+        }
+        if (tHub) tHub.style.transform = 'translate(calc(-50% + ' + (-cX * 3).toFixed(1) + 'px), calc(-50% + ' + (-cY * 3).toFixed(1) + 'px))';
+        if (Math.abs(tX - cX) + Math.abs(tY - cY) > 0.002) tRaf = requestAnimationFrame(tilt);
+      };
+      window.addEventListener('pointermove', function (e){
+        var r = stage.getBoundingClientRect();
+        if (!r.width) return;
+        var nx = ((e.clientX - r.left) / r.width) * 2 - 1;
+        var ny = ((e.clientY - r.top) / r.height) * 2 - 1;
+        if (nx < -1.5 || nx > 1.5 || ny < -1.5 || ny > 1.5){ tX = 0; tY = 0; }
+        else { tX = Math.max(-1, Math.min(1, nx)); tY = Math.max(-1, Math.min(1, ny)); }
+        if (!tRaf) tRaf = requestAnimationFrame(tilt);
+      }, { passive: true });
+    }
   })();
 
   /* ---------- placeholder route CTAs (no live destinations yet) ---------- */

@@ -150,10 +150,11 @@
     ],
 
     PARTNERS: [
-      { f: 'maersk.png', n: 'Maersk', h: 34 },
+      /* inv:false — artwork is already dark-mode friendly; rendered WITHOUT the invert filter */
+      { f: 'maersk.png', n: 'Maersk', h: 34, inv: false },
       { f: 'nyk.png', n: 'NYK', h: 26 },
       { f: 'mol.jpg', n: 'MOL Chemical Tankers', h: 30 },
-      { f: 'rio-tinto.png', n: 'Rio Tinto', h: 28 },
+      { f: 'rio-tinto.png', n: 'Rio Tinto', h: 28, inv: false },
       { f: 'pacific-basin.jpg', n: 'Pacific Basin', h: 30 },
       { f: 'asyad-dark.png', n: 'Asyad', h: 26 },
       { f: 'cmb-tech.jpg', n: 'CMB Tech', h: 32 },
@@ -163,7 +164,7 @@
       { f: 'campbell.jpg', n: 'Campbell', h: 36 },
       { f: 'petredec.svg', n: 'Petredec', h: 24 },
       { f: 'gem.svg', n: 'GEM', h: 34 },
-      { f: 'aesm.jpg', n: 'AESM', h: 34 }
+      { f: 'aesm.jpg', n: 'AESM', h: 34, inv: false }
     ]
   };
 

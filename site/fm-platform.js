@@ -13,6 +13,7 @@
   var floor   = sec.querySelector('.pf-floor');
   var fglow   = sec.querySelector('.pf-floor-glow');
   var head    = sec.querySelector('.pf-head');
+  var headGlassP = sec.querySelector('.pf-head .pf-glass');
   var chans   = sec.querySelector('.pf-channels');
   var tiles   = Array.prototype.slice.call(sec.querySelectorAll('.pf-tile'));
   var deck    = sec.querySelector('.pf-deck');
@@ -54,14 +55,48 @@
   //  until the stage is pinned and filling the viewport.
   // ============================================================
   var PH = {
-    seedA: 0.03, seedB: 0.13,       // floor + heading + slab
-    pivA:  0.13, pivB:  0.27,       // tip into 3D
-    splitA:0.27, splitB:0.44,       // split into 3 cards (CENTRE DONE)
-    chA:   0.44, chB:   0.54,       // channel row settles
-    leftA: 0.54, leftB: 0.66,       // left ecosystem, one by one
-    rightA:0.66, rightB:0.80,       // right ecosystem, one by one
-    cirA:  0.80, cirB:  0.96         // circuit wires draw on; pulses loop after
+    seedA: 0.20, seedB: 0.30,       // floor + slab rise (AFTER the intro glass beat)
+    pivA:  0.30, pivB:  0.42,       // tip into 3D
+    splitA:0.42, splitB:0.56,       // split into 3 cards (CENTRE DONE)
+    chA:   0.56, chB:   0.64,       // channel row settles
+    leftA: 0.64, leftB: 0.73,       // left ecosystem, one by one
+    rightA:0.73, rightB:0.82,       // right ecosystem, one by one
+    cirA:  0.82, cirB:  0.96         // circuit wires draw on — ALL complete by ~0.96; pulses loop after
   };
+
+  // ---- INTRO (mirrors the problem→solution opening): the heading sits CENTRED
+  // in a glass panel; past the trigger the glass sinks on its own ~0.85s clock
+  // and a W1 field-swell + W4 crest-light wave rolls through the ambient board
+  // once the glass has FULLY disappeared. Text then docks to the top.
+  var INTRO = { inA: 0.015, inB: 0.05, trig: 0.085, dockA: 0.115, dockB: 0.185 };
+  var gx = { v: 0, on: false, w: 0, placed: false, cx: 0, cy: 0, amp: 22, maxR: 900, wDur: 1400 };
+  function stepIntro(dt){
+    if (gx.on){ if (s < INTRO.trig - 0.012) gx.on = false; }
+    else if (s >= INTRO.trig) gx.on = true;
+    if (gx.on){ if (gx.v < 1) gx.v = Math.min(1, gx.v + dt / 850); }
+    else if (gx.v > 0) gx.v = Math.max(0, gx.v - dt / 550);
+    if (headGlassP){
+      if (gx.v > 0.03 && !gx.placed){
+        var sr = stage.getBoundingClientRect(), r = headGlassP.getBoundingClientRect();
+        if (r.width){
+          gx.cx = r.left + r.width / 2 - sr.left;
+          gx.cy = r.top + r.height / 2 - sr.top;
+          gx.amp = Math.max(14, Math.min(28, r.width * 0.04));
+          gx.maxR = Math.max(460, r.width * 1.5);
+          gx.placed = true;
+        }
+      } else if (gx.v <= 0.02 && gx.placed) gx.placed = false;
+    }
+    if (gx.v >= 0.66 && gx.placed){ if (gx.w < 1) gx.w = Math.min(1, gx.w + dt / gx.wDur); }
+    else if (gx.v < 0.5) gx.w = 0;
+    // fast-scroll guard: the dock holds while the glass is mid-sink, then eases
+    // in at a capped rate (~0.6s) — text never moves under a sinking glass
+    var dTarget = (gx.v > 0.02 && gx.v < 0.995) ? Math.min(dockAnim.raw, dockAnim.v) : dockAnim.raw;
+    var dRate = dt / 600;
+    if (dockAnim.v < dTarget) dockAnim.v = Math.min(dTarget, dockAnim.v + dRate);
+    else if (dockAnim.v > dTarget) dockAnim.v = Math.max(dTarget, dockAnim.v - dRate);
+  }
+  var dockAnim = { v: 0, raw: 0 };
 
   // ============================================================
   //  CIRCUIT OVERLAY
@@ -152,8 +187,10 @@
   }
 
   function wireDraw(w, s){
-    if (w.grp === 'left')  return smooth(PH.cirA + w.i*0.015, PH.cirA + 0.10 + w.i*0.015, s);
-    return smooth(PH.cirA + 0.05 + w.i*0.014, PH.cirA + 0.15 + w.i*0.014, s);
+    // tightened stagger so EVERY wire — including the LAST ecosystem rows
+    // (Identity & security, Enterprise systems…) — completes well before s=1
+    if (w.grp === 'left')  return smooth(PH.cirA + w.i*0.008, PH.cirA + 0.07 + w.i*0.008, s);
+    return smooth(PH.cirA + 0.03 + w.i*0.008, PH.cirA + 0.10 + w.i*0.008, s);
   }
 
   /* channel rail: the 5 end-user surfaces terminate into EXCHANGE specifically —
@@ -214,17 +251,36 @@
   function drawCircuit(s, now){
     cctx.clearRect(0, 0, cw, ch);
     drawChannelRail(s);
-    var fade = smooth(PH.cirA - 0.04, PH.cirA + 0.06, s);   // overall fade-in of the board
-    if (fade <= 0.001) { pulses.length = 0; return; }
+    var fade = smooth(PH.cirA - 0.04, PH.cirA + 0.06, s);   // wired board fade-in
+    var amb = Math.max(fade, smooth(0.01, 0.06, s) * 0.55); // ambient field lives from the very start
+    if (amb <= 0.001) { pulses.length = 0; return; }
 
-    // drift ambient nodes
+    // intro wave state (W1 swell through the ambient field)
+    var wEff = gx.placed && gx.w > 0 && gx.w < 1;
+    var wex = 0, wR = 0, wWd = 0, wDec = 0;
+    if (wEff){
+      wex = 1 - Math.pow(1 - gx.w, 3);
+      wR = wex * gx.maxR;
+      wWd = Math.max(80, gx.maxR * 0.18);
+      wDec = Math.pow(1 - gx.w, 0.9);
+    }
+
+    // drift ambient nodes (+ wave displacement into render coords dx/dy)
     for (var i = 0; i < anodes.length; i++){
       var n = anodes[i];
       n.x += n.vx; n.y += n.vy;
       if (n.x < -10) n.x = cw+10; if (n.x > cw+10) n.x = -10;
       if (n.y < -10) n.y = ch+10; if (n.y > ch+10) n.y = -10;
+      n.dx = n.x; n.dy = n.y; n.wI = 0;
+      if (wEff){
+        var wdx = n.x - gx.cx, wdy = n.y - gx.cy;
+        var wd = Math.sqrt(wdx * wdx + wdy * wdy) || 1;
+        var wq = (wd - wR) / wWd;
+        var wk = Math.exp(-wq * wq * 2) * wDec;
+        if (wk > 0.01){ n.wI = wk; n.dx += (wdx / wd) * wk * gx.amp; n.dy += (wdy / wd) * wk * gx.amp * 0.92; }
+      }
     }
-    // ambient nearest-neighbour links (orthogonal, faint)
+    // ambient nearest-neighbour links (orthogonal, faint; warp with the wave)
     alinks = [];
     var maxd = Math.min(cw, ch) * 0.26;
     for (i = 0; i < anodes.length; i++){
@@ -235,18 +291,28 @@
     cctx.lineWidth = 1;
     for (i = 0; i < alinks.length; i++){
       var a = anodes[alinks[i].a], b = anodes[alinks[i].b];
-      cctx.strokeStyle = 'rgba(130,150,220,' + (0.11*fade).toFixed(3) + ')';
-      drawPoly(linkPts(a.x,a.y,b.x,b.y), 1);
-      cctx.fillStyle = 'rgba(130,150,220,' + (0.16*fade).toFixed(3) + ')';
-      cctx.fillRect(b.x-1, a.y-1, 2, 2);
+      var wBoost = Math.max(a.wI || 0, b.wI || 0);
+      cctx.strokeStyle = 'rgba(130,150,220,' + Math.min(0.5, 0.11*amb + wBoost*0.3).toFixed(3) + ')';
+      drawPoly(linkPts(a.dx,a.dy,b.dx,b.dy), 1);
+      cctx.fillStyle = 'rgba(130,150,220,' + (0.16*amb).toFixed(3) + ')';
+      cctx.fillRect(b.dx-1, a.dy-1, 2, 2);
     }
-    // ambient nodes
+    // ambient nodes (brighten as the crest passes)
     for (i = 0; i < anodes.length; i++){
-      var nd = anodes[i], tw = (0.55 + 0.45*Math.sin(now*0.001 + nd.ph)) * fade;
-      cctx.save(); cctx.globalAlpha = tw; cctx.fillStyle = nd.c; cctx.shadowColor = nd.c; cctx.shadowBlur = 7;
-      if (nd.port) cctx.fillRect(nd.x-nd.r, nd.y-nd.r, nd.r*2, nd.r*2);
-      else { cctx.beginPath(); cctx.arc(nd.x, nd.y, nd.r, 0, 6.2832); cctx.fill(); }
+      var nd = anodes[i], tw = Math.min(1, (0.55 + 0.45*Math.sin(now*0.001 + nd.ph)) * amb * (1 + (nd.wI || 0) * 1.3));
+      cctx.save(); cctx.globalAlpha = tw; cctx.fillStyle = nd.c; cctx.shadowColor = nd.c; cctx.shadowBlur = 7 + (nd.wI || 0) * 10;
+      if (nd.port) cctx.fillRect(nd.dx-nd.r, nd.dy-nd.r, nd.r*2, nd.r*2);
+      else { cctx.beginPath(); cctx.arc(nd.dx, nd.dy, nd.r * (1 + (nd.wI || 0) * 0.5), 0, 6.2832); cctx.fill(); }
       cctx.restore();
+    }
+    // W4 crest light: an ultra-soft band of luminance rides the intro wavefront
+    if (wEff){
+      var cgrd = cctx.createRadialGradient(gx.cx, gx.cy, Math.max(0, wR - wWd), gx.cx, gx.cy, wR + wWd);
+      cgrd.addColorStop(0, 'rgba(1,179,246,0)');
+      cgrd.addColorStop(0.5, 'rgba(1,179,246,' + (0.07 * wDec).toFixed(3) + ')');
+      cgrd.addColorStop(1, 'rgba(1,179,246,0)');
+      cctx.fillStyle = cgrd;
+      cctx.fillRect(0, 0, cw, ch);
     }
 
     // wired traces (left->Exchange teal, right->Studio/Fabric gold), drawn on + staggered
@@ -284,7 +350,7 @@
       // trunks: surface -> card top, staggered draw-on
       for (var ti = 0; ti < trunkCards.length; ti++){
         var rc = rectIn(trunkCards[ti]), fx = rc.cx, fy = wlY(fx, sr);
-        var dp = smooth(PH.cirA + 0.04 + ti*0.02, PH.cirA + 0.18 + ti*0.02, s);
+        var dp = smooth(PH.cirA + 0.04 + ti*0.012, PH.cirA + 0.14 + ti*0.012, s);
         if (dp <= 0) continue;
         cctx.strokeStyle = hexA(WATER, 0.32 * wlFade * fade); cctx.lineWidth = 1.4;
         drawPoly([[fx, fy], [fx, rc.t]], dp);
@@ -334,12 +400,26 @@
 
   // ---------- DOM writer ----------
   function render(s, now){
-    // SEED
+    // INTRO — glass card centred with the full message; glass sinks (trigger-played),
+    // the text docks to the top, THEN the electronic deck rises
+    var hIn = smooth(INTRO.inA, INTRO.inB, s);
+    dockAnim.raw = smooth(INTRO.dockA, INTRO.dockB, s);
+    var dock = dockAnim.v;
     var seed = smooth(PH.seedA, PH.seedB, s);
     floor.style.opacity = (seed * 0.6).toFixed(3);
     fglow.style.opacity = (seed * 0.9).toFixed(3);
-    head.style.opacity = seed.toFixed(3);
-    head.style.transform = 'translateX(-50%) translateY(' + lerp(-14, 0, seed).toFixed(1) + 'px)';
+    head.style.opacity = hIn.toFixed(3);
+    head.style.top = lerp(46, 4.8, dock).toFixed(2) + '%';
+    head.style.transform = 'translate(-50%, ' + lerp(-50, 0, dock).toFixed(1) + '%) scale(' + (lerp(0.97, 1, hIn) * lerp(1, 0.88, dock)).toFixed(3) + ')';
+    if (headGlassP){
+      if (gx.v <= 0){ headGlassP.style.transform = ''; headGlassP.style.filter = ''; headGlassP.style.opacity = ''; }
+      else {
+        var gf = smooth(0, 0.62, gx.v);
+        headGlassP.style.transform = 'translateY(' + (gf * 34).toFixed(1) + 'px) scale(' + lerp(1, 0.7, gf).toFixed(3) + ')';
+        headGlassP.style.filter = 'brightness(' + lerp(1, 0.5, gf).toFixed(2) + ') blur(' + (gf * 4).toFixed(1) + 'px)';
+        headGlassP.style.opacity = (1 - smooth(0.5, 0.66, gx.v)).toFixed(3);
+      }
+    }
 
     // PIVOT (two-stage yaw 0->+22->-6, pitch 0->14)
     var piv = smooth(PH.pivA, PH.pivB, s), ry;
@@ -400,8 +480,9 @@
 
   // ---------- scroll clock + loop ----------
   var s = 0, running = false, rafId = 0;
-  // Base scrollable height mirrors CSS `.platform { height: 360vh }` → 3.6 viewports.
-  var BASE_VH = 3.6;
+  // Base scrollable height mirrors CSS `.platform { height: 560vh }` → 5.6 viewports
+  // (intro glass beat + an extra page so the circuit finale fully completes on screen).
+  var BASE_VH = 5.6;
   // Optional live overrides (set by a Tweaks panel as window.__pf = {base, tail}).
   // Undefined on the homepage, so defaults hold there.
   function pfBase(){ return (window.__pf && typeof window.__pf.base === 'number') ? window.__pf.base : BASE_VH; }
@@ -416,11 +497,14 @@
     var top = sec.getBoundingClientRect().top;
     return total > 0 ? clamp01(-top / total) : 0;
   }
+  var lastNowP = 0;
   function tick(now){
-    if (!running || !visible){ rafId = 0; return; }
+    if (!running || !visible){ rafId = 0; lastNowP = 0; return; }
+    var dt = lastNowP ? Math.min(50, now - lastNowP) : 16; lastNowP = now;
     var p = progress();
     s += (p - s) * 0.18;
     if (Math.abs(p - s) < 0.0004) s = p;
+    stepIntro(dt);
     (window.__fmMotion || (window.__fmMotion = {})).platform = s;
     render(s, now || 0);
     rafId = requestAnimationFrame(tick);
@@ -436,7 +520,7 @@
   }
 
   function clearInline(){
-    [head, deck, chans, banner, mark, floor, fglow, ecoL, ecoR]
+    [head, headGlassP, deck, chans, banner, mark, floor, fglow, ecoL, ecoR]
       .concat(tiles, leftNodes, rightNodes, [cards.exchange, cards.studio, cards.fabric])
       .forEach(function(el){ if (el) el.removeAttribute('style'); });
     if (shield) shield.removeAttribute('style');
@@ -451,6 +535,10 @@
     sec.classList.remove('pf-static');
     layoutTail();
     sizeCanvas(); buildAmbient(); buildWires();
+    // snap the intro to its end-state if the page loads already scrolled past it
+    s = progress();
+    gx.on = s >= INTRO.trig; gx.v = gx.on ? 1 : 0; gx.w = gx.on ? 1 : 0; gx.placed = false;
+    dockAnim.v = dockAnim.raw = smooth(INTRO.dockA, INTRO.dockB, s);
     running = true; rafId = requestAnimationFrame(tick);
   }
   function stop(){

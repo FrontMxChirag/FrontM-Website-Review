@@ -142,10 +142,24 @@
 .blogs-nav { display: flex; gap: 10px; }
 .blogs-nav button { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line-2); color: var(--muted); display: grid; place-items: center; transition: all .2s; }
 .blogs-nav button:hover { color: #fff; border-color: var(--primary); background: rgba(107,95,217,0.12); }
-.blogs-row { display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding-bottom: 10px; scrollbar-width: none; }
+.blogs-row {
+  display: flex; gap: 20px; overflow-x: auto;
+  scroll-snap-type: x proximity; scroll-behavior: smooth;
+  /* breathing room so the hover lift + glow are never clipped by the scroller */
+  padding: 20px 16px 24px; margin: -20px -16px -14px;
+  scrollbar-width: none; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y;
+}
 .blogs-row::-webkit-scrollbar { display: none; }
-.blog-card { flex: 0 0 clamp(290px, 32vw, 360px); scroll-snap-align: start; border-radius: var(--r-lg); border: 1px solid var(--line); background: var(--s-1); padding: 24px; display: flex; flex-direction: column; transition: transform .3s var(--ease), border-color .3s; }
-.blog-card:hover { transform: translateY(-4px); border-color: color-mix(in oklch, var(--cc) 45%, var(--line)); }
+.blog-card { flex: 0 0 clamp(290px, 32vw, 360px); scroll-snap-align: start; border-radius: var(--r-lg); border: 1px solid var(--line); background: var(--s-1); padding: 24px; display: flex; flex-direction: column; transition: transform .3s var(--ease), border-color .3s, box-shadow .3s, background .3s; }
+.blog-card:hover {
+  transform: translateY(-6px) scale(1.015);
+  border-color: color-mix(in oklch, var(--cc) 50%, var(--line));
+  background: color-mix(in oklch, var(--s-2) 88%, transparent);
+  box-shadow:
+    0 0 44px -12px color-mix(in oklch, var(--cc) 45%, transparent),
+    0 24px 44px -26px rgba(0,0,0,0.85),
+    inset 0 1px 0 rgba(255,255,255,0.07);
+}
 .blog-card .bc-cat { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cc); margin-bottom: 14px; }
 .blog-card h4 { font-size: 1.2rem; line-height: 1.25; margin-bottom: 12px; }
 .blog-card p { font-size: 0.9rem; color: var(--muted); line-height: 1.55; flex: 1; }

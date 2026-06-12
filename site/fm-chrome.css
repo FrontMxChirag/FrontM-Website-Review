@@ -12,7 +12,7 @@
 }
 .nav.scrolled {
   background: color-mix(in oklch, var(--bg) 78%, transparent);
-  backdrop-filter: blur(18px) saturate(1.25); -webkit-backdrop-filter: blur(18px) saturate(1.25);
+  backdrop-filter: blur(9px) saturate(1.12) brightness(1.03); -webkit-backdrop-filter: blur(9px) saturate(1.12) brightness(1.03);
   border-bottom: 1px solid var(--line);
 }
 .brand { display: inline-flex; align-items: center; gap: 9px; font-size: 1.18rem; font-weight: 600; letter-spacing: -0.01em; color: #fff; }
@@ -46,7 +46,7 @@
   width: max-content; max-width: min(880px, 92vw);
   background: color-mix(in oklch, var(--s-1) 92%, transparent);
   border: 1px solid var(--line); border-radius: var(--r-lg);
-  box-shadow: 0 30px 70px -20px rgba(0,0,0,0.7); backdrop-filter: blur(22px) saturate(1.3);
+  box-shadow: 0 30px 70px -20px rgba(0,0,0,0.7); backdrop-filter: blur(9px) saturate(1.12) brightness(1.03);
   padding: 22px; opacity: 0; visibility: hidden; pointer-events: none;
   transition: opacity .26s var(--ease), transform .26s var(--ease), visibility .26s;
   z-index: 90;
@@ -95,30 +95,52 @@
 }
 .marquee-label .rule { height: 1px; width: 46px; background: linear-gradient(90deg, transparent, var(--line-2)); }
 .marquee-label .rule:last-child { background: linear-gradient(90deg, var(--line-2), transparent); }
-.marquee { position: relative; width: 100%; overflow: hidden; padding-block: 26px; -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); }
+.marquee { position: relative; width: 100%; overflow: hidden; padding-block: 32px; -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); }
 .marquee-track { display: flex; align-items: center; width: max-content; animation: marquee 48s linear infinite; }
 .marquee:hover .marquee-track { animation-play-state: paused; }
 .marquee-track .logo {
-  display: grid; place-items: center; width: 112px; height: 112px; flex: none; padding: 10px; margin-right: 20px;
-  background: rgba(236,240,248,0.86);
-  border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.10);
-  backdrop-filter: blur(20px) saturate(1.05); -webkit-backdrop-filter: blur(20px) saturate(1.05);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), 0 8px 22px -16px rgba(0,0,0,0.5);
-  /* --w: centre-spotlight weight (0 edge → 1 centre), written per-frame by fm.js */
-  opacity: calc(0.32 + var(--w, 0.64) * 0.68);
+  position: relative;
+  display: grid; place-items: center; width: 152px; height: 134px; flex: none; padding: 12px; margin-right: 22px;
+  background: rgba(12, 17, 36, 0.55);
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.09);
+  backdrop-filter: blur(9px) saturate(1.12) brightness(1.03); -webkit-backdrop-filter: blur(9px) saturate(1.12) brightness(1.03);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 14px 34px -18px rgba(0,0,0,0.7);
+  /* --w: centre-spotlight weight (0 edge → 1 centre), written per-frame by fm.js.
+     Edges sit at HALF visibility; the centre is fully lit. */
+  opacity: calc(0.5 + var(--w, 0.64) * 0.5);
   transform: translateY(calc(var(--w, 0) * -5px)) scale(calc(0.94 + var(--w, 0) * 0.1));
-  transition: transform .3s var(--ease), box-shadow .3s, background .3s, opacity .3s;
+  transition: transform .3s var(--ease), box-shadow .3s, background .3s, opacity .3s, border-color .3s;
 }
 .marquee-track .logo:hover {
   transform: translateY(-8px) scale(1.12);
-  background: rgba(249,251,253,0.97);
+  background: rgba(22, 30, 58, 0.8);
   opacity: 1; z-index: 3;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 26px 50px -20px rgba(0,0,0,0.7);
+  border-color: rgba(120, 170, 255, 0.35);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 26px 50px -20px rgba(0,0,0,0.8);
 }
-.marquee-track .logo:hover img { filter: grayscale(0); }
-.marquee-track .logo img { max-height: 78px; max-width: 92px; width: auto; object-fit: contain; display: block;
-  filter: grayscale(calc((1 - var(--w, 1)) * 80%)); transition: filter .3s; }
+/* hover halo on a pseudo-element, NOT box-shadow: a glow shadow on an element that
+   also has backdrop-filter composites against the backdrop snapshot in Chromium and
+   renders as a hard-edged ghost ring (it was also clipped by the marquee's
+   overflow:hidden). This gradient scales with the tile and fades to transparent
+   well inside its own box, so it never hits a visible clip edge. */
+.marquee-track .logo::after {
+  content: ''; position: absolute; inset: -22px; z-index: -1; border-radius: 30px;
+  background: radial-gradient(closest-side, rgba(1,179,246,0.32), rgba(1,179,246,0.14) 62%, rgba(1,179,246,0.05) 82%, transparent 100%);
+  opacity: 0; transition: opacity .3s var(--ease); pointer-events: none;
+}
+.marquee-track .logo:hover::after { opacity: 1; }
+.marquee-track .logo:hover img { filter: invert(1) hue-rotate(180deg) saturate(1.25) brightness(1.12); }
+/* dark-glass adaptation: invert+hue-rotate flips light-background artwork to light-on-dark
+   while keeping hues roughly true; screen-blend drops the (now dark) JPG backgrounds out */
+.marquee-track .logo img { max-height: 92px; max-width: 126px; width: auto; object-fit: contain; display: block;
+  mix-blend-mode: screen;
+  filter: invert(1) hue-rotate(180deg) saturate(1.15) brightness(1.06) grayscale(calc((1 - var(--w, 1)) * 55%));
+  transition: filter .3s; }
+/* logos whose artwork is ALREADY dark-mode friendly (light ink / dark or brand plate):
+   no inversion — screen-blend alone drops dark plates and keeps the light artwork */
+.marquee-track .logo-native img { filter: saturate(1.1) brightness(1.05) grayscale(calc((1 - var(--w, 1)) * 55%)); }
+.marquee-track .logo-native:hover img { filter: saturate(1.2) brightness(1.12); }
 @keyframes marquee { to { transform: translateX(-50%); } }
 @media (prefers-reduced-motion: reduce) { .marquee-track { animation: none; flex-wrap: wrap; justify-content: center; } }
 
@@ -160,7 +182,7 @@
 /* problem card: translucent frosted panel so the blurred scene shows through */
 .card-problem.glass {
   background: color-mix(in oklch, var(--s-1) 38%, transparent);
-  backdrop-filter: blur(24px) saturate(1.25); -webkit-backdrop-filter: blur(24px) saturate(1.25);
+  backdrop-filter: blur(9px) saturate(1.12) brightness(1.03); -webkit-backdrop-filter: blur(9px) saturate(1.12) brightness(1.03);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 30px 80px -42px rgba(0,0,0,0.6);
 }
 /* solution card morphs into the standalone headline, one h2, no duplicate => no ghost */
@@ -169,7 +191,7 @@
   content: ""; position: absolute; inset: 0; z-index: -1; border-radius: var(--r-lg);
   background: color-mix(in oklch, var(--s-1) 38%, transparent);
   border: 1px solid var(--line);
-  backdrop-filter: blur(24px) saturate(1.25); -webkit-backdrop-filter: blur(24px) saturate(1.25);
+  backdrop-filter: blur(9px) saturate(1.12) brightness(1.03); -webkit-backdrop-filter: blur(9px) saturate(1.12) brightness(1.03);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 30px 80px -42px rgba(0,0,0,0.6);
   opacity: var(--chrome, 1);
 }
@@ -236,7 +258,7 @@
 .transition.t-static .t-net .node.is-stk { display: none; }  /* keep the 8 module chips; drop 12 stakeholder pills for a clean mobile payoff */
 
 /* ---------- demo modal ---------- */
-.modal-scrim { position: fixed; inset: 0; z-index: 120; background: rgba(4,5,15,0.7); backdrop-filter: blur(8px); display: grid; place-items: center; padding: 20px; opacity: 0; visibility: hidden; transition: opacity .3s, visibility 0s .3s; }
+.modal-scrim { position: fixed; inset: 0; z-index: 120; background: rgba(4,5,15,0.7); backdrop-filter: blur(9px) saturate(1.12) brightness(1.03); display: grid; place-items: center; padding: 20px; opacity: 0; visibility: hidden; transition: opacity .3s, visibility 0s .3s; }
 .modal-scrim.open { opacity: 1; visibility: visible; transition: opacity .3s, visibility 0s; } /* visibility flips instantly on open (focusable immediately); only delays on close */
 .modal { position: relative; width: min(560px, 100%); max-height: 90vh; overflow-y: auto; background: var(--s-1); border: 1px solid var(--line); border-radius: var(--r-xl); padding: 30px; transform: translateY(18px) scale(0.98); transition: transform .35s var(--ease); }
 .modal-scrim.open .modal { transform: none; }

@@ -157,9 +157,9 @@
     var track = $('#marquee-track'); if (!track) return;
     var base = 'assets/logos/companies/';
     var html = FM.PARTNERS.map(function (p) {
-      /* p.h caps were tuned for the old 58px pill row — scale ×1.9 for the 112px squares */
-      var hs = p.h ? ' style="max-height:' + Math.round(p.h * 1.9) + 'px"' : '';
-      return '<span class="logo" title="' + p.n + '"><img src="' + base + p.f + '" alt="' + p.n + '"' + hs + ' decoding="async"></span>';
+      /* p.h caps were tuned for the old 58px pill row — scale x2.2 for the 134px-tall dark-glass tiles */
+      var hs = p.h ? ' style="max-height:' + Math.round(p.h * 2.2) + 'px"' : '';
+      return '<span class="logo' + (p.inv === false ? ' logo-native' : '') + '" title="' + p.n + '"><img src="' + base + p.f + '" alt="' + p.n + '"' + hs + ' decoding="async"></span>';
     }).join('');
     track.innerHTML = html + html; // duplicate for seamless loop
     // a 404'd logo file removes its pill instead of showing a broken-image glyph
@@ -175,11 +175,13 @@
       var spot = function () {
         if (!spotOn) { spotRaf = 0; return; }
         var r = mq.getBoundingClientRect();
-        var mid = r.left + r.width / 2, half = r.width * 0.36;   // tighter falloff — spotlight concentrates on the centre
+        var mid = r.left + r.width / 2, half = r.width * 0.4;
         for (var i = 0; i < logos.length; i++) {
           var lr = logos[i].getBoundingClientRect();
           if (lr.right < r.left || lr.left > r.right) { logos[i].style.setProperty('--w', '0'); continue; }
           var d = Math.abs((lr.left + lr.right) / 2 - mid) / half;
+          /* plateau: anything within the inner 24% of the spotlight is FULLY lit */
+          d = d <= 0.24 ? 0 : (d - 0.24) / 0.76;
           var w = d >= 1 ? 0 : 1 - d * d * (3 - 2 * d);   // smooth falloff
           logos[i].style.setProperty('--w', w.toFixed(3));
         }
@@ -255,14 +257,27 @@
     renderDetail(0);
   });
 
-  /* ---------- blogs ---------- */
+  /* ---------- blogs: looping card rail (touch scroll + edge-hover autoscroll) ---------- */
   safe('blogs', function () {
     var row = $('#blogs-row'); if (!row) return;
-    row.innerHTML = FM.BLOGS.map(function (b) {
+    var html = FM.BLOGS.map(function (b) {
       return '<article class="blog-card" style="--cc:' + b.c + '"><div class="bc-cat">' + b.cat + '</div>' +
         '<h4>' + b.t + '</h4><p>' + b.x + '</p>' +
         '<span class="bc-link">Read article <svg viewBox="0 0 24 24" width="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></article>';
     }).join('');
+    row.innerHTML = html + html;   // duplicate for a seamless loop
+    var half = 0;
+    function measure(){ half = row.scrollWidth / 2; }
+    function jump(x){ row.scrollTo({ left: x, behavior: 'instant' }); }
+    function wrap(){
+      if (!half) return;
+      if (row.scrollLeft >= half) jump(row.scrollLeft - half);
+      else if (row.scrollLeft <= 0) jump(row.scrollLeft + half);
+    }
+    measure();
+    requestAnimationFrame(function (){ measure(); if (row.scrollLeft <= 0) jump(1); });
+    window.addEventListener('resize', measure, { passive: true });
+    row.addEventListener('scroll', wrap, { passive: true });
     $$('[data-blog]').forEach(function (b) {
       b.addEventListener('click', function () {
         var card = row.querySelector('.blog-card');
@@ -270,6 +285,25 @@
         row.scrollBy({ left: step * (+b.dataset.blog), behavior: 'smooth' });
       });
     });
+    /* edge-hover autoscroll: park the pointer near either side of the section
+       and the rail glides that way (fine pointers only — touch just swipes) */
+    var zone = row.closest('section') || row.parentElement;
+    if (zone && matchMedia('(hover: hover) and (pointer: fine)').matches){
+      var dir = 0, autoRaf = 0;
+      var autoStep = function (){
+        if (!dir){ autoRaf = 0; return; }
+        jump(row.scrollLeft + dir * 4);
+        wrap();
+        autoRaf = requestAnimationFrame(autoStep);
+      };
+      zone.addEventListener('pointermove', function (e) {
+        var r = zone.getBoundingClientRect();
+        var nx = (e.clientX - r.left) / r.width;
+        dir = nx < 0.07 ? -1 : nx > 0.93 ? 1 : 0;
+        if (dir && !autoRaf) autoRaf = requestAnimationFrame(autoStep);
+      }, { passive: true });
+      zone.addEventListener('pointerleave', function () { dir = 0; }, { passive: true });
+    }
   });
 
   /* ---------- testimonials ---------- */
