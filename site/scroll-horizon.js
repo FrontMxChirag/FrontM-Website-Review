@@ -32,9 +32,10 @@
   var GLOW = d.glow || '#01B3F6';
   var MAXOP = d.opacity != null ? parseFloat(d.opacity) : 0.5;
   var ZIDX = d.z != null ? d.z : 3;
-  // travel mode: 'scroll' (homepage — crest rises bottom→rest with scroll) or
-  // 'fixed' (other pages — crest pinned at rest, ocean fully active regardless of scroll)
-  var MODE = d.horizonMode === 'scroll' ? 'scroll' : 'fixed';
+  // travel mode: 'scroll' (default — crest starts low and rises to rest as the page is
+  // scrolled, on EVERY page) or 'fixed' (opt-in via data-horizon-mode="fixed" — crest pinned)
+  var MODE = d.horizonMode === 'fixed' ? 'fixed' : 'scroll';
+  var TRAVEL = d.travel != null ? parseFloat(d.travel) : 2.6;   // rise completes after this many viewport-heights of scroll
   var REST = 0.20;    // resting crest height = 20% from top (do not touch)
   var START = 0.80;   // scroll-top crest: ~20% ocean + fuller fleet at hero, reveal preserved (0.80 → 0.20)
 
@@ -106,14 +107,18 @@
   function compute() {
     var doc = document.documentElement;
     var max = (doc.scrollHeight - window.innerHeight);
-    var p = max > 0 ? Math.min(1, Math.max(0, (window.scrollY || doc.scrollTop) / max)) : 0;
     var vh = window.innerHeight;
+    var sy = window.scrollY || doc.scrollTop || 0;
     if (MODE === 'scroll') {
-      // crest starts at START·vh (ocean sliver already visible) -> rests at REST·vh; same
-      // scroll distance + easing as before, just a shorter travel (0.86 → 0.20).
+      // the rise completes within the first TRAVEL viewport-heights of scrolling (or by
+      // the end of a shorter page), so the background visibly answers the scrollbar on
+      // every page — not just across the full height of very long pages.
+      var travel = Math.min(TRAVEL * vh, max > 0 ? max : TRAVEL * vh);
+      if (travel < 1) travel = 1;
+      var p = Math.min(1, Math.max(0, sy / travel));
       tgtY = (START - p * (START - REST)) * vh;
     } else {
-      // fixed pages: crest pinned at the resting line
+      // fixed pages (opt-in): crest pinned at the resting line
       tgtY = vh * REST;
     }
 

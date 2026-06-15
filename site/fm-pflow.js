@@ -9,9 +9,7 @@
 (function () {
   var sec = document.getElementById('problem-flow');
   if (!sec) return;
-  var FM = window.FM;
-  if (!FM) { if (window.console) console.error('[fm-pflow] window.FM missing — fm-data.js failed to load; aborting cinematic'); return; }
-  var ico = FM.ico;
+  var FM = window.FM, ico = FM.ico;
   var stage = sec.querySelector('.pflow-stage');
   var canvas = sec.querySelector('.pflow-canvas');
   var ctx = canvas.getContext('2d');

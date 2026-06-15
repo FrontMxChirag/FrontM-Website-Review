@@ -2,8 +2,7 @@
    FrontM, marketing homepage · design system
    Dark mode only. Tokens lifted from the brand styleguide.
    ============================================================ */
-/* Fonts load via <link> in each page's <head> (preconnect + stylesheet) — the @import here
-   created a render-blocking 3-hop chain (HTML → this CSS → fonts CSS → woff2). WS1.7. */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 *, *::before, *::after { box-sizing: border-box; }
 /* reflow guard: nothing may force sideways scroll (WCAG 1.4.10) */
@@ -74,7 +73,7 @@ html, body { overflow-x: clip; }
   --grad-page:     radial-gradient(circle at top, var(--s-1) 0%, var(--bg) 48%, var(--inset) 100%);
 
   /* type */
-  --sans: "Hanken Grotesk", system-ui, -apple-system, sans-serif;
+  --sans: "IBM Plex Sans Condensed", "Hanken Grotesk", system-ui, -apple-system, sans-serif;
   --disp: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, monospace;
 

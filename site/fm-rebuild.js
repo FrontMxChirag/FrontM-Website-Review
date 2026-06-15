@@ -10,12 +10,12 @@
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return [].slice.call((r || document).querySelectorAll(s)); };
 
-  /* demo CTAs are primary until the /pricing page exists; platform-plan links are secondary */
+  /* primary platform CTAs route to placeholder anchors (TODO: real routes) */
   function platBtn(label, route, primary) {
-    return '<a class="btn btn-secondary' + (primary ? ' btn-pill' : '') + '" href="#" data-route="' + route + '">' + label + '</a>';
+    return '<a class="btn ' + (primary ? 'btn-primary btn-pill' : 'btn-secondary') + '" href="#" data-route="' + route + '">' + label + '</a>';
   }
   function demoBtn(label, fn) {
-    return '<button class="btn btn-primary" data-open-demo' + (fn ? ' data-demo-fn="' + fn + '"' : '') + '>' + label + '</button>';
+    return '<button class="btn btn-secondary" data-open-demo' + (fn ? ' data-demo-fn="' + fn + '"' : '') + '>' + label + '</button>';
   }
 
   /* ---------- S2 · friction ---------- */

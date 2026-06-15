@@ -29,60 +29,20 @@
   window.FM = {
     ico: ico, I: I,
 
+    /* ---- Information architecture (June 2026) ----
+       Top level: Platform · Solutions · Learn · Community · Company
+       Plain items navigate (href) or are inert placeholders (no href, no hover menu).
+       ONLY Company opens a dropdown. */
     NAV: [
-      { label: 'Platform', menu: {
-        title: 'The connected operating layer',
-        grid: [
-          ['Platform Overview', 'How the four-layer maritime stack fits together'],
-          ['App Marketplace', 'Partner apps installed across 1,500+ vessels'],
-          ['Superapp PaaS', 'Build maritime apps on shared platform infrastructure'],
-          ['Low-Code Framework', 'Drag-and-drop workflow studio with AI assist'],
-          ['frontm.ai', 'AI-assisted workflows for shore teams'],
-          ['APIs & Integrations', 'Connect with crewing, ERP and fleet systems']
-        ],
-        cta: ['See how the four layers work together', 'View architecture']
-      }},
-      { label: 'Product', menu: {
-        title: 'Eight modules, one platform',
-        colored: true,
-        grid: [
-          ['CONNECT', 'Role-based ship-shore communication with acknowledgement', '#01B3F6'],
-          ['ENGAGE', 'Internal community for the company, campaigns & feedback', '#6B5FD9'],
-          ['CARE', 'Video telemedicine & wellbeing for crew at sea', '#18C95C'],
-          ['ENTERTAIN', 'IPTV & managed content for shared recreation spaces', '#FF6A04'],
-          ['INFORM', 'Digital signage & HSEQ campaigns scheduled from shore', '#FFC500'],
-          ['TRAIN', 'Microlearning, safety awareness & cadet content', '#3CAD33'],
-          ['MAINTAIN', 'Maintenance workflows & technical coordination', '#435FE8', 'Coming Soon'],
-          ['MANAGE', 'Approvals, administration & management workflows', '#404858', 'Coming Soon']
-        ]
-      }},
-      { label: 'Industries', menu: {
-        title: 'Built for the teams running maritime',
-        grid: [
-          ['Fleet Operators', 'Visibility across vessels, comms, services and delivery'],
-          ['Technical Management & HSQE', 'Safety guidance, awareness, inspections, audit trails'],
-          ['Crewing & Workforce Operations', 'Engagement, welfare, readiness, feedback, retention'],
-          ['Maritime Service Providers', 'Distribute services to platform-ready vessels and crew'],
-          ['Maritime Ecosystem Organisations', 'Member updates, campaigns, welfare programmes at scale'],
-          ['Welfare & Healthcare Partners', 'Deliver telemedicine and welfare services via the platform']
-        ]
-      }},
-      { label: 'Community', menu: {
-        title: 'onship, the professional community for maritime people',
-        one: true,
-        grid: [
-          ['onship App', ''],
-          ['Seafarers Network', ''],
-          ['Maritime Professionals', ''],
-          ['Cadets Network', '']
-        ],
-        cta: ['', 'Visit onship']
-      }},
-      { label: 'Company', menu: {
-        title: 'FrontM',
-        one: true,
-        grid: [['About', ''], ['Resources', ''], ['Case Studies', ''], ['Contact', '']]
-      }}
+      { label: 'Platform',  href: 'platform.html' },
+      { label: 'Solutions', href: 'index.html' },
+      { label: 'Learn',      href: 'learn.html' },
+      { label: 'Community' },    /* no page yet — inert label, no dropdown */
+      { label: 'Company', menu: { items: [
+        ['About Us',     'about.html'],
+        ['Contact Us',   'contact.html'],
+        ['We Are Hiring', 'hiring.html']
+      ] } }
     ],
 
     PILLARS: [
@@ -97,7 +57,7 @@
         checks: ['Single identity layer across ship + shore', 'Shared permissions, audit and data fabric', 'Open APIs for crewing, ERP, satcom, partners', 'Module-to-module data flow built in'] },
       { name: 'Scalable', color: '#FF6A04', icon: I.scalable,
         body: 'One operating layer, twelve stakeholder roles, 1,500+ vessels. Multi-tenant. Multi-region. Multi-fleet.',
-        checks: ['1,500+ vessels reached across 40+ flag states', 'Multi-tenant, multi-region deployment', '12 stakeholder roles per workspace', 'Low-bandwidth optimised'] }
+        checks: ['1,500+ vessels live across 40+ flag states', 'Multi-tenant, multi-region deployment', '12 stakeholder roles per workspace', 'Low-bandwidth optimised, VSAT-friendly'] }
     ],
 
     MODULES: [
