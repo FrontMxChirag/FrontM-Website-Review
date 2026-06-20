@@ -1,0 +1,117 @@
+/* ============================================================
+   FrontM — About page styles
+   Reuses tokens from fm.css; no new visual system.
+   ============================================================ */
+
+/* ---------- hero ---------- */
+.about-hero { min-height: 82svh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: calc(var(--nav-h) + 56px) var(--pad) 64px; position: relative; z-index: 1; }
+.about-hero .ah-inner { max-width: 1020px; margin-inline: auto; display: flex; flex-direction: column; align-items: center; }
+.about-hero h1 { margin: 24px 0 0; font-size: clamp(2.6rem, 4.8vw, 4.4rem); max-width: 18ch; }
+.about-hero .lede { max-width: 840px; margin: 24px auto 0; }
+.ah-tagline { margin-top: 28px; font-family: var(--mono); font-size: 12.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--primary-lift); display: inline-flex; align-items: center; gap: 14px; }
+.ah-tagline .rule { width: 36px; height: 1px; background: var(--line-2); }
+.ah-cta { margin-top: 38px; display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+
+/* ---------- what FrontM does · split panel ---------- */
+.duo { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 50px; }
+.duo-card { border-radius: var(--r-lg); border: 1px solid var(--line); background: var(--s-1); box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); padding: 32px 30px; position: relative; isolation: isolate; overflow: hidden; transition: transform .3s var(--ease), border-color .3s; }
+.duo-card:hover { transform: translateY(-4px); border-color: color-mix(in oklch, var(--cc) 45%, var(--line)); }
+.duo-card::before { content: ""; position: absolute; left: 50%; bottom: -82%; width: 232%; height: 124%; transform: translateX(-50%); border-radius: 50% 50% 0 0; z-index: -1; pointer-events: none; border-top: 1.5px solid color-mix(in oklch, var(--cc, #6B5FD9) 55%, transparent); background: radial-gradient(120% 58% at 50% 0%, color-mix(in oklch, var(--cc, #6B5FD9) 14%, transparent), transparent 62%); opacity: 0.22; }
+.duo-card .dc-k { font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cc); margin-bottom: 16px; display: inline-flex; align-items: center; gap: 8px; }
+.duo-card .dc-k .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cc); box-shadow: 0 0 9px var(--cc); }
+.duo-card h3 { font-size: 1.5rem; margin-bottom: 12px; }
+.duo-card p { color: var(--muted); line-height: 1.6; max-width: 52ch; }
+
+/* ---------- CEO quote ---------- */
+.ceo-quote { max-width: 920px; margin: 0 auto; border-radius: var(--r-xl); padding: clamp(34px, 5vw, 60px); text-align: center; position: relative; }
+.ceo-quote .mark { font-family: Georgia, serif; font-size: 4rem; line-height: 0.4; color: var(--primary-lift); margin-bottom: 26px; }
+.ceo-quote blockquote { font-family: var(--disp); font-weight: 500; font-size: clamp(1.4rem, 2.6vw, 2.05rem); line-height: 1.35; color: var(--heading); text-wrap: balance; margin: 0 auto; max-width: 26ch; }
+.ceo-sig { margin-top: 32px; display: flex; align-items: center; justify-content: center; gap: 16px; }
+.ceo-sig .ini { width: 54px; height: 54px; border-radius: 50%; flex: none; display: grid; place-items: center; font-family: var(--disp); font-weight: 600; font-size: 1.1rem; color: #fff; background: color-mix(in oklch, var(--primary) 28%, transparent); border: 1px solid color-mix(in oklch, var(--primary-lift) 50%, var(--line)); box-shadow: 0 0 24px var(--primary-glow); }
+.ceo-sig .who { text-align: left; }
+.ceo-sig .who b { display: block; color: #fff; font-weight: 600; }
+.ceo-sig .who span { color: var(--subtle); font-size: 0.88rem; }
+
+/* ---------- ecosystem groups ---------- */
+.eco-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 50px; }
+.eco-card { padding: 26px 24px; border-radius: var(--r-lg); border: 1px solid var(--line); background: var(--s-1); box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); transition: transform .3s var(--ease), border-color .3s; }
+.eco-card:hover { transform: translateY(-4px); border-color: var(--line-2); }
+.eco-card .ec-ico { width: 42px; height: 42px; border-radius: 6px; display: grid; place-items: center; background: color-mix(in oklch, var(--cc) 15%, transparent); color: var(--cc); margin-bottom: 16px; }
+.eco-card .ec-ico svg { width: 22px; height: 22px; }
+.eco-card h4 { font-size: 1.08rem; margin-bottom: 9px; }
+.eco-card p { font-size: 0.9rem; color: var(--muted); line-height: 1.55; }
+.eco-kicker { margin-top: 36px; font-family: var(--mono); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--subtle); display: flex; align-items: center; gap: 14px; }
+.eco-kicker .rule { flex: 1; height: 1px; background: var(--line); }
+
+/* ---------- team placeholders ---------- */
+.team-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 50px; }
+.team-card { padding: 28px 24px; border-radius: var(--r-lg); border: 1px solid var(--line); background: var(--s-1); display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0; }
+.team-card .tm-avatar { width: 92px; height: 92px; border-radius: 50%; border: 1px dashed var(--line-2); background: repeating-linear-gradient(135deg, rgba(255,255,255,0.025) 0 8px, transparent 8px 16px); display: grid; place-items: center; color: var(--faint); margin-bottom: 20px; }
+.team-card .tm-avatar svg { width: 30px; height: 30px; }
+.team-card .tm-bar { height: 11px; border-radius: var(--pill); background: rgba(255,255,255,0.06); width: 70%; }
+.team-card .tm-bar.short { width: 46%; margin-top: 10px; background: rgba(255,255,255,0.04); }
+.team-note { margin-top: 26px; font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.08em; color: var(--subtle); text-align: center; }
+
+/* ---------- values ---------- */
+.values-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 50px; }
+.value-card { padding: 28px 24px; border-radius: var(--r-lg); border: 1px solid var(--line); background: color-mix(in oklch, var(--s-1) 58%, transparent); backdrop-filter: blur(9px) saturate(1.12); -webkit-backdrop-filter: blur(9px) saturate(1.12); box-shadow: inset 0 1px 0 rgba(255,255,255,0.06); transition: transform .3s var(--ease), border-color .3s, box-shadow .3s; }
+.value-card:hover { transform: translateY(-5px); border-color: color-mix(in oklch, var(--cc) 50%, var(--line)); box-shadow: 0 0 38px -14px color-mix(in oklch, var(--cc) 50%, transparent), inset 0 1px 0 rgba(255,255,255,0.07); }
+.value-card .vc-ico { width: 44px; height: 44px; border-radius: 7px; display: grid; place-items: center; background: color-mix(in oklch, var(--cc) 16%, transparent); color: var(--cc); margin-bottom: 18px; }
+.value-card .vc-ico svg { width: 23px; height: 23px; }
+.value-card h4 { font-size: 1.12rem; margin-bottom: 10px; }
+.value-card p { font-size: 0.92rem; color: var(--muted); line-height: 1.55; }
+
+/* ---------- join band ---------- */
+.join-band { border-radius: var(--r-xl); padding: clamp(40px, 6vw, 72px) clamp(24px, 5vw, 64px); text-align: center; position: relative; overflow: hidden; isolation: isolate; }
+.join-band::before { content: ""; position: absolute; left: 50%; bottom: -78%; width: 210%; height: 120%; transform: translateX(-50%); border-radius: 50% 50% 0 0; z-index: -1; pointer-events: none; border-top: 1.5px solid color-mix(in oklch, var(--primary-lift) 45%, transparent); background: radial-gradient(120% 58% at 50% 0%, color-mix(in oklch, var(--primary) 16%, transparent), transparent 62%); opacity: 0.3; }
+.join-band h2 { margin-bottom: 14px; }
+.join-band .jb-tag { font-family: var(--mono); font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--primary-lift); margin-bottom: 18px; }
+.join-band p { color: var(--muted); max-width: 640px; margin: 0 auto; line-height: 1.65; }
+.join-band .jb-cta { margin-top: 34px; display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+
+/* ---------- contact ---------- */
+.contact-grid { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 48px; margin-top: 50px; align-items: start; }
+.contact-aside p { color: var(--muted); line-height: 1.65; max-width: 40ch; }
+.contact-aside .ca-points { margin-top: 28px; display: grid; gap: 14px; list-style: none; padding: 0; }
+.contact-aside .ca-points li { display: flex; gap: 11px; color: var(--body); font-size: 0.93rem; line-height: 1.5; }
+.contact-aside .ca-points svg { width: 17px; height: 17px; color: var(--primary-lift); flex: none; margin-top: 3px; }
+.contact-form { border-radius: var(--r-xl); padding: clamp(26px, 3.5vw, 38px); }
+.contact-form .field textarea { width: 100%; min-height: 120px; resize: vertical; background: var(--s-1); border: 1px solid var(--line-2); border-radius: var(--r-sm); padding: 11px 13px; font: 400 0.95rem var(--sans); color: #fff; transition: border-color .2s, box-shadow .2s; }
+.contact-form .field textarea:focus { outline: none; border-color: var(--primary-lift); box-shadow: 0 0 0 3px rgba(154,134,255,0.22); }
+.contact-form .field input[aria-invalid="true"], .contact-form .field textarea[aria-invalid="true"] { border-color: #E5484D; box-shadow: 0 0 0 3px rgba(229,72,77,0.18); }
+.contact-form .ferr { display: block; color: #FF8589; font-size: 0.82rem; margin-top: 7px; }
+.contact-form .ferr[hidden] { display: none; }
+.contact-form .opt { color: var(--faint); font-weight: 400; }
+.contact-form .consent { margin-top: 16px; font-size: 0.8rem; color: var(--subtle); line-height: 1.55; }
+.contact-form .form-status { margin-top: 18px; padding: 13px 16px; border-radius: var(--r-sm); font-size: 0.92rem; }
+.contact-form .form-status[hidden] { display: none; }
+.contact-form .form-status.ok { color: var(--b-green); border: 1px solid rgba(24,201,92,0.35); background: rgba(24,201,92,0.08); }
+.contact-form .form-status.bad { color: #FF8589; border: 1px solid rgba(229,72,77,0.35); background: rgba(229,72,77,0.08); }
+.contact-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+
+/* ---------- stay connected ---------- */
+.connect-band { border-radius: var(--r-lg); padding: 26px 30px; display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+.connect-band .cb-ico { width: 46px; height: 46px; flex: none; border-radius: var(--r-md); border: 1px solid var(--line-2); display: grid; place-items: center; color: var(--primary-lift); }
+.connect-band .cb-ico svg { width: 22px; height: 22px; }
+.connect-band .cb-body { flex: 1 1 320px; }
+.connect-band h4 { margin-bottom: 5px; }
+.connect-band p { font-size: 0.9rem; color: var(--muted); line-height: 1.5; max-width: 62ch; }
+.connect-band .cb-handle { font-family: var(--mono); font-size: 11.5px; color: var(--subtle); margin-top: 7px; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 1080px) {
+  .eco-grid, .values-grid, .team-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 860px) {
+  .duo { grid-template-columns: 1fr; }
+  .contact-grid { grid-template-columns: 1fr; gap: 36px; }
+}
+@media (max-width: 560px) {
+  .about-hero { min-height: 70svh; }
+  .eco-grid, .values-grid, .team-grid { grid-template-columns: 1fr; }
+  .contact-row2 { grid-template-columns: 1fr; gap: 0; }
+  .ah-cta .btn, .jb-cta .btn { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .duo-card, .eco-card, .value-card, .team-card, .join-band::before { transition: none; animation: none; }
+}

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Page not found | FrontM</title>
+<meta name="description" content="The page you were looking for could not be found. Head back to the FrontM home page or explore the platform.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0B0E1A">
+<link rel="icon" type="image/png" href="assets/logos/frontm/frontm-mark.png">
+<link rel="stylesheet" href="site/fm.css">
+<link rel="stylesheet" href="site/fm-chrome.css">
+<style>
+  /* ---- 404: single centred glass panel, light + reduced-motion safe ---- */
+  .nf-main {
+    min-height: 100svh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 120px var(--pad) 80px;
+    position: relative; z-index: 1;
+  }
+  .nf-panel {
+    max-width: 620px; width: 100%; text-align: center;
+    padding: clamp(36px, 5vw, 64px);
+  }
+  .nf-code {
+    font-family: var(--mono); font-weight: 700;
+    font-size: clamp(72px, 14vw, 132px); line-height: 1;
+    letter-spacing: -0.03em; margin-bottom: 20px;
+    background: var(--grad-intel);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+  }
+  .nf-panel .eyebrow { justify-content: center; margin-bottom: 22px; }
+  .nf-panel h1 {
+    font-size: clamp(1.6rem, 3.4vw, 2.3rem);
+    letter-spacing: -0.02em; line-height: 1.12; margin-bottom: 16px;
+  }
+  .nf-panel p {
+    color: var(--muted); font-size: clamp(1rem, 1.4vw, 1.12rem);
+    line-height: 1.6; max-width: 46ch; margin: 0 auto 36px;
+  }
+  .nf-cta { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+  @media (max-width: 520px) { .nf-cta .btn { width: 100%; } }
+</style>
+</head>
+<body>
+
+<div class="page-base" aria-hidden="true"></div>
+<canvas id="signal-field" aria-hidden="true" style="position:fixed;inset:0;z-index:-1;width:100vw;height:100vh;"></canvas>
+
+<!-- ============ NAV (shared; built by fm.js from fm-data.js) ============ -->
+<nav class="nav" id="nav">
+  <a href="index.html" class="brand brand-lockup"><img src="assets/logos/frontm/frontm-logo-full-light-opt.png" alt="FrontM" width="760" height="252" decoding="async" fetchpriority="high"></a>
+  <div class="nav-center" id="nav-center"></div>
+  <div class="nav-right">
+    <button class="btn btn-primary btn-pill" data-open-demo>Book a Demo</button>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+    </button>
+  </div>
+</nav>
+<div class="drawer" id="drawer">
+  <div id="drawer-body"></div>
+  <button class="btn btn-primary btn-pill" data-open-demo>Book a Demo</button>
+</div>
+
+<main class="nf-main">
+  <div class="nf-panel glass">
+    <div class="nf-code">404</div>
+    <span class="eyebrow"><span class="dot"></span> Page not found</span>
+    <h1>We couldn't find that page.</h1>
+    <p>The link may be broken, or the page may have moved. Let's get you back to something useful.</p>
+    <div class="nf-cta">
+      <a class="btn btn-primary btn-pill" href="index.html">Back to Home</a>
+      <a class="btn btn-ghost btn-pill" href="platform.html">Explore the Platform</a>
+    </div>
+  </div>
+</main>
+
+<script src="site/fm-data.js" defer></script>
+<script src="site/signal-field.js" defer></script>
+<script src="site/fm.js" defer></script>
+</body>
+</html>

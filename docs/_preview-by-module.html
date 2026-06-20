@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PREVIEW · Solutions — By Module</title>
+<meta name="description" content="Preview of the rebuilt By Module explorer + Pathways for decision-making.">
+<meta name="robots" content="noindex">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0B0E1A">
+<link rel="icon" type="image/png" href="assets/logos/frontm/frontm-mark.png">
+<link rel="stylesheet" href="site/fm.css">
+<link rel="stylesheet" href="site/fm-chrome.css">
+<link rel="stylesheet" href="site/fm-content.css">
+<link rel="stylesheet" href="site/fm-platform.css">
+<link rel="stylesheet" href="site/fm-rebuild.css">
+<style>
+  /* PREVIEW ONLY — decision aid for the By Module page. Shows the rebuilt module
+     explorer (FM.MODULES, 8 modules) + the original Pathways block (FM.PATHWAYS).
+     Reuses .mod-explorer / .mod-detail / .pathways from fm-content.css verbatim. */
+  .sbm-hero { padding-top: clamp(124px, 16vh, 196px); }
+  .sbm-hero .sec-head { max-width: 860px; }
+  .sbm-hero .sec-head h1 { font-family: var(--disp); font-weight: 700; letter-spacing: -0.02em; line-height: 1.06; font-size: clamp(2.3rem, 4.6vw, 3.6rem); color: var(--heading); margin: 14px 0 0; }
+  .sbm-hero .sec-head .lede { margin-top: 18px; }
+  /* preview banner */
+  .pv-banner { position: sticky; top: 0; z-index: 50; background: #FFC500; color: #1a1500; font-family: var(--mono, monospace); font-size: 13px; letter-spacing: 0.02em; text-align: center; padding: 8px 16px; }
+  .pv-banner b { font-weight: 700; }
+  .pv-divider { border: 0; border-top: 1px solid var(--line); max-width: 1200px; margin: 8px auto 0; }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#top">Skip to main content</a>
+
+<div class="page-base" aria-hidden="true"></div>
+<canvas id="signal-field" aria-hidden="true" style="position:fixed;inset:0;z-index:-1;width:100vw;height:100vh;"></canvas>
+
+<!-- ============ NAV ============ -->
+<nav class="nav" id="nav">
+  <a href="index.html" class="brand brand-lockup"><img src="assets/logos/frontm/frontm-logo-full-light-opt.png" alt="FrontM" width="760" height="252" decoding="async" fetchpriority="high"></a>
+  <div class="nav-center" id="nav-center"></div>
+  <div class="nav-right">
+    <button class="btn btn-primary btn-pill" data-open-demo>Book a Demo</button>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Open menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+</nav>
+<div class="drawer" id="drawer">
+  <div id="drawer-body"></div>
+  <button class="btn btn-primary btn-pill" data-open-demo>Book a Demo</button>
+</div>
+
+<div class="pv-banner"><b>PREVIEW</b> — this is a decision aid, not the final page. Top block = the rebuilt <b>By Module</b> explorer (original 8 modules). Bottom block = the optional <b>Pathways</b> (Question 1).</div>
+
+<main id="top">
+
+  <!-- ============ PREVIEW · BY MODULE (decision aid — not the final page) ============ -->
+  <section class="section wrap wrap-wide sbm-hero" data-screen-label="By Module Explorer">
+    <div class="sec-head reveal">
+      <span class="eyebrow"><span class="dot"></span> Solutions · By Module</span>
+      <h1>One platform layer for ship, shore, crew and partners.</h1>
+      <p class="lede">Six modules in production. Two on the way. A low-code studio underneath. Built for vessel-network bandwidth, role-based by design, audit-ready by default.</p>
+    </div>
+    <div class="mod-explorer">
+      <div class="mod-list" id="mod-list"></div>
+      <div class="mod-detail" id="mod-detail"></div>
+    </div>
+  </section>
+
+  <!-- Pathways block (Question 1: include this with the explorer, or explorer only?) -->
+  <section class="section wrap wrap-wide" data-screen-label="Pathways">
+    <hr class="pv-divider">
+    <div class="sec-head reveal" style="margin-top:48px;">
+      <span class="eyebrow"><span class="dot"></span> Optional · Question 1</span>
+      <h2>Built for the teams running maritime performance.</h2>
+      <p class="lede">Pick the pathway that matches what your team actually does day-to-day.</p>
+    </div>
+    <div class="pathways" id="pathways"></div>
+  </section>
+
+</main>
+
+<!-- ============ FOOTER (shared) ============ -->
+<footer class="footer">
+  <div class="wrap wrap-wide">
+    <div class="footer-top">
+      <div class="newsletter">
+        <h3>Operational insights, delivered monthly.</h3>
+        <p>What's working in maritime ops right now, from the teams running fleets, partners delivering services, and the seafarers using onship. One email a month. Unsubscribe anytime.</p>
+        <form onsubmit="return false;">
+          <input type="email" placeholder="you@operator.com" aria-label="Email">
+          <button class="btn btn-primary" type="submit">Subscribe</button>
+        </form>
+      </div>
+      <div class="careers-card">
+        <span class="ce"><span class="d"></span> We're hiring</span>
+        <h4>Careers at FrontM</h4>
+        <p>Build the operating layer for maritime. Remote-first, deep domain. 12 open roles across engineering, product and partner success.</p>
+      </div>
+    </div>
+
+    <div class="footer-sitemap">
+      <div class="footer-brand">
+        <a href="index.html" class="brand brand-lockup"><img src="assets/logos/frontm/frontm-logo-full-light-opt.png" alt="FrontM" width="760" height="252" decoding="async" loading="lazy"></a>
+        <p>The AI-native operating platform for maritime. Ship · Shore · Crew · Partners, connected through one role-based platform. ISO 27001 certified. Built for limited-bandwidth vessel networks.</p>
+        <div class="footer-social">
+          <a href="https://www.linkedin.com/company/frontm/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 11-.02 5 2.5 2.5 0 01.02-5zM3 9h4v12H3zM10 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05C21.4 8.65 22 11 22 14.1V21h-4v-6.1c0-1.45-.03-3.32-2.02-3.32-2.02 0-2.33 1.58-2.33 3.21V21h-4z"></path></svg></a>
+          <a href="#" aria-label="X"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 3h3l-7 8 8.2 10h-6.4l-5-6.1L7 21H4l7.5-8.6L3.6 3h6.5l4.5 5.6zm-1.1 16h1.7L8 4.7H6.2z"></path></svg></a>
+          <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 12s0-3.3-.42-4.88a2.53 2.53 0 00-1.78-1.79C19.2 5 12 5 12 5s-7.2 0-8.8.33a2.53 2.53 0 00-1.78 1.8C1 8.7 1 12 1 12s0 3.3.42 4.88a2.53 2.53 0 001.78 1.79C4.8 19 12 19 12 19s7.2 0 8.8-.33a2.53 2.53 0 001.78-1.79C23 15.3 23 12 23 12zm-13 3.2V8.8L15.5 12z"></path></svg></a>
+          <a href="#" aria-label="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 7l9 6 9-6"></path></svg></a>
+        </div>
+      </div>
+      <div class="footer-col"><h5>Platform</h5><ul><li><a href="platform.html">Overview</a></li><li><a href="#">App Marketplace</a></li><li><a href="#">Superapp PaaS</a></li><li><a href="#">Low-Code Studio</a></li><li><a href="#">frontm.ai</a></li><li><a href="#">APIs &amp; Integrations</a></li></ul></div>
+      <div class="footer-col"><h5>Product</h5><ul><li><a href="#">CONNECT</a></li><li><a href="#">ENGAGE</a></li><li><a href="#">CARE</a></li><li><a href="#">ENTERTAIN</a></li><li><a href="#">INFORM</a></li><li><a href="#">TRAIN</a></li><li><a href="#">MAINTAIN</a></li><li><a href="#">MANAGE</a></li></ul></div>
+      <div class="footer-col"><h5>Industries</h5><ul><li><a href="#">Fleet Operators</a></li><li><a href="#">Technical &amp; HSQE</a></li><li><a href="#">Crewing &amp; Workforce</a></li><li><a href="#">Service Providers</a></li><li><a href="#">Welfare Organisations</a></li><li><a href="#">Maritime Associations</a></li></ul></div>
+      <div class="footer-col"><h5>Community</h5><ul><li><a href="#">onship App</a></li><li><a href="#">Seafarers</a></li><li><a href="#">Professionals</a></li><li><a href="#">Cadets</a></li><li><a href="#">Mentors</a></li></ul></div>
+      <div class="footer-col"><h5>Company</h5><ul><li><a href="about.html">About Us</a></li><li><a href="contact.html">Contact Us</a></li><li><a href="hiring.html">We Are Hiring</a></li></ul></div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>Global · English &nbsp;·&nbsp; © 2026 FrontM. All rights reserved. ISO 27001 certified.</span>
+      <div class="fb-links"><a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Security</a><a href="#">Cookies</a></div>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ BOOK A DEMO MODAL (shared) ============ -->
+<div class="modal-scrim" id="demo-modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Book a demo">
+    <button class="modal-close" id="modal-close" aria-label="Close"><svg viewBox="0 0 24 24" width="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <div class="eyebrow">Book a 20-minute demo</div>
+    <h3>See FrontM running against your fleet&rsquo;s real workflows in 20 minutes.</h3>
+    <div class="modal-steps">
+      <div class="st active">1 · Day</div><div class="st">2 · Time</div><div class="st">3 · Details</div>
+    </div>
+
+    <div class="modal-pane show" data-step="1">
+      <p class="muted" style="margin-bottom:16px;">Pick a day in the next week.</p>
+      <div class="chip-grid" id="demo-days"></div>
+    </div>
+
+    <div class="modal-pane" data-step="2" id="demo-times">
+      <div class="tz-group"><div class="tz-label">CET</div><div class="chip-grid"><button class="chip" data-time="CET 09:00">09:00</button><button class="chip" data-time="CET 11:00">11:00</button><button class="chip" data-time="CET 14:00">14:00</button><button class="chip" data-time="CET 16:00">16:00</button></div></div>
+      <div class="tz-group"><div class="tz-label">SGT</div><div class="chip-grid"><button class="chip" data-time="SGT 10:30">10:30</button><button class="chip" data-time="SGT 13:30">13:30</button><button class="chip" data-time="SGT 15:30">15:30</button></div></div>
+      <div class="tz-group"><div class="tz-label">EST</div><div class="chip-grid"><button class="chip" data-time="EST 09:00">09:00</button><button class="chip" data-time="EST 11:00">11:00</button><button class="chip" data-time="EST 14:00">14:00</button></div></div>
+    </div>
+
+    <div class="modal-pane" data-step="3">
+      <form id="demo-form">
+        <div class="field"><label for="demo-name">Name</label><input id="demo-name" type="text" required placeholder="Your name" autocomplete="name"></div>
+        <div class="field"><label for="demo-email">Work email</label><input id="demo-email" type="email" required placeholder="you@operator.com" autocomplete="email"></div>
+        <div class="field"><label for="demo-fleet">Fleet size</label>
+          <select id="demo-fleet" required><option value="">Select…</option><option>Under 10 vessels</option><option>10-30 vessels</option><option>30-80 vessels</option><option>80-200 vessels</option><option>200+ vessels</option></select>
+        </div>
+        <button class="btn btn-primary" type="submit" style="width:100%;">Confirm booking</button>
+      </form>
+    </div>
+
+    <div class="modal-pane modal-success" id="demo-success">
+      <div class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 13l4 4L19 7"/></svg></div>
+      <h3 style="margin-bottom:8px;">You're on the calendar.</h3>
+      <p class="muted">We'll send a calendar invite and a short prep note. See you soon.</p>
+    </div>
+
+    <div class="modal-foot">ISO 27001 · GDPR · HIPAA aligned</div>
+  </div>
+</div>
+
+<script src="site/fm-data.js" defer></script>
+<script src="site/signal-field.js" defer></script>
+<script src="site/fm-platform.js" defer></script>
+<script src="site/fm-rebuild.js" defer></script>
+<script src="site/fm.js" defer></script>
+</body>
+</html>

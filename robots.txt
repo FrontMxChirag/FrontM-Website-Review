@@ -1,0 +1,3 @@
+# Review build — NOT for indexing until production launch on the live domain.
+User-agent: *
+Disallow: /
