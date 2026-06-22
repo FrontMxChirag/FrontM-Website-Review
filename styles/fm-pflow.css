@@ -1,0 +1,272 @@
+/* ============================================================
+   FrontM — Problem→Solution pinned cinematic sequence
+   "Atoms splitting" fragmentation that resolves on the turn.
+   Tokens/fonts/colours from fm.css. Driver: fm-pflow.js
+   ============================================================ */
+
+.pflow { position: relative; height: 1200vh; /* no-JS fallback; JS drives PIN_VH */ }
+.pflow-stage {
+  position: sticky; top: 0; height: 100vh; overflow: hidden;
+  display: grid; place-items: center;
+}
+.pflow-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+
+/* ---- problem headline: starts CENTRED in glass, docks to top ---- */
+.pflow-head {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: min(820px, 90vw); text-align: center; z-index: 4; will-change: opacity, transform, top;
+}
+.pflow-head .eyebrow { justify-content: center; margin-bottom: 18px; }
+.pflow-head h2 { font-size: clamp(2rem, 4.2vw, 3.1rem); line-height: 1.1; }
+.pflow-lead { color: var(--muted); font-size: clamp(1.05rem, 1.6vw, 1.35rem); margin-top: 16px; max-width: 640px; margin-inline: auto; }
+.pflow-head-inner, .pflow-approach-inner { position: relative; z-index: 1; }
+
+/* ---- glass panels: ONE house frost recipe — translucent surface, heavy backdrop
+   blur (frosty, visibly blurs whatever passes behind), top hairline highlight,
+   and a soft accent halo CENTRED directly behind the panel (no offset). ---- */
+.pflow-glass {
+  position: absolute; inset: -38px -44px; z-index: 0; --cc: #9A86FF;
+  background: color-mix(in oklch, var(--s-1) 48%, transparent);
+  border: 1px solid var(--line-2); border-radius: var(--r-xl);
+  backdrop-filter: blur(9px) saturate(1.12) brightness(1.03);
+  -webkit-backdrop-filter: blur(9px) saturate(1.12) brightness(1.03);
+  box-shadow:
+    0 0 90px -18px color-mix(in oklch, var(--cc) 32%, transparent),
+    0 30px 70px -30px rgba(0,0,0,0.8),
+    inset 0 1px 0 rgba(255,255,255,0.1);
+  will-change: transform, opacity, filter;
+}
+
+/* ---- exit ripples: handled entirely on the constellation canvas now
+   (W1 field swell + W5 underglow, fm-pflow.js) — no DOM overlay rigs ---- */
+
+/* ---- friction cards (revealed one-by-one, BIGGER — they own the centre of the stage) ---- */
+.pflow-friction {
+  position: absolute; left: 50%; top: 53%; transform: translate(-50%, -50%);
+  display: flex; gap: 18px; z-index: 5; width: max-content; max-width: 96vw;
+  perspective: 1200px;
+}
+.pflow-fr {
+  width: clamp(208px, 16vw, 264px); padding: 28px 24px; border-radius: var(--r-lg); --cc: var(--b-orange);
+  background: color-mix(in oklch, var(--s-1) 62%, transparent);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(9px) saturate(1.12) brightness(1.03); -webkit-backdrop-filter: blur(9px) saturate(1.12) brightness(1.03);
+  box-shadow: 0 18px 40px -24px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.06);
+  display: flex; flex-direction: column; gap: 14px;
+  will-change: opacity, transform;
+}
+.pflow-fr .pfr-ico {
+  width: 52px; height: 52px; border-radius: 8px; display: grid; place-items: center;
+  color: var(--cc);
+  background: color-mix(in oklch, var(--cc) 16%, var(--s-2));
+  border: 1px solid color-mix(in oklch, var(--cc) 38%, var(--line));
+}
+.pflow-fr .pfr-ico svg { width: 28px; height: 28px; }
+.pflow-fr .pfr-t { color: var(--heading); font-weight: 700; font-size: 1.12rem; }
+.pflow-fr .pfr-d { color: var(--muted); font-size: 0.95rem; line-height: 1.55; }
+
+/* ---- cost stat: pill + supporting copy share ONE glass panel ---- */
+.pflow-statwrap {
+  position: absolute; left: 50%; bottom: 13.5%; transform: translateX(-50%);
+  z-index: 5; text-align: center; width: max-content; max-width: 88vw;
+  opacity: 0; will-change: opacity, transform, filter;
+}
+.pflow-statwrap .pflow-glass.pg-stat {
+  inset: -24px -42px; --cc: var(--b-orange);
+  background: color-mix(in oklch, var(--b-orange) 9%, color-mix(in oklch, var(--s-1) 48%, transparent));
+  border-color: color-mix(in oklch, var(--b-orange) 34%, var(--line));
+  /* glow sits CENTRED directly behind the card — zero offset in any direction */
+  box-shadow:
+    0 0 84px -10px color-mix(in oklch, var(--b-orange) 50%, transparent),
+    inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.pflow-statwrap-inner { position: relative; z-index: 1; }
+.pflow-stat {
+  display: flex; align-items: center; justify-content: center; gap: 14px;
+  width: max-content; max-width: 100%; margin: 0 auto;
+  will-change: opacity, transform; white-space: nowrap;
+}
+.pflow-stat .gx { font-family: var(--disp); font-size: clamp(1.7rem, 3.2vw, 2.4rem); color: var(--b-orange); line-height: 1; }
+.pflow-stat .gt { color: var(--body); font-size: clamp(0.85rem, 1.3vw, 1rem); white-space: normal; }
+.pflow-statcopy {
+  max-width: min(620px, 84vw); text-align: center;
+  color: var(--muted); font-size: clamp(0.95rem, 1.35vw, 1.1rem); line-height: 1.55;
+  white-space: normal; opacity: 0; will-change: opacity, transform; margin: 14px auto 0;
+}
+
+/* ---- the approach reveal: pops in glass at CENTRE, docks to top ---- */
+.pflow-approach {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: min(860px, 92vw); text-align: center; z-index: 6; opacity: 0; will-change: opacity, transform, top;
+}
+.pflow-approach .eyebrow { justify-content: center; }
+.pflow-approach .pa-h { font-size: clamp(1.9rem, 4vw, 3rem); line-height: 1.08; margin-top: 14px; }
+.pflow-approach .pa-p { color: var(--muted); font-size: clamp(0.95rem, 1.3vw, 1.1rem); line-height: 1.55; max-width: 720px; margin: 14px auto 0; }
+
+/* ---- HEAL: the 8 outcomes (flip in from the friction cards) ---- */
+.pflow-outcomes {
+  position: absolute; left: 50%; bottom: 9%; transform: translateX(-50%);
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px;
+  width: min(1120px, 95vw); z-index: 5; perspective: 1200px;
+}
+.pflow-oc {
+  padding: 20px 18px; border-radius: var(--r-lg); --cc: var(--primary-lift);
+  background: color-mix(in oklch, var(--s-1) 62%, transparent);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(9px) saturate(1.12) brightness(1.03); -webkit-backdrop-filter: blur(9px) saturate(1.12) brightness(1.03);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+  display: flex; flex-direction: column; gap: 10px; opacity: 0; will-change: opacity, transform;
+}
+.pflow-oc .poc-ico {
+  width: 42px; height: 42px; border-radius: 6px; display: grid; place-items: center;
+  color: var(--cc);
+  background: color-mix(in oklch, var(--cc) 16%, var(--s-2));
+  border: 1px solid color-mix(in oklch, var(--cc) 38%, var(--line));
+}
+.pflow-oc .poc-ico svg { width: 22px; height: 22px; }
+.pflow-oc .poc-t { color: var(--heading); font-weight: 700; font-size: 0.98rem; }
+.pflow-oc .poc-d { color: var(--muted); font-size: 0.86rem; line-height: 1.42; }
+
+/* ---- FINALE: the wheel blooms in-stage ---- */
+.pflow-wheelwrap {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  z-index: 4; opacity: 0; will-change: opacity, transform; pointer-events: none;
+  display: flex; flex-direction: column; align-items: center; gap: 0;
+  width: min(1100px, 94vw);
+}
+.pflow-wheelwrap.live { pointer-events: auto; }
+/* finale title: giant TWO-LINE ghost text drifting slowly BEHIND the wheel —
+   faded fill, soft glow behind, and a live 2× constellation clipped INSIDE the
+   glyphs (canvas painted by fm-pflow.js) */
+.pflow-wheel-head {
+  position: absolute; left: 50%; top: 50%; z-index: 0;
+  width: 180vw; overflow: visible; text-align: center;
+  opacity: 0; will-change: opacity, transform; pointer-events: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 22%, #000 78%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 22%, #000 78%, transparent);
+}
+.pflow-wheel-head::before {
+  content: ''; position: absolute; left: 50%; top: 50%; z-index: -1;
+  width: min(1040px, 70%); height: 165%; transform: translate(-50%, -50%); border-radius: 50%;
+  /* the LIGHT behind the FrontM mark: cyan core → blue → violet, the same hue
+     family as the hub glow — the text fill below is tinted to match so it reads
+     as glass lit from this source */
+  background: radial-gradient(58% 58% at calc(50% + var(--glx, 0%)) calc(50% + var(--gly, 0%)),
+    color-mix(in oklch, var(--b-cyan, #1FE6D4) 22%, transparent),
+    color-mix(in oklch, var(--b-blue, #01B3F6) 13%, transparent) 42%,
+    color-mix(in oklch, var(--primary-lift, #9A86FF) 7%, transparent) 66%,
+    transparent 80%);
+  filter: blur(34px); pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .pflow-wheel-head::before { animation: pflowHubBreath 6.5s ease-in-out infinite alternate; }
+}
+@keyframes pflowHubBreath {
+  from { opacity: .72; transform: translate(-50%, -50%) scale(.97); }
+  to   { opacity: 1;   transform: translate(-50%, -50%) scale(1.05); }
+}
+/* Option B — outline stack: three lines of stroke-only condensed caps,
+   vignette-masked so the letterforms melt into the dark at the edges.
+   The in-glyph constellation canvas paints INSIDE the letter bodies. */
+.pflow-wheel-title {
+  position: relative; width: max-content; margin: 0 auto; white-space: nowrap; text-align: center;
+  font-family: var(--disp); font-weight: 700; text-transform: uppercase;
+  font-size: clamp(88px, 11vw, 185px); line-height: 0.96; letter-spacing: 0.01em;
+  color: transparent; -webkit-text-stroke: 1.25px rgba(150, 185, 245, 0.5);
+  -webkit-mask-image: radial-gradient(84% 86% at 50% 50%, #000 52%, transparent 90%);
+  mask-image: radial-gradient(84% 86% at 50% 50%, #000 52%, transparent 90%);
+  animation: pflowDrift 64s ease-in-out infinite alternate;
+}
+.pflow-wheel-title .pwt-stars { position: absolute; inset: 0; pointer-events: none; }
+/* progressive fill (scroll-triggered): the outline persists; the gradient pours
+   into each line one after another (--fa 0→1, set by fm-pflow.js). While a line
+   is filling its stroke IGNITES (--gw) with a living glow that dies once the
+   line is solid. */
+.pflow-wheel-title .wt-l {
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  /* dim cool SHADE pours in on scroll (--fa) — tinted cyan→violet→blue to match
+     the light behind the hub; stays low-alpha so the glowing outline leads */
+  background-image: linear-gradient(180deg,
+    rgba(120, 210, 255, calc(0.34 * var(--fa, 0))),
+    rgba(150, 130, 255, calc(0.22 * var(--fa, 0))) 55%,
+    rgba(90, 180, 255, calc(0.12 * var(--fa, 0))));
+  /* GLOW OUTLINE: a visible cool stroke at rest that ignites cyan as it fills,
+     carrying a constant soft halo that swells (--gw) while the line burns */
+  -webkit-text-stroke-color: color-mix(in oklch, rgba(150, 185, 245, 0.5) calc(100% - var(--gw, 0) * 100%), rgba(64, 196, 255, 0.95));
+  filter: drop-shadow(0 0 calc(4px + var(--gw, 0) * 16px) rgba(1, 179, 246, calc(0.22 + var(--gw, 0) * 0.55)));
+  will-change: filter;
+}
+@keyframes pflowDrift { from { transform: translateX(-5%); } to { transform: translateX(5%); } }
+@media (prefers-reduced-motion: reduce) { .pflow-wheel-title { animation: none; } }
+.pflow-wheel-lede {
+  color: var(--muted); font-size: clamp(0.98rem, 1.4vw, 1.15rem); line-height: 1.55;
+  max-width: 640px; margin: 12px auto 0;
+}
+.pflow-wheelwrap .cw-stage {
+  width: min(66vh, 84vw); aspect-ratio: 1; margin: 8px 0 0; position: relative; flex: none; z-index: 1;
+}
+
+/* a scroll cue while pinned */
+.pflow-cue {
+  position: absolute; bottom: 3%; left: 50%; transform: translateX(-50%); z-index: 6;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--subtle);
+  display: flex; align-items: center; gap: 8px;
+}
+@media (prefers-reduced-motion: no-preference) { .pflow-cue { animation: pflowCue 2.4s var(--ease) infinite; } }
+@keyframes pflowCue { 0%,100% { opacity: .4; transform: translate(-50%, 0); } 50% { opacity: 1; transform: translate(-50%, 4px); } }
+
+/* ============================================================
+   STATIC fallback (narrow / reduced-motion)
+   ============================================================ */
+.pflow.pf-static { height: auto; }
+.pflow.pf-static .pflow-stage {
+  position: static; height: auto; display: block;
+  padding: clamp(64px, 10vh, 120px) var(--pad);
+}
+.pflow.pf-static .pflow-canvas, .pflow.pf-static .pflow-cue, .pflow.pf-static .pflow-glass { display: none; }
+.pflow.pf-static .pflow-head,
+.pflow.pf-static .pflow-friction,
+.pflow.pf-static .pflow-statwrap,
+.pflow.pf-static .pflow-stat,
+.pflow.pf-static .pflow-statcopy,
+.pflow.pf-static .pflow-approach,
+.pflow.pf-static .pflow-outcomes,
+.pflow.pf-static .pflow-wheelwrap,
+.pflow.pf-static .pflow-wheel-head,
+.pflow.pf-static .pflow-wheel-title {
+  position: static; transform: none; left: auto; top: auto; bottom: auto;
+  opacity: 1 !important; clip-path: none !important; margin-inline: auto;
+}
+.pflow.pf-static .pflow-head { margin-bottom: 44px; }
+.pflow.pf-static .pflow-friction {
+  flex-wrap: wrap; justify-content: center; width: 100%; max-width: 1000px; margin: 0 auto 28px;
+}
+.pflow.pf-static .pflow-fr { width: 200px; }
+.pflow.pf-static .pflow-statwrap { margin: 0 auto 56px; }
+.pflow.pf-static .pflow-stat { margin: 0 auto 14px; width: max-content; }
+.pflow.pf-static .pflow-statcopy { margin: 14px auto 0; width: auto; max-width: 620px; text-align: center; }
+.pflow.pf-static .pflow-approach { max-width: 820px; margin-bottom: 32px; }
+.pflow.pf-static .pflow-fr, .pflow.pf-static .pflow-oc { opacity: 1 !important; transform: none !important; }
+.pflow.pf-static .pflow-wheelwrap { pointer-events: auto; margin-bottom: 12px; width: 100%; }
+.pflow.pf-static .pflow-wheelwrap .cw-stage { width: min(760px, 92vw); margin: 24px auto 0; }
+.pflow.pf-static .pflow-wheel-head { opacity: 1 !important; transform: none !important; position: static; width: auto; overflow: visible; -webkit-mask-image: none; mask-image: none; }
+.pflow.pf-static .pflow-wheel-head::before { display: none; }
+.pflow.pf-static .pflow-wheel-title { font-size: clamp(1.6rem, 4vw, 2.2rem); opacity: 1; color: var(--heading); -webkit-text-stroke: 0; text-transform: none; letter-spacing: normal; line-height: 1.2; -webkit-mask-image: none; mask-image: none; text-shadow: none; animation: none; width: auto; white-space: normal; }
+.pflow.pf-static .pflow-wheel-title .wt-l { color: var(--heading); -webkit-text-stroke: 0; background: none; filter: none; }
+.pflow.pf-static .pflow-wheel-title br { display: none; }
+.pflow.pf-static .pwt-stars { display: none; }
+@media (max-width: 560px) {
+  .pflow.pf-static .pflow-outcomes { grid-template-columns: 1fr; }
+}
+
+/* fallback: outcomes as a NORMAL static list */
+.pflow.pf-static .pflow-outcomes {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: 100%; max-width: 900px; margin: 0 auto 56px;
+}
+
+@media (max-width: 1240px) {
+  .pflow-fr { width: 192px; padding: 22px 18px; }
+  .pflow-fr .pfr-t { font-size: 1.02rem; }
+  .pflow-fr .pfr-d { font-size: 0.9rem; }
+}
