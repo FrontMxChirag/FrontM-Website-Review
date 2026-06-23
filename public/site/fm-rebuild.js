@@ -38,14 +38,22 @@
   (function () {
     var host = $('#tracks'); if (!host) return;
     host.innerHTML = FM.TRACKS.map(function (t, i) {
-      var dest = t.href || '#';
-      var routeAttr = t.href ? '' : ' data-route="' + t.route + '"';
-      var cardHref = t.href ? ' data-card-href="' + t.href + '"' : '';
-      return '<div class="track-card reveal" data-d="' + i + '" style="--cc:' + t.color + '"' + cardHref + '>' +
-        '<div class="tk-num">0' + (i + 1) + '</div>' +
+      var num = t.label ? (i + 1) + ' \u00B7 ' + t.label : '0' + (i + 1);
+      var dest, ctaAttr, cardAttr;
+      if (t.interstitial) {
+        dest = t.interstitial;
+        ctaAttr = ' data-interstitial="' + t.interstitial + '"';
+        cardAttr = ' data-card-interstitial="' + t.interstitial + '"';
+      } else if (t.href) {
+        dest = t.href; ctaAttr = ''; cardAttr = ' data-card-href="' + t.href + '"';
+      } else {
+        dest = '#'; ctaAttr = ' data-route="' + t.route + '"'; cardAttr = '';
+      }
+      return '<div class="track-card reveal" data-d="' + i + '" style="--cc:' + t.color + '"' + cardAttr + '>' +
+        '<div class="tk-num">' + num + '</div>' +
         '<div class="tk-ico">' + ico(t.ic) + '</div>' +
         '<h3>' + t.t + '</h3><p>' + t.d + '</p>' +
-        '<div class="tk-cta"><a class="tk-link" href="' + dest + '"' + routeAttr + '>' + t.cta +
+        '<div class="tk-cta"><a class="tk-link" href="' + dest + '"' + ctaAttr + '>' + t.cta +
         ' <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div></div>';
     }).join('');
     /* whole card is clickable when it has a real destination */
@@ -54,6 +62,15 @@
       card.addEventListener('click', function (e) {
         if (e.target.closest('a, button')) return; /* let real links/buttons handle their own clicks */
         window.location.href = card.getAttribute('data-card-href');
+      });
+    });
+    /* community card hands off to the onship interstitial (same as nav) */
+    $$('#tracks .track-card[data-card-interstitial]').forEach(function (card) {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', function (e) {
+        if (e.target.closest('a, button')) return;
+        var link = card.querySelector('[data-interstitial]');
+        if (link) link.click();
       });
     });
   })();

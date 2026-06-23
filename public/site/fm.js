@@ -262,65 +262,77 @@
     renderDetail(0);
   })();
 
-  /* ---------- blogs: looping card rail (touch scroll + edge-hover autoscroll) ---------- */
+  /* ---------- homepage blogs carousel (featured blogs; manual prev/next + swipe) ---------- */
   (function () {
     var row = $('#blogs-row'); if (!row) return;
-    var html = FM.BLOGS.map(function (b) {
-      return '<article class="blog-card" style="--cc:' + b.c + '"><div class="bc-cat">' + b.cat + '</div>' +
-        '<h4>' + b.t + '</h4><p>' + b.x + '</p>' +
-        '<span class="bc-link">Read article <svg viewBox="0 0 24 24" width="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></article>';
+    var todo = function (v) { return !v || (typeof v === 'string' && /TODO/i.test(v)); };
+    var types = FM.RES_TYPES || {};
+    var arrow = '<svg viewBox="0 0 24 24" width="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+
+    /* Blogs only. News entries are parked in FM.RESOURCES but never shown here.
+       Source = featured blogs; INTERIM fallback to all blogs while featured flags are
+       unset, so the section never goes empty/broken. Switches to featured-only once
+       real blogs + flags land — purely a data change. */
+    var blogs = (FM.RESOURCES || []).filter(function (b) { return b.type === 'blog' && !todo(b.title); });
+    var featured = blogs.filter(function (b) { return b.featured; });
+    var show = featured.length ? featured : blogs;
+
+    var section = row.closest('section');
+    if (!show.length) { if (section) section.style.display = 'none'; return; }   // hard guard: never render an empty section
+
+    row.innerHTML = show.map(function (b) {
+      var ty = types[b.type] || { label: b.type, c: '#9A86FF' };
+      var media = !todo(b.image)
+        ? '<div class="bc-media" style="background-image:url(\'' + b.image + '\')"></div>'
+        : '<div class="bc-media bc-media-ph"><span>' + ty.label + '</span></div>';
+      var cat = todo(b.cat) ? ty.label : b.cat;
+      var dek = todo(b.dek) ? '<p class="bc-pending">Summary coming soon</p>' : '<p>' + b.dek + '</p>';
+      var link = !todo(b.url)
+        ? '<a class="bc-link" href="' + b.url + '" target="_blank" rel="noopener">Read article ' + arrow + '</a>'
+        : '<a class="bc-link" href="blogs.html">View in Blogs ' + arrow + '</a>';
+      return '<article class="blog-card" style="--cc:' + ty.c + '">' + media +
+        '<div class="bc-body"><div class="bc-cat">' + cat + '</div>' +
+        '<h4>' + b.title + '</h4>' + dek + link + '</div></article>';
     }).join('');
-    row.innerHTML = html + html;   // duplicate for a seamless loop
-    var half = 0;
-    function measure(){ half = row.scrollWidth / 2; }
-    function jump(x){ row.scrollTo({ left: x, behavior: 'instant' }); }
-    function wrap(){
-      if (!half) return;
-      if (row.scrollLeft >= half) jump(row.scrollLeft - half);
-      else if (row.scrollLeft <= 0) jump(row.scrollLeft + half);
+
+    var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var navWrap = $('.blogs-nav');
+    function step() { var c = row.querySelector('.blog-card'); return c ? c.getBoundingClientRect().width + 20 : 340; }
+    function atEnds() {
+      var max = row.scrollWidth - row.clientWidth - 2;
+      return { start: row.scrollLeft <= 2, end: row.scrollLeft >= max, scrollable: max > 4 };
     }
-    measure();
-    requestAnimationFrame(function (){ measure(); if (row.scrollLeft <= 0) jump(1); });
-    window.addEventListener('resize', measure, { passive: true });
-    row.addEventListener('scroll', wrap, { passive: true });
+    function syncArrows() {
+      var e = atEnds();
+      $$('[data-blog]').forEach(function (b) {
+        var prev = (+b.dataset.blog) < 0;
+        var off = prev ? e.start : e.end;
+        b.disabled = off; b.style.opacity = off ? '0.32' : ''; b.style.pointerEvents = off ? 'none' : '';
+      });
+      // hide the prev/next cluster entirely when there's nothing to scroll (e.g. a single blog)
+      $$('[data-blog]').forEach(function (b) { b.style.display = e.scrollable ? '' : 'none'; });
+    }
     $$('[data-blog]').forEach(function (b) {
       b.addEventListener('click', function () {
-        var card = row.querySelector('.blog-card');
-        var step = card ? card.getBoundingClientRect().width + 20 : 340;
-        row.scrollBy({ left: step * (+b.dataset.blog), behavior: 'smooth' });
+        row.scrollBy({ left: step() * (+b.dataset.blog), behavior: reduced ? 'auto' : 'smooth' });
       });
     });
-    /* edge-hover autoscroll: park the pointer near either side of the section
-       and the rail glides that way (fine pointers only — touch just swipes) */
-    var zone = row.closest('section') || row.parentElement;
-    if (zone && matchMedia('(hover: hover) and (pointer: fine)').matches){
-      var dir = 0, autoRaf = 0;
-      var autoStep = function (){
-        if (!dir){ autoRaf = 0; return; }
-        jump(row.scrollLeft + dir * 4);
-        wrap();
-        autoRaf = requestAnimationFrame(autoStep);
-      };
-      zone.addEventListener('pointermove', function (e) {
-        var r = zone.getBoundingClientRect();
-        var nx = (e.clientX - r.left) / r.width;
-        dir = nx < 0.07 ? -1 : nx > 0.93 ? 1 : 0;
-        if (dir && !autoRaf) autoRaf = requestAnimationFrame(autoStep);
-      }, { passive: true });
-      zone.addEventListener('pointerleave', function () { dir = 0; }, { passive: true });
-    }
+    row.addEventListener('scroll', syncArrows, { passive: true });
+    window.addEventListener('resize', syncArrows, { passive: true });
+    requestAnimationFrame(syncArrows);
   })();
 
-  /* ---------- testimonials ---------- */
+  /* ---------- testimonials (homepage carousel — INTERIM placeholder quotes) ---------- */
   (function () {
     var track = $('#t-track2'), dotsHost = $('#t-dots'); if (!track) return;
-    track.innerHTML = FM.TESTIMONIALS.map(function (t, i) {
+    var DATA = FM.HOME_TESTIMONIALS || [];
+    track.innerHTML = DATA.map(function (t, i) {
       return '<div class="t-quote' + (i === 0 ? ' active' : '') + '"><div class="mark">\u201C</div>' +
         '<blockquote>' + t.q + '</blockquote>' +
         '<div class="who"><b>' + t.who.split(',')[0] + '</b>, ' + t.who.split(',').slice(1).join(',').trim() + '</div>' +
         '<div class="metric">' + t.m + '</div></div>';
     }).join('');
-    dotsHost.innerHTML = FM.TESTIMONIALS.map(function (t, i) { return '<button class="' + (i === 0 ? 'on' : '') + '" data-k="' + i + '"></button>'; }).join('');
+    dotsHost.innerHTML = DATA.map(function (t, i) { return '<button class="' + (i === 0 ? 'on' : '') + '" data-k="' + i + '"></button>'; }).join('');
     var quotes = $$('.t-quote', track), dots = $$('button', dotsHost), idx = 0, timer = null;
     function go(n) { idx = (n + quotes.length) % quotes.length; quotes.forEach(function (q, k) { q.classList.toggle('active', k === idx); }); dots.forEach(function (d, k) { d.classList.toggle('on', k === idx); }); }
     function restart() { clearInterval(timer); timer = setInterval(function () { go(idx + 1); }, 5000); }
@@ -328,6 +340,48 @@
     $('#t-prev').addEventListener('click', function () { go(idx - 1); restart(); });
     $('#t-next').addEventListener('click', function () { go(idx + 1); restart(); });
     restart();
+  })();
+
+  /* ---------- partners & investors band (Batch B scaffold) ----------
+     Renders FROM FM.TESTIMONIALS (type partner|investor). CONDITIONAL: stays hidden while there
+     are no real entries, so an empty band never ships. Every card is tagged Partner/Investor and
+     labelled role · company so it can never read as a customer endorsement. Missing photo →
+     monogram (a quote is never blocked on a photo). Punit Oza is guarded out. Static grid — no
+     carousel/auto-advance, so reduced-motion needs nothing special. */
+  (function () {
+    var sec = $('#partners-investors'); if (!sec) return;
+    var grid = $('#pi-grid', sec); if (!grid) return;
+    var todo = function (v) { return !v || (typeof v === 'string' && /TODO/i.test(v)); };
+    /* Backstop only — the real control is simply never adding an Oza entry. Keyed on ATTRIBUTION
+       (name/company), NOT the quote body, so a partner who merely mentions Oza isn't dropped.
+       Scoped to this band only — it does not touch Oza's "One Year With FrontM" blog. */
+    var isOza = function (t) { return /\boza\b/i.test([t.name, t.company].join(' ')); };
+    var list = (FM.TESTIMONIALS || []).filter(function (t) {
+      return (t.type === 'partner' || t.type === 'investor') && !isOza(t) && !todo(t.quote);
+    });
+    if (!list.length) { sec.hidden = true; sec.style.display = 'none'; return; }  // empty band must not ship
+    sec.hidden = false;
+
+    function monogram(t) {
+      var src = (!todo(t.name) ? t.name : t.company) || '';
+      var p = src.trim().split(/\s+/);
+      var ini = ((p[0] || '')[0] || '') + ((p[1] || '')[0] || '');
+      return '<span class="pi-mono" aria-hidden="true">' + (ini.toUpperCase() || '\u2022') + '</span>';
+    }
+    grid.innerHTML = list.map(function (t) {
+      var pic = !todo(t.photo)
+        ? '<img class="pi-photo" src="' + t.photo + '" alt="' + (t.name || t.company || '') + '" loading="lazy" decoding="async">'
+        : monogram(t);
+      var name = todo(t.name) ? '' : '<b>' + t.name + '</b>';
+      var rc = [todo(t.role) ? '' : t.role, todo(t.company) ? '' : t.company].filter(Boolean).join(' \u00B7 ');
+      var logo = !todo(t.logo) ? '<img class="pi-logo" src="' + t.logo + '" alt="' + (t.company || '') + '" loading="lazy" decoding="async">' : '';
+      var tag = t.type === 'investor' ? 'Investor' : 'Partner';
+      return '<figure class="pi-card reveal"><div class="pi-tag">' + tag + '</div>' +
+        '<blockquote>' + t.quote + '</blockquote>' +
+        '<figcaption><span class="pi-id">' + pic +
+          '<span class="pi-meta">' + name + '<span class="pi-rc">' + rc + '</span></span></span>' + logo +
+        '</figcaption></figure>';
+    }).join('');
   })();
 
   /* ---------- narrative rail + paragraph reveal ---------- */

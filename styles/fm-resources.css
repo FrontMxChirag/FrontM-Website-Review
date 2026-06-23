@@ -1,0 +1,131 @@
+/* ============================================================
+   FrontM — Resources hub (filterable: News · Blogs · Whitepapers)
+   Reuses the global tokens from fm.css. Scoped to #resources.
+   ============================================================ */
+
+/* ---- filter bar ---- */
+.res-filterbar {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px;
+  padding-bottom: 24px; margin-bottom: 34px;
+  border-bottom: 1px solid var(--line);
+}
+.res-filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.res-cats { margin-left: auto; }
+.res-cats:empty { display: none; }
+.res-cats-label {
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--faint); margin-right: 2px;
+}
+
+.res-chip {
+  min-height: 44px; display: inline-flex; align-items: center; gap: 9px;
+  padding: 0 18px; border-radius: var(--r-pill);
+  border: 1px solid var(--line-2); background: var(--s-1);
+  color: var(--muted); font-family: var(--disp); font-size: 0.95rem; font-weight: 500;
+  letter-spacing: 0.01em; cursor: pointer;
+  transition: color .2s, border-color .2s, background .2s, transform .2s var(--ease-emphasized);
+}
+.res-chip:hover { color: var(--heading); border-color: var(--line-strong); transform: translateY(-2px); }
+.res-chip .rc-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--cc, var(--primary-lift)); box-shadow: 0 0 9px var(--cc, var(--primary-lift)); flex: none; }
+.res-chip .rc-count {
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  color: var(--faint); padding-left: 2px;
+}
+.res-chip.on {
+  color: var(--heading); border-color: color-mix(in oklch, var(--cc, var(--primary)) 60%, var(--line-2));
+  background: color-mix(in oklch, var(--cc, var(--primary)) 16%, var(--s-1));
+}
+.res-chip.on .rc-count { color: color-mix(in oklch, var(--cc, var(--primary-lift)) 78%, #fff); }
+.res-cats .res-chip { font-size: 0.86rem; min-height: 40px; padding: 0 15px; }
+
+/* ---- grid ---- */
+.res-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 22px; }
+
+.res-card {
+  display: flex; flex-direction: column; overflow: hidden;
+  border: 1px solid var(--line); border-radius: var(--r-lg);
+  background: var(--s-1); color: inherit; text-decoration: none;
+  transition: transform .3s var(--ease-emphasized), border-color .3s, box-shadow .3s, background .3s;
+}
+a.res-card:hover {
+  transform: translateY(-6px);
+  border-color: color-mix(in oklch, var(--cc) 50%, var(--line));
+  background: var(--s-2);
+  box-shadow: 0 22px 48px -28px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.07);
+}
+
+/* media: real image OR typed fallback tile */
+.rc-media { aspect-ratio: 16 / 10; background-size: cover; background-position: center; background-color: var(--s-2); position: relative; }
+.rc-media-ph {
+  display: grid; place-items: center; gap: 0;
+  background:
+    repeating-linear-gradient(135deg, transparent 0 13px, color-mix(in oklch, var(--cc) 7%, transparent) 13px 14px),
+    linear-gradient(150deg, color-mix(in oklch, var(--cc) 20%, var(--s-2)), color-mix(in oklch, var(--cc) 5%, var(--s-1)));
+}
+.rc-media-ph .ph-type {
+  font-family: var(--mono); font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: color-mix(in oklch, var(--cc) 78%, #fff);
+}
+.rc-media-ph .ph-slug {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em;
+  color: var(--faint); margin-top: 8px; max-width: 80%; text-align: center; word-break: break-word;
+}
+
+.rc-body { padding: 22px 22px 20px; display: flex; flex-direction: column; flex: 1; }
+.rc-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; margin-bottom: 13px; }
+.rc-type {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--cc); display: inline-flex; align-items: center; gap: 7px;
+}
+.rc-type::before { content: ""; width: 7px; height: 7px; border-radius: 2px; background: var(--cc); box-shadow: 0 0 8px var(--cc); }
+.rc-dim { font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint); }
+.rc-draft {
+  margin-left: auto; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--gold, #FFC500); padding: 4px 9px; border-radius: 999px;
+  border: 1px solid color-mix(in oklch, #FFC500 38%, transparent); background: color-mix(in oklch, #FFC500 11%, transparent);
+}
+.res-card h3 { font-family: var(--disp); font-size: 1.28rem; line-height: 1.2; letter-spacing: -0.01em; color: var(--heading); margin: 0; text-wrap: pretty; }
+.res-card h3.is-untitled { color: var(--subtle); font-style: italic; font-weight: 500; }
+.rc-dek { font-size: 0.92rem; color: var(--muted); line-height: 1.55; margin-top: 11px; flex: 1; text-wrap: pretty; }
+.rc-foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line);
+}
+.rc-author { font-size: 0.82rem; color: var(--subtle); }
+.rc-link { font-size: 0.85rem; font-weight: 600; color: var(--cc); display: inline-flex; gap: 6px; align-items: center; }
+.rc-link svg { transition: transform .25s var(--ease-emphasized); }
+a.res-card:hover .rc-link svg { transform: translateX(4px); }
+.rc-pending { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint); }
+
+/* ---- featured card ---- */
+.res-featured { margin-bottom: 30px; }
+.res-card.is-featured { flex-direction: row; }
+.res-card.is-featured .rc-media, .res-card.is-featured .rc-media-ph { aspect-ratio: auto; flex: 0 0 46%; min-height: 300px; }
+.res-card.is-featured .rc-body { padding: 38px 40px; justify-content: center; }
+.res-card.is-featured .rc-flag {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--primary-lift); margin-bottom: 16px; display: inline-flex; align-items: center; gap: 8px;
+}
+.res-card.is-featured .rc-flag::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--primary-lift); box-shadow: 0 0 9px var(--primary-lift); }
+.res-card.is-featured h3 { font-size: clamp(1.7rem, 2.6vw, 2.3rem); }
+.res-card.is-featured .ph-type { font-size: 16px; }
+
+/* ---- empty state ---- */
+.res-empty {
+  padding: 60px 24px; text-align: center;
+  font-family: var(--disp); font-size: 1.15rem; color: var(--muted);
+  border: 1px dashed var(--line-2); border-radius: var(--r-lg); background: color-mix(in oklch, var(--s-1) 70%, transparent);
+}
+
+/* ---- entrance suppressed: cards are visible by default (correct for print / PDF /
+   reduced-motion and html-to-image capture); filter swaps are instant per spec. ---- */
+
+/* ---- ≤980px: single column, chips wrap, full-width featured ---- */
+@media (max-width: 980px) {
+  .res-grid { grid-template-columns: 1fr; }
+  .res-grid .rc-media, .res-grid .rc-media-ph { aspect-ratio: auto; height: 200px; }
+  .res-cats { margin-left: 0; width: 100%; }
+  .res-card.is-featured { flex-direction: column; }
+  .res-card.is-featured .rc-media, .res-card.is-featured .rc-media-ph { flex: none; min-height: 0; aspect-ratio: 16 / 10; }
+  .res-card.is-featured .rc-body { padding: 26px 24px; }
+}

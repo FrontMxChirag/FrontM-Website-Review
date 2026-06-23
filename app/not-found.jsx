@@ -1,0 +1,8 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import ScriptRunner from '@/app/ScriptRunner';
+const SCRIPTS = [{"src":"/site/fm-data.js"},{"src":"/site/signal-field.js"},{"src":"/site/fm.js"}];
+export default function NotFound() {
+  const html = fs.readFileSync(path.join(process.cwd(), 'app/notfound.frag.html'), 'utf8');
+  return (<><div dangerouslySetInnerHTML={{ __html: html }} /><ScriptRunner scripts={SCRIPTS} /></>);
+}

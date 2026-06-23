@@ -1,0 +1,65 @@
+/* ============================================================
+   fm-legal.css — reading layout for the Legal pages
+   (legal.html landing + legal-gdpr / legal-privacy / legal-terms)
+   Dark FrontM surface, one glass reading sheet, no marketing chrome.
+   Reduced-motion safe; works with JS off (content is static HTML).
+   Added 17 Jun 2026.
+   ============================================================ */
+
+.legal-main { padding-top: clamp(116px, 14vh, 172px); padding-bottom: clamp(64px, 10vh, 128px); }
+.legal-wrap { max-width: 1340px; margin: 0 auto; padding: 0 24px; }
+
+/* ---------- landing head ---------- */
+.legal-head { max-width: 720px; margin: 0 auto clamp(38px, 6vh, 56px); text-align: center; }
+.legal-head .eyebrow { justify-content: center; }
+.legal-head h1 { font-family: var(--disp); font-weight: 700; letter-spacing: -0.02em; line-height: 1.05; font-size: clamp(2.4rem, 5vw, 3.4rem); color: var(--heading); margin: 14px 0 0; }
+.legal-head p { color: var(--muted); font-size: 1.12rem; line-height: 1.6; margin-top: 16px; }
+
+/* ---------- landing cards ---------- */
+.legal-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+@media (max-width: 840px) { .legal-cards { grid-template-columns: 1fr; } }
+.legal-card {
+  display: flex; flex-direction: column; gap: 12px;
+  padding: 30px 28px; border-radius: var(--r-lg);
+  border: 1px solid var(--line); border-top: 2px solid var(--cc, var(--primary-lift));
+  background: var(--s-1); color: inherit; text-decoration: none;
+  transition: transform .3s var(--ease), border-color .3s;
+}
+.legal-card:hover { transform: translateY(-4px); border-color: var(--line-2); }
+.legal-card:focus-visible { outline: 2px solid var(--primary-lift); outline-offset: 3px; }
+.legal-card .lc-ico { width: 46px; height: 46px; border-radius: 10px; display: grid; place-items: center; background: color-mix(in oklch, var(--cc, var(--primary-lift)) 16%, transparent); color: var(--cc, var(--primary-lift)); }
+.legal-card .lc-ico svg { width: 24px; height: 24px; }
+.legal-card h2 { font-family: var(--disp); font-size: 1.28rem; color: var(--heading); letter-spacing: -0.01em; }
+.legal-card p { color: var(--muted); font-size: 0.93rem; line-height: 1.55; flex: 1; }
+.legal-card .lc-go { margin-top: 4px; color: var(--b-blue); font-weight: 600; font-size: 0.9rem; display: inline-flex; gap: 7px; align-items: center; }
+.legal-card .lc-go svg { width: 16px; height: 16px; }
+
+/* ---------- back link ---------- */
+.legal-back { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 0.92rem; text-decoration: none; margin-bottom: 24px; transition: color .25s; }
+.legal-back:hover { color: var(--body); }
+.legal-back:focus-visible { outline: 2px solid var(--primary-lift); outline-offset: 3px; border-radius: 4px; }
+.legal-back svg { width: 16px; height: 16px; }
+
+/* ---------- reading sheet ---------- */
+.legal-sheet {
+  max-width: 1140px; margin: 0 auto;
+  background: var(--s-1); border: 1px solid var(--line);
+  border-radius: var(--r-lg); padding: clamp(28px, 5vw, 64px);
+}
+.legal-sheet > h1 { font-family: var(--disp); font-weight: 700; letter-spacing: -0.02em; line-height: 1.08; font-size: clamp(2rem, 4vw, 2.8rem); color: var(--heading); }
+.legal-updated { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-top: 12px; }
+
+.legal-doc { margin-top: clamp(26px, 4vh, 40px); color: var(--body); line-height: 1.65; }
+.legal-doc > *:first-child { margin-top: 0; }
+.legal-doc h2 { font-family: var(--disp); font-weight: 700; font-size: 1.4rem; line-height: 1.25; letter-spacing: -0.01em; color: var(--heading); margin: clamp(34px, 5vh, 48px) 0 14px; padding-top: clamp(34px, 5vh, 48px); border-top: 1px solid var(--line); }
+.legal-doc h2:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
+.legal-doc h3 { font-size: 1.06rem; font-weight: 650; color: var(--heading); margin: 24px 0 8px; }
+.legal-doc p { margin: 0 0 18px; }
+.legal-doc ul { margin: 0 0 20px; padding-left: 24px; }
+.legal-doc li { margin: 0 0 9px; }
+.legal-doc li::marker { color: var(--primary-lift); }
+.legal-doc strong { color: var(--heading); font-weight: 650; }
+.legal-doc a { color: var(--b-blue); text-decoration: underline; text-underline-offset: 2px; word-break: break-word; }
+.legal-doc a:hover { text-decoration: none; }
+.legal-doc .legal-toc { columns: 2; column-gap: 32px; }
+@media (max-width: 620px) { .legal-doc .legal-toc { columns: 1; } }

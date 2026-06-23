@@ -41,7 +41,7 @@
       { label: 'Platform',  href: 'platform.html' },
       { label: 'Solutions', menu: { items: [
         ['By Department', 'solutions-by-department.html'],
-        ['By Module'],
+        ['By Module', 'solutions-by-module.html'],
         ['By Industry', 'solutions-by-industry.html'],
         ['By Plan']
       ] } },
@@ -50,9 +50,13 @@
         url: 'https://onship.app', host: 'onship.app',
         logo: '/assets/logos/onship/onship-logo-placeholder.png'
       } },
+      /* Resources: parent dropdown → Blogs + Newsletter (24 Jun; supersedes the single-link
+         hub). Blogs is the repurposed page (blogs.html, type=='blog' only). The 6 News entries
+         stay in FM.RESOURCES as parked data but are not surfaced in nav, blogs.html, or the
+         homepage carousel. */
       { label: 'Resources', menu: { items: [
-        ['Blog'],        /* page not built yet — inert, pending pages stage */
-        ['Newsletter']   /* page not built yet — inert, pending pages stage */
+        ['Blogs', 'blogs.html'],
+        ['Newsletter', 'newsletter.html']
       ] } },
       { label: 'Company', menu: { items: [
         ['About Us',     'about.html'],
@@ -73,33 +77,42 @@
         body: 'Identity, permissions, data and audit shared across modules, and out to crewing systems, ERP and partner services.',
         checks: ['Single identity layer across ship + shore', 'Shared permissions, audit and data fabric', 'Open APIs for crewing, ERP, satcom, partners', 'Module-to-module data flow built in'] },
       { name: 'Scalable', color: '#FF6A04', icon: I.scalable,
-        body: 'One operating layer, twelve stakeholder roles, 15,000+ vessels. Multi-tenant. Multi-region. Multi-fleet.',
-        checks: ['15,000+ vessels live across 40+ flag states', 'Multi-tenant, multi-region deployment', '12 stakeholder roles per workspace', '99% uptime SLA, low-bandwidth optimised'] }
+        body: 'One operating layer, twelve stakeholder roles, 3,000+ vessels. Multi-tenant. Multi-region. Multi-fleet.',
+        checks: ['3,000+ vessels live across 40+ flag states', 'Multi-tenant, multi-region deployment', '12 stakeholder roles per workspace', '99% uptime SLA, low-bandwidth optimised'] }
     ],
 
+    /* Module set (8) — the original/canonical set, restored 22 Jun.
+       Order: Connect · Engage · Care · Entertain · Inform · Learn · Maintain · Manage.
+       ("Learn", NOT "Train" — the wireframe's "Train" was wrong.) The three speculative
+       items — Sailor Cart, eSIM, OnShip Mentorship — were dropped for good (not modules).
+       Badge state per the original 8: Learn is live; Maintain + Manage are Soon (6 live,
+       2 on the way). Display names are Title Case; .cw-name / .mi-name render id verbatim
+       (no force-uppercase), so casing lives here and stays consistent across all 8.
+       The collaboration wheel rebuilds from FM.MODULES.length → 8 spokes; with the 12
+       stakeholders that restores the 20 nodes the pflow convergence expects. */
     MODULES: [
-      { id: 'CONNECT', color: '#01B3F6', icon: I.connect, tag: 'Role-based ship-shore comms. Right message, right rank, every time.',
+      { id: 'Connect', color: '#01B3F6', icon: I.connect, tag: 'Role-based ship-shore comms. Right message, right rank, every time.',
         body: 'Send bulletins to the people who actually need them. Acknowledgement is tracked at the individual level and exported for ISM and ISPS audits in seconds.',
         slides: [['Bulletin sent', 'HSEQ-2026-11 · Mooring update · 42 vessels'], ['Acknowledged', '38/42 · Masters + Bosuns'], ['Audit export', 'Time-stamped trail · Single click']] },
-      { id: 'ENGAGE', color: '#6B5FD9', icon: I.engage, tag: 'Internal community. Target by role, prove what was seen.',
+      { id: 'Engage', color: '#4DC243', icon: I.engage, tag: 'Internal community. Target by role, prove what was seen.',
         body: 'Run campaigns to chief cooks across 42 vessels without disturbing the captain. Feedback comes back structured, not as forwarded emails.',
         slides: [['Campaign live', 'Healthier Meals · Chief Cooks only'], ['Targeted reach', 'Vessel · Rank · Department'], ['Feedback in', '29 structured responses · Q2 2026']] },
-      { id: 'CARE', color: '#18C95C', icon: I.care, tag: 'Telemedicine on video. The doctor sees what the seafarer sees.',
+      { id: 'Care', color: '#18C95C', icon: I.care, tag: 'Telemedicine on video. The doctor sees what the seafarer sees.',
         body: 'Adaptive video on VSAT and Starlink, store-and-forward when bandwidth drops. Mental health, preventive check-ins and chronic care on one channel.',
         slides: [['Session active', 'MV Northern Star · Dr. Patel'], ['Visual assessment', 'Superficial laceration · Onboard care'], ['Deviation avoided', '3 days fuel + charter contract saved']] },
-      { id: 'ENTERTAIN', color: '#FF6A04', icon: I.entertain, tag: 'IPTV + on-demand for recreation spaces. Licensed, managed.',
+      { id: 'Entertain', color: '#FF6A04', icon: I.entertain, tag: 'IPTV + on-demand for recreation spaces. Licensed, managed.',
         body: 'Live channels, films and series scheduled from shore. Local caching for limited bandwidth, multi-language tracks, rights-cleared per flag.',
         slides: [['Channels live', '42 vessels · 14 language tracks'], ['On-demand library', 'Refreshed monthly · Rights-cleared'], ['Local cache', 'Plays under 256 kbps · Store-forward']] },
-      { id: 'INFORM', color: '#FFC500', icon: I.inform, tag: 'Digital signage to every crew mess. Scheduled from shore.',
+      { id: 'Inform', color: '#FFC500', icon: I.inform, tag: 'Digital signage to every crew mess. Scheduled from shore.',
         body: 'Push HSEQ campaigns, weather updates and corporate messages to onboard screens. One canonical version, refreshed the moment policy changes.',
         slides: [['Campaign scheduled', 'Mooring procedures · Across 42 vessels'], ['Screens active', 'Crew mess + bridge + galley'], ['Version current', 'Auto-refresh · No stale posters']] },
-      { id: 'TRAIN', color: '#3CAD33', icon: I.train, tag: 'Microlearning + cadet content. Engagement you can measure.',
+      { id: 'Learn', color: '#3CAD33', icon: I.train, tag: 'Microlearning + cadet content. Engagement you can measure.',
         body: 'Five-minute safety drills, role-specific refreshers, cadet onboarding. Completion + comprehension tracked at the individual level, exportable.',
         slides: [['Module live', 'Mooring safety · 5 min · 14 languages'], ['Completion', '84% across 42 vessels · 7 days'], ['Comprehension', 'Knowledge-check + pass rate']] },
-      { id: 'MAINTAIN', color: '#435FE8', icon: I.maintain, soon: true, tag: 'Maintenance + technical coordination. Workflows that travel.',
+      { id: 'Maintain', color: '#435FE8', icon: I.maintain, soon: true, tag: 'Maintenance + technical coordination. Workflows that travel.',
         body: 'Job cards, inspections and parts orders move with the vessel. Photo + video evidence attached at source, sync when bandwidth allows.',
         slides: [['Job card open', 'Main engine · CMS due in 14 days'], ['Inspection logged', 'Photo evidence · Crew + shore notified'], ['Parts ordered', 'Approved by superintendent · ETA Suez']] },
-      { id: 'MANAGE', color: '#404858', icon: I.manage, soon: true, tag: 'Approvals + administration. One identity across the fleet.',
+      { id: 'Manage', color: '#6E7689', icon: I.manage, soon: true, tag: 'Approvals + administration. One identity across the fleet.',
         body: 'Crew change requests, expense approvals, port agency coordination. Routed by role, logged for audit, visible from a single dashboard.',
         slides: [['Approval queue', '8 items · Crew change + port agency'], ['Audit trail', 'Who approved what, when, on which vessel'], ['Dashboard view', 'Fleet-wide rollup · Per-vessel drill-down']] }
     ],
@@ -108,22 +121,63 @@
       { t: 'Fleet Operators', icon: I.ship, d: 'See vessel status, route comms by rank or department, and track outcomes across your fleet from one dashboard.' },
       { t: 'Technical & HSQE', icon: I.shield, d: 'Publish HSEQ campaigns to onboard screens, see who acknowledged each safety bulletin, and close the gaps that drive audit findings.' },
       { t: 'Crewing & Workforce', icon: I.users, d: 'Run wellness campaigns, collect structured feedback, connect crew to healthcare partners, and build community across distributed teams.' },
-      { t: 'Maritime Service Providers', icon: I.api, d: 'Distribute your service to 15,000+ vessels. Use platform identity, permissions and data. Build with the low-code studio or open APIs.' },
+      { t: 'Maritime Service Providers', icon: I.api, d: 'Distribute your service to 3,000+ vessels. Use platform identity, permissions and data. Build with the low-code studio or open APIs.' },
       { t: 'Maritime Ecosystem Organisations', icon: I.network, d: 'Reach members across operators, run multi-org safety campaigns, and distribute welfare resources at scale, without rebuilding the channel each time.' }
     ],
 
-    BLOGS: [
-      { cat: 'Operations · May 2026', c: '#01B3F6', t: 'Why fleet-wide email is a hidden audit liability.', x: 'Forwarded chains, partial acknowledgements, and the two days a superintendent loses every ISM cycle, and what replaces them.' },
-      { cat: 'Crew Welfare · Apr 2026', c: '#079B33', t: 'Telemedicine over VSAT: from coin-flip to clinical call.', x: 'How adaptive video and store-and-forward changed how the on-call doctor decides on deviations.' },
-      { cat: 'Workflow Design · Apr 2026', c: '#9A86FF', t: 'Designing maritime workflows in plain language.', x: 'A walkthrough of frontm.ai, how a Tier-1 bulletin becomes a routed, ack-tracked, audit-ready workflow in under a minute.' },
-      { cat: 'Compliance · Mar 2026', c: '#FFC500', t: 'What ISM auditors actually want to see.', x: 'Per-recipient acknowledgement trails, time-stamped exports, escalations before port call, the procurement checklist.' },
-      { cat: 'Ecosystem · Feb 2026', c: '#FF6A04', t: 'Why the maritime network needs an operating layer.', x: 'From the captain\u2019s bridge to the broker\u2019s desk, what changes when twelve stakeholder groups share one identity model.' }
+    /* ---- RESOURCES — single source for Blogs (blogs.html) + the homepage carousel ----
+       Migrated 22 Jun 2026 (was FM.BLOGS; old placeholder copy archived to
+       archive/superseded/site/fm-blogs-archived.js). 24 Jun: repurposed from a News/Blogs/
+       Whitepapers hub into a Blogs page — only type=='blog' is rendered. The 6 News entries
+       are RETAINED here as parked data (not deleted) but are not surfaced anywhere. These are
+       REAL published items being ported, not editorial writing. Fields marked «TODO» are left
+       for Chirag to fill from the live frontm.com articles — do not invent them. `featured`
+       picks the homepage carousel set (featured blogs); the hero card on blogs.html. Render
+       treats any «TODO»/empty value as missing (typed fallback tile, no broken <img>, non-
+       navigating link). ONE array only — do not duplicate item data. */
+    RES_TYPES: {
+      news:       { label: 'News',       plural: 'News',        c: '#01B3F6' },
+      blog:       { label: 'Blog',       plural: 'Blogs',       c: '#9A86FF' },
+      whitepaper: { label: 'Whitepaper', plural: 'Whitepapers', c: '#FFC500' }  /* defined for when whitepapers publish; no items today */
+    },
+
+    RESOURCES: [
+      { id: 1, type: 'news', cat: '«TODO»', title: 'Gulf Energy Maritime',     dek: '«TODO»', author: 'FrontM Team', date: '«TODO»', image: null, url: '«TODO»', slug: 'gulf-energy-maritime', featured: true },
+      { id: 2, type: 'news', cat: '«TODO»', title: 'Hafnia',                   dek: '«TODO»', author: 'FrontM Team', date: '«TODO»', image: null, url: '«TODO»', slug: 'hafnia', featured: false },
+      { id: 3, type: 'news', cat: '«TODO»', title: 'Alassia',                  dek: '«TODO»', author: 'FrontM Team', date: '«TODO»', image: null, url: '«TODO»', slug: 'alassia', featured: false },
+      { id: 4, type: 'news', cat: '«TODO»', title: 'Punit Oza Joins as CCO',   dek: '«TODO»', author: 'FrontM Team', date: '«TODO»', image: null, url: '«TODO»', slug: 'oza-cco', featured: false },
+      { id: 5, type: 'news', cat: '«TODO»', title: 'Home2US / GMA',            dek: '«TODO»', author: 'FrontM Team', date: '«TODO»', image: null, url: '«TODO»', slug: 'home2us-gma', featured: false },
+      { id: 6, type: 'news', cat: '«TODO»', title: 'BVB',                      dek: '«TODO»', author: 'FrontM Team', date: '«TODO»', image: null, url: '«TODO»', slug: 'bvb', featured: false },
+      { id: 7, type: 'blog', cat: '«TODO»', title: 'One Year With FrontM',     dek: '«TODO»', author: 'Punit Oza',  date: '«TODO»', image: null, url: '«TODO»', slug: 'one-year-with-frontm', featured: false }
+      /* Whitepapers: no real item yet — the “spare slot” stub was dropped 22 Jun so the
+         filter shows real types only (News + Blog). Add whitepaper items here when they
+         publish; the Whitepapers chip then appears automatically (data-driven). */
     ],
 
-    TESTIMONIALS: [
+    /* ---- HOME_TESTIMONIALS — INTERIM live homepage quotes (placeholder copy) ----
+       These three anonymised placeholder quotes still drive the homepage testimonials
+       carousel so nothing degrades while the verified pack is inbound. Snapshot archived to
+       archive/superseded/site/fm-testimonials-placeholders-archived.js. They retire the moment
+       real customer quotes land in FM.TESTIMONIALS (then repoint the homepage carousel). */
+    HOME_TESTIMONIALS: [
       { q: 'Auditors used to take two days to get answers. Now it\u2019s a single export. The platform paid for itself in one ISM cycle.', who: 'Superintendent, Mid-sized ship manager · 40+ vessels · Northern Europe', m: '\u221288% audit response time' },
       { q: 'We avoided two deviations last quarter because the doctor could see the injury on video. Days of fuel and contract integrity saved.', who: 'Operations Director, Bulk carrier operator · 60+ vessels · Greece / Singapore', m: '2 / qtr deviations avoided' },
       { q: 'We can target only chief cooks across 28 vessels for a wellness campaign, and prove who actually engaged. Captains aren\u2019t disturbed by what isn\u2019t theirs.', who: 'Crewing Manager, Container shipping line · 180+ vessels · Asia\u2013Europe trade', m: '+73% campaign ack rate' }
+    ],
+
+    /* ---- TESTIMONIALS (new canonical shape; Batch B scaffold, 24 Jun) ----
+       { id, type:'customer'|'partner'|'investor', quote, name, role, company, photo|null, logo|null }
+       MIGRATION, not writing: the verified 11-quote pack has NOT landed, so this holds ONLY the
+       three independent customers, stubbed by COMPANY. quote/name/role/photo are \u00abTODO\u00bb for
+       Chirag \u2014 do not invent. NO partner/investor entries yet (identities unknown): the Partners
+       & Investors band conditional-renders and stays hidden until real entries exist. Punit Oza is
+       EXCLUDED (now CCO) \u2014 the render also guards against any Oza entry. Missing photo \u2192 monogram
+       fallback (a quote is never blocked on a photo). The live homepage quotes still come from
+       FM.HOME_TESTIMONIALS and are untouched until real customer quotes arrive here. */
+    TESTIMONIALS: [
+      { id: 'cust-gem',     type: 'customer', quote: '\u00abTODO\u00bb', name: '\u00abTODO\u00bb', role: '\u00abTODO\u00bb', company: 'Gulf Energy Maritime', photo: null, logo: null },
+      { id: 'cust-hafnia',  type: 'customer', quote: '\u00abTODO\u00bb', name: '\u00abTODO\u00bb', role: '\u00abTODO\u00bb', company: 'Hafnia',               photo: null, logo: null },
+      { id: 'cust-alassia', type: 'customer', quote: '\u00abTODO\u00bb', name: '\u00abTODO\u00bb', role: '\u00abTODO\u00bb', company: 'Alassia',              photo: null, logo: null }
     ],
 
     PARTNERS: [
@@ -169,34 +223,37 @@
   };
 
   FM.FRICTION = [
-    { ic: NI.channels, c: '#01B3F6', t: 'Too many channels', d: 'Critical information gets scattered.' },
-    { ic: NI.manual,   c: '#FFC500', t: 'Too much manual work', d: 'Teams chase instead of progress.' },
-    { ic: NI.blind,    c: '#9A86FF', t: 'Too little visibility', d: 'Issues escalate out of sight.' },
-    { ic: NI.slow,     c: '#1FE6D4', t: 'Too slow to change', d: 'Digitalisation gets stuck in silos.' },
-    { ic: NI.risk,     c: '#FF6A04', t: 'Too much human risk', d: 'Fatigue and safety risk compound.' }
+    { ic: NI.channels, c: '#01B3F6', t: 'Too Many Channels', d: 'Critical information gets scattered.' },
+    { ic: NI.manual,   c: '#FFC500', t: 'Too Much Manual Work', d: 'Teams chase instead of progress.' },
+    { ic: NI.blind,    c: '#9A86FF', t: 'Too Little Visibility', d: 'Issues escalate out of sight.' },
+    { ic: NI.slow,     c: '#1FE6D4', t: 'Too Slow to Change', d: 'Digitalisation gets stuck in silos.' },
+    { ic: NI.risk,     c: '#FF6A04', t: 'Too Much Human Risk', d: 'Fatigue and safety risk compound.' }
   ];
 
   FM.OUTCOMES = [
-    { ic: I.connect,    c: '#01B3F6', t: 'Reach frontline consistently', d: 'Critical updates reach the right people.' },
-    { ic: I.network,    c: '#435FE8', t: 'Coordinate workflows', d: 'Teams, tasks, and vessels stay connected.' },
-    { ic: I.shield,     c: '#18C95C', t: 'Safeguard earlier', d: 'Risks are spotted before they escalate.' },
-    { ic: I.users,      c: '#6B5FD9', t: 'Connect stakeholders', d: 'Departments, partners, and services align.' },
-    { ic: NI.rocket,    c: '#FF6A04', t: 'Launch faster', d: 'Apps and services deploy without silos.' },
-    { ic: NI.trend,     c: '#1FE6D4', t: 'Improve adoption', d: 'New tools become easier to use.' },
-    { ic: NI.chart,     c: '#FFC500', t: 'Measure value', d: 'Impact becomes visible and reportable.' },
-    { ic: I.scalable,   c: '#9A86FF', t: 'Scale AI roadmap', d: 'Digital initiatives grow on one platform.' }
+    { ic: I.connect,    c: '#01B3F6', t: 'Reach Frontline Consistently', d: 'Critical updates reach the right people.' },
+    { ic: I.network,    c: '#435FE8', t: 'Coordinate Workflows', d: 'Teams, tasks, and vessels stay connected.' },
+    { ic: I.shield,     c: '#18C95C', t: 'Safeguard Earlier', d: 'Risks are spotted before they escalate.' },
+    { ic: I.users,      c: '#6B5FD9', t: 'Connect Stakeholders', d: 'Departments, partners, and services align.' },
+    { ic: NI.rocket,    c: '#FF6A04', t: 'Launch Faster', d: 'Apps and services deploy without silos.' },
+    { ic: NI.trend,     c: '#1FE6D4', t: 'Improve Adoption', d: 'New tools become easier to use.' },
+    { ic: NI.chart,     c: '#FFC500', t: 'Measure Value', d: 'Impact becomes visible and reportable.' },
+    { ic: I.scalable,   c: '#9A86FF', t: 'Scale AI Roadmap', d: 'Digital initiatives grow on one platform.' }
   ];
 
   FM.TRACKS = [
-    { color: '#6B5FD9', ic: I.lowcode, t: 'Subscribe to the FrontM Operating Platform',
+    { color: '#6B5FD9', ic: I.lowcode, label: 'Use', t: 'Subscribe to the FrontM Operating Platform',
       d: 'Access ready-to-use maritime SaaS services for crews, vessels, shore teams, and operational partners through one connected platform.',
       cta: 'Explore Solutions', route: 'pricing', href: 'solutions-by-department.html' },
-    { color: '#01B3F6', ic: I.ai, t: 'Build maritime digital solutions faster',
+    { color: '#01B3F6', ic: I.ai, label: 'Build', t: 'Build Maritime Digital Solutions Faster',
       d: 'Create AI-native maritime apps, automations, agents, and workflows tailored to your operating environment.',
       cta: 'Build with frontm.ai', route: 'frontm-ai', href: 'platform.html' },
-    { color: '#18C95C', ic: NI.storefront, t: 'Integrate into the Maritime App Marketplace',
+    { color: '#18C95C', ic: NI.storefront, label: 'Sell', t: 'Integrate Into the Maritime App Marketplace',
       d: 'Bring your maritime services, products, and custom applications into one ecosystem built for adoption and scale.',
-      cta: 'Join the Marketplace', route: 'marketplace', href: 'platform.html' }
+      cta: 'Join the Marketplace', route: 'marketplace', href: 'platform.html' },
+    { color: '#FF6A04', ic: I.users, label: 'Belong', t: 'Join the FrontM Community',
+      d: 'Connect with seafarers, shore professionals, and partners across the maritime network on onship, the community at the heart of the FrontM ecosystem.',
+      cta: 'Get Involved', interstitial: 'https://onship.app' }
   ];
 
   FM.FUNCTIONS = [
@@ -205,7 +262,7 @@
       impact: 'Improve crew supply, mobilisation, compliance readiness, communication, welfare access, and retention support.',
       demo: 'Book a Crewing Demo', hl: 'crewing teams',
       x: {
-        h: 'Keep the fleet crew-ready at every stage of the seafarer lifecycle.',
+        h: 'Keep the Fleet Crew-Ready at Every Stage of the Seafarer Lifecycle',
         p: 'Crewing teams need to source qualified seafarers, keep documents current, coordinate medicals, training, travel, sign-on/sign-off, pay queries, welfare, and crew communication \u2014 without losing time to fragmented workflows.',
         helps: [
           ['Fill roles faster', 'Connect candidates, crew pools, vessels, and shore teams.'],
@@ -224,7 +281,7 @@
       impact: 'Improve engagement, wellbeing, benefits access, employer brand, retention, feedback, learning, and future leadership development.',
       demo: 'Book a Marine HR Demo', hl: 'Marine HR teams',
       x: {
-        h: 'Create a crew experience that seafarers choose to return to.',
+        h: 'Create a Crew Experience That Seafarers Choose to Return To',
         p: 'Marine HR teams need to keep seafarers engaged, supported, cared for, and connected across the full employment journey \u2014 before joining, onboard, during leave, and before the next assignment.',
         helps: [
           ['Engage crews continuously', 'Use campaigns, surveys, communities, recognition, and company updates.'],
@@ -244,7 +301,7 @@
       impact: 'Improve safety culture, inspection readiness, incident learning, audit evidence, and AI-enabled assurance.',
       demo: 'Book an HSQE Demo', hl: 'HSQE teams',
       x: {
-        h: 'Make safety, compliance, and assurance measurable across the fleet.',
+        h: 'Make Safety, Compliance, and Assurance Measurable Across the Fleet',
         p: 'HSQE teams need to improve safety culture, prepare for audits and inspections, close the loop on incidents, evidence compliance, support environmental goals, and keep crews engaged in safer operations.',
         helps: [
           ['Strengthen safety culture', 'Keep safety visible through campaigns, feedback, learning, and participation.'],
@@ -263,7 +320,7 @@
       impact: 'Improve technical coordination, maintenance visibility, defect follow-up, superintendent productivity, vendor access, and AI-assisted vessel support.',
       demo: 'Book a Technical Demo', hl: 'technical teams',
       x: {
-        h: 'Keep technical operations ahead of vessel risk, cost, and downtime.',
+        h: 'Keep Technical Operations Ahead of Vessel Risk, Cost, and Downtime',
         p: 'Technical teams need to manage vessel condition, maintenance, defects, repairs, dry docking, spares, vendors, budgets, and performance \u2014 while keeping ships operational and commercially available.',
         helps: [
           ['Keep vessels operational', 'Connect defects, updates, service needs, and follow-ups.'],
@@ -282,7 +339,7 @@
       impact: 'Improve voyage execution, port coordination, ETA visibility, charterer communication, incident response, partner alignment, and AI-assisted decisions.',
       demo: 'Book an Operations Demo', hl: 'operations teams',
       x: {
-        h: 'Make voyage execution connected, visible, and AI-ready.',
+        h: 'Make Voyage Execution Connected, Visible, and AI-Ready',
         p: 'Operations teams manage vessel movements, ETAs, port calls, cargo readiness, charterer updates, agent coordination, vessel performance, incidents, documentation, and commercial follow-up.',
         helps: [
           ['Coordinate voyages', 'Connect movements, ETAs, instructions, and schedules.'],
@@ -301,7 +358,7 @@
       impact: 'Reduce vendor sprawl, improve adoption, govern AI, connect systems, and prove value across ships and shore.',
       demo: 'Book a Digital Transformation Demo', hl: 'digital leaders',
       x: {
-        h: 'Move from fragmented digital projects to one scalable operating model.',
+        h: 'Move From Fragmented Digital Projects to One Scalable Operating Model',
         p: 'Digital leaders need to modernise safety-critical, low-connectivity fleet environments without increasing cyber risk, vendor sprawl, integration debt, or crew workload.',
         helps: [
           ['Reduce vendor sprawl', 'Give approved apps and partners one controlled route to the fleet.'],
@@ -321,29 +378,29 @@
   FM.FN_SEGUE = 'Technical keeps vessels ready. Operations keeps voyages moving. HSQE keeps assurance measurable. Crewing and Marine HR keep people ready, supported, and retained. Digital leaders make it all scalable, secure, and AI-ready. FrontM connects every function through one intelligent ship-shore operating layer.';
 
   FM.IMPACT_CARDS = [
-    { c: '#01B3F6', ic: I.connect,  t: 'Reach & response', d: 'Measure who received, acknowledged, and acted on critical updates.' },
-    { c: '#3CAD33', ic: I.shield,   t: 'Safety & assurance', d: 'Evidence campaign participation, policy acknowledgement, audits, and inspection readiness.' },
-    { c: '#18C95C', ic: NI.heartplus, t: 'Health & welfare', d: 'Track healthcare access, welfare usage, support cases, and wellbeing engagement.' },
-    { c: '#9A86FF', ic: I.train,    t: 'Learning & competence', d: 'Measure crew education, microlearning, assessments, and development participation.' },
-    { c: '#FFC500', ic: NI.gauge,   t: 'Operational efficiency', d: 'Track manual work reduced, workflows completed, cases closed, and delays avoided.' },
-    { c: '#FF6A04', ic: NI.rocket,  t: 'Digitalisation accelerated', d: 'Reduce partner scouting, integration effort, rollout time, and change-management friction.' },
-    { c: '#435FE8', ic: I.ai,       t: 'AI readiness', d: 'Create data harmony, workflow intelligence, BI visibility, and AI-assisted decision support.' },
-    { c: '#1FE6D4', ic: NI.chart,   t: 'Commercial confidence', d: 'Strengthen customer assurance, ESG evidence, contract support, and partner-service value.' }
+    { c: '#01B3F6', ic: I.connect,  t: 'Reach & Response', d: 'Measure who received, acknowledged, and acted on critical updates.' },
+    { c: '#3CAD33', ic: I.shield,   t: 'Safety & Assurance', d: 'Evidence campaign participation, policy acknowledgement, audits, and inspection readiness.' },
+    { c: '#18C95C', ic: NI.heartplus, t: 'Health & Welfare', d: 'Track healthcare access, welfare usage, support cases, and wellbeing engagement.' },
+    { c: '#9A86FF', ic: I.train,    t: 'Learning & Competence', d: 'Measure crew education, microlearning, assessments, and development participation.' },
+    { c: '#FFC500', ic: NI.gauge,   t: 'Operational Efficiency', d: 'Track manual work reduced, workflows completed, cases closed, and delays avoided.' },
+    { c: '#FF6A04', ic: NI.rocket,  t: 'Digitalisation Accelerated', d: 'Reduce partner scouting, integration effort, rollout time, and change-management friction.' },
+    { c: '#435FE8', ic: I.ai,       t: 'AI Readiness', d: 'Create data harmony, workflow intelligence, BI visibility, and AI-assisted decision support.' },
+    { c: '#1FE6D4', ic: NI.chart,   t: 'Commercial Confidence', d: 'Strengthen customer assurance, ESG evidence, contract support, and partner-service value.' }
   ];
 
   FM.VALUE_BRIDGE = [
-    { ic: NI.clock,  t: 'Time saved', d: 'Less chasing, reporting, manual coordination, vendor scouting, repeated rollout effort, and duplicate communication.' },
-    { ic: I.shield,  t: 'Risk reduced', d: 'Better visibility into safety participation, welfare access, health support, escalation readiness, and inspection evidence.' },
-    { ic: NI.star,   t: 'Value captured', d: 'Higher adoption of healthcare, welfare, learning, benefits, partner services, and existing digital investments.' },
-    { ic: NI.checkc, t: 'Cases resolved', d: 'Support cases, welfare requests, healthcare interactions, operational issues, and workflow actions tracked through to closure.' },
-    { ic: I.users,   t: 'People supported', d: 'Crew reached, educated, engaged, assisted, recognised, and cared for across the seafarer journey.' },
-    { ic: NI.rocket, t: 'Digitalisation accelerated', d: 'Faster discovery, integration, deployment, and adoption of maritime services through one operating platform and marketplace.' },
-    { ic: I.ai,      t: 'AI readiness created', d: 'Data, workflows, adoption signals, and BI reporting become structured enough to support AI-assisted operations.' },
-    { ic: NI.badge,  t: 'Commercial confidence strengthened', d: 'Evidence for customers, charterers, audits, inspections, ESG reporting, and contract assurance.' }
+    { ic: NI.clock,  t: 'Time Saved', d: 'Less chasing, reporting, manual coordination, vendor scouting, repeated rollout effort, and duplicate communication.' },
+    { ic: I.shield,  t: 'Risk Reduced', d: 'Better visibility into safety participation, welfare access, health support, escalation readiness, and inspection evidence.' },
+    { ic: NI.star,   t: 'Value Captured', d: 'Higher adoption of healthcare, welfare, learning, benefits, partner services, and existing digital investments.' },
+    { ic: NI.checkc, t: 'Cases Resolved', d: 'Support cases, welfare requests, healthcare interactions, operational issues, and workflow actions tracked through to closure.' },
+    { ic: I.users,   t: 'People Supported', d: 'Crew reached, educated, engaged, assisted, recognised, and cared for across the seafarer journey.' },
+    { ic: NI.rocket, t: 'Digitalisation Accelerated', d: 'Faster discovery, integration, deployment, and adoption of maritime services through one operating platform and marketplace.' },
+    { ic: I.ai,      t: 'AI Readiness Created', d: 'Data, workflows, adoption signals, and BI reporting become structured enough to support AI-assisted operations.' },
+    { ic: NI.badge,  t: 'Commercial Confidence Strengthened', d: 'Evidence for customers, charterers, audits, inspections, ESG reporting, and contract assurance.' }
   ];
 
   FM.PROOF = [
-    { n: '1,500+', l: 'Vessels reached' },
+    { n: '3,000+', l: 'Vessels reached' },
     { n: '100K+',  l: 'Maritime professionals connected' },
     { n: '50+',    l: 'Maritime operators' },
     { n: '30+',    l: 'Partner apps in the marketplace' }
